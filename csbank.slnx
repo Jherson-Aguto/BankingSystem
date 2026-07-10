@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/csbank.Api/csbank.Api.csproj" />
     <Project Path="src/csbank.Application/csbank.Application.csproj" />
     <Project Path="src/csbank.Domain/csbank.Domain.csproj" />
+    <Project Path="src/csbank.Infrastructure/csbank.Infrastructure.csproj" />
   </Folder>
 </Solution>
