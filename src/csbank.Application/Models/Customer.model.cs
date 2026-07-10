@@ -5,6 +5,6 @@ public record CustomerDto(
     string FirstName,
     string LastName,
     string Suffix,
-    PrivateInfoDto? PrivateInfo,
+    DateTime RegistrationDate,
     char? MiddleInitial = null
 );

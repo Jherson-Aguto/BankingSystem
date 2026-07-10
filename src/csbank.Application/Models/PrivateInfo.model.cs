@@ -7,5 +7,7 @@ public record PrivateInfoDto(
     string City,
     string Province,
     string Country,
-    string Nationality
+    string Nationality,
+    int Age,
+    string BirthDate
 );
