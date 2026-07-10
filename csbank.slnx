@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/csbank.Application/csbank.Application.csproj" />
+    <Project Path="src/csbank.Console/csbank.Console.csproj" />
+  </Folder>
+</Solution>
