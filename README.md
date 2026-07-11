@@ -1,6 +1,7 @@
 # **My Current Architecture** 
 ## Layers
 ### **API** ==> **Infrastructure** ==> **Application** ==> **Domain**
+### **API** ==> **Application**
 ---
 - Only the Infrastructure and Domain has the Implementation.
 - Domain has no interface, because its service is stateless.
