@@ -3,7 +3,7 @@ using CSBank.Application.Models;
 
 namespace CSBank.Application.Mapper;
 
-public static class Map
+internal static class Map
 {
     public static CustomerRequest ToDomain(this CustomerDto dto) =>
         new(dto.Id, dto.FirstName, dto.LastName,

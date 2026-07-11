@@ -1,7 +1,7 @@
 namespace CSbank.Domain.Request;
 
 public record CustomerRequest(
-    int Id,
+    Guid Id,
     string FirstName,
     string LastName,
     string Suffix,
@@ -10,7 +10,7 @@ public record CustomerRequest(
 );
 
 public record PrivateInfoRequest(
-    int Id,
+    Guid Id,
     string Email,
     string PhoneNumber,
     string City,
