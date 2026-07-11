@@ -8,10 +8,13 @@ namespace CSBank.Application.Services;
 public class RegisterCustomerService : IRegisterCustomer
 {
     private readonly RegisterServiceDomain register = new();
-    
-    public async Task Register(CustomerDto customerDto, PrivateInfoDto privateInfo)
+
+    public async Task<(CustomerDto customerData, PrivateInfoDto privateInfoData)>
+    Register(CustomerDto customerDto, PrivateInfoDto privateInfo)
     {
-        await register.RegisterCustomerDetails(Map.ToDomain(customerDto));
-        await register.RegisterCustomerPrivateInfo(Map.ToDomain(privateInfo));
+        var customerData = await register.RegisterCustomerDetails(Map.ToDomain(customerDto));
+        var privateInfoData = await register.RegisterCustomerPrivateInfo(Map.ToDomain(privateInfo));
+
+        return (customerData: Map.ToDto(customerData), privateInfoData: Map.ToDto(privateInfoData));
     }
 }

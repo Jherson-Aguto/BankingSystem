@@ -13,8 +13,12 @@ public class RegisterCustomerController(IRegisterCustomer _register) : Controlle
     {
         try
         {
-            await _register.Register(r.CustomerDto, r.PrivateInfoDto);
-            return Ok("Post Register ran successfully!");
+            var result = await _register.Register(r.CustomerDto, r.PrivateInfoDto);
+
+            return Ok(new RegisterRequest(
+                result.customerData,
+                result.privateInfoData
+            ));
         }
         catch (Exception ex)
         {

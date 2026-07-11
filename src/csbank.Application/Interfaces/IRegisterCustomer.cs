@@ -4,5 +4,5 @@ namespace CSBank.Application.Interfaces;
 
 public interface IRegisterCustomer
 {
-    Task Register(CustomerDto customerDto, PrivateInfoDto privateInfo);
+    Task<(CustomerDto customerData, PrivateInfoDto privateInfoData)> Register(CustomerDto customerDto, PrivateInfoDto privateInfo);
 }
