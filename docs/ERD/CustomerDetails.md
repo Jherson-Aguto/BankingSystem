@@ -2,9 +2,9 @@
 
 ```mermaid
 erDiagram
-    CUSTOMER_DETAILS ||--|| PRIVATE_INFORMATION : has
+    USERS.CUSTOMER_DETAILS ||--|| USERS.PRIVATE_INFORMATION : has
     
-    CUSTOMER_DETAILS {
+    USERS.CUSTOMER_DETAILS {
         Guid id PK
         string first_name
         string last_name
@@ -13,7 +13,7 @@ erDiagram
         char middle_initial "optional"
     }
     
-    PRIVATE_INFORMATION {
+    USERS.PRIVATE_INFORMATION {
         Guid customer_id PK,FK
         string email UK
         string phone_number
