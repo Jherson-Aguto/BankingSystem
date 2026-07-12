@@ -1,86 +1,4 @@
-Here's a combined version that keeps the strongest parts of both responses while making the progression clearer.
 
----
-
-# SQL Foundation Before EF Core
-
-Yes—and that's actually a good thing.
-
-You're not "stuck"; you're building the foundation that will make EF Core, migrations, and debugging much easier later. Most developers who struggle with EF Core are really struggling with **relational database concepts**, not the ORM itself.
-
----
-
-# ERD Review
-
-Your ERD is already a solid start and correctly models a **1:1 relationship**.
-
-A few refinements:
-
-### 1. `birth_date` should be a `date`, not a `string`
-
-**Why:** PostgreSQL can validate, compare, sort, and index dates efficiently.
-
----
-
-### 2. Use consistent naming
-
-Instead of:
-
-```text
-Country
-```
-
-prefer
-
-```text
-country
-```
-
-or use a consistent naming convention throughout (`snake_case`, `camelCase`, etc.).
-
----
-
-### 3. Consider naming the foreign key `customer_id`
-
-Instead of
-
-```text
-PRIVATE_INFORMATION
-    id PK, FK
-```
-
-consider
-
-```text
-PRIVATE_INFORMATION
-    customer_id PK, FK
-```
-
-Both designs are valid.
-
-Using `customer_id` simply makes the relationship much more obvious to someone reading the schema and is easier to understand when writing SQL or configuring EF Core.
-
----
-
-### 4. Email should remain UNIQUE
-
-```text
-email UNIQUE
-```
-
-Good choice.
-
-You may later decide to make `phone_number` unique as well depending on your business rules.
-
----
-
-## Your 1:1 relationship is correct
-
-Using the same GUID as both the **Primary Key** and **Foreign Key** is a perfectly valid way to model a strict one-to-one relationship.
-
----
-
-# Don't spend days only reading theory
 
 Instead, learn SQL **while building your database**.
 
@@ -96,7 +14,7 @@ You already finished this.
 
 ---
 
-## Step 2 — Create the database
+## Step 2 — Create the database ERD ✅ (Done)
 
 Learn:
 
@@ -110,7 +28,7 @@ Learn:
 
 ---
 
-## Step 3 — Create tables
+## Step 3 — Create tables ERD ✅ (Done)
 
 Learn:
 
