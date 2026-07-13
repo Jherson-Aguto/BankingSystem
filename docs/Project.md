@@ -1,140 +1,379 @@
+# Project.md
+
 # Project Blueprint: CSBank System Evolution
 
-This blueprint details how to build and evolve **CSBank**, starting with the **Customer Registration** use-case and scaling into a fully-featured enterprise banking backend.
+This blueprint describes the long-term evolution of **CSBank**, beginning with **Customer Registration** and gradually expanding into a production-quality banking backend while following **Clean Architecture**.
 
 ---
 
-## 🏗️ Architecture Design (Clean Architecture)
+# Current Project Status
+
+## Architecture
+
+**Status:** Phase 3 Complete ✅
+
+Completed:
+
+- Clean Architecture solution structure
+- Domain layer
+- Application layer
+- API layer
+- Manual object mapping
+- Repository abstractions
+- Domain services
+- Dependency Injection architecture
+- Customer Registration use case (mock implementation)
+
+The project is intentionally paused before persistence while PostgreSQL fundamentals are being learned.
+
+---
+
+# Architecture Design
 
 ```
 CSBank (Solution)
-├── csbank.Domain         # Core entities, domain models, and domain business rules
-├── csbank.Application    # Use cases, mappers, service orchestrators, and system interfaces (e.g., IPasswordHasher)
-├── csbank.Infrastructure # Database (EF Core), persistence, BCryptPasswordHasher implementation, caching
-└── csbank.Api            # REST endpoints, controllers, dependency injection setup
+├── csbank.Domain
+│   ├── Domain models
+│   ├── Domain services
+│   └── Business rules
+│
+├── csbank.Application
+│   ├── Use Cases
+│   ├── DTOs
+│   ├── Manual Mappers
+│   ├── Repository Interfaces
+│   └── Application Services
+│
+├── csbank.Infrastructure
+│   ├── Repository Implementations
+│   ├── Dapper (Phase 4B)
+│   ├── EF Core (Later)
+│   └── Database Connectivity
+│
+└── csbank.Api
+    ├── Controllers
+    ├── Dependency Injection
+    └── HTTP Endpoints
 ```
 
----
+Current dependency graph:
 
-## 🚀 Evolution Blueprints
+```
+API
+├── Application
+└── Infrastructure
 
----
+Application
+└── Domain
 
-### 📦 Phase 1 - 3: Scaffold & Models
-*   **Logic:** A request hits `RegisterCustomerController`, maps input to domain records (`CustomerRequest`, `PrivateInfoRequest`), validates age in the domain service, and returns a simulated response.
-*   **Active Directory:** Check [csbank.Api/Controllers](file:///home/jherson/Documents/Learn/c%23/csbank/src/csbank.Api/Controllers/RegisterCustomer.cs) and [csbank.Application/Services](file:///home/jherson/Documents/Learn/c%23/csbank/src/csbank.Application/Services/RegisterCustomer.cs).
+Infrastructure
+└── Application
 
----
-
-### 💾 Phase 4: Persistence (SQL, PostgreSQL & EF Core)
-Instead of maintaining static arrays or fake memory classes, you write records directly to a PostgreSQL database.
-
-*   **EF Core AppDbContext Configuration (`csbank.Infrastructure`):** Configure table schemas for `Customers` and `PrivateInfos` in your repository layer.
-*   **Repository Pattern (`csbank.Infrastructure`):** Implement the `ICustomerRepository` interface to handle database insertions using EF Core's `DbContext`.
-
----
-
-### 🗄️ Phase 4.5: Relational Database Design
-Before tuning EF Core, design a standardized relational database schema.
-*   **Database Schema Constraints:** Apply Primary Keys (PK), Foreign Keys (FK), and Unique Constraints directly in your relational design.
-*   **Normalization (1NF, 2NF, 3NF):** Ensure customer details and private information are normalized. You will implement a One-to-One (1:1) mapping between the `Customers` table and the `PrivateInfos` table.
-
----
-
-### 🚀 Phase 5 - 7: DB Performance, Big O & Memory Processing
-Use your database to learn performance bottlenecks and in-memory data manipulations.
-
-#### 1. Indexing & Big O Analysis (SQL vs. EF Core)
-*   **Without Index ($O(n)$):** Searching for a customer by a non-indexed column requires a sequential table scan.
-*   **With Index ($O(\log n)$):** Create a B-Tree index on `Email` in SQL:
-    ```sql
-    CREATE UNIQUE INDEX IX_PrivateInfos_Email ON "PrivateInfos" ("Email");
-    ```
-*   **Practical Task:** Seed 100,000 registrations. Compare query response times of an indexed email lookup against a non-indexed search.
-
-#### 2. In-Memory Search & Custom Sorting
-Once data is retrieved, process it in the application layer:
-*   **Sorting:** Fetch registered users from the database into memory, and write a custom **QuickSort** in `csbank.Application` to sort them alphabetically by `LastName` before returning them.
-*   **Searching:** Fetch a sorted list of registrations and write a **Binary Search** to find a customer record matching a specific target age/birthdate.
-
----
-
-### 🌿 Phase 8 - 11: Tree Hierarchies & Algorithmic Patterns
-
-#### 1. Branch Hierarchy (Trees)
-*   Create a `Branch` table where each branch record points to a parent branch (`ParentId`).
-*   Retrieve branches and write a recursive tree-traversal algorithm in C# to find all nested branches and their total registered customer counts.
-
-#### 2. Rate Limiting (Sliding Window)
-*   Write a middleware/filter in `csbank.Api` to track client request intervals.
-*   Prevent automated registration bots by tracking request timestamps using a sliding window algorithm in memory.
-
----
-
-### ⚡ Phase 12 - 15: Optimization, Networking & Concurrency
-
-#### 1. Query Optimization & Projections (Avoiding N+1)
-To prevent N+1 query execution and avoid fetching redundant database columns (such as password hashes) over the network, use direct projections:
-
-```csharp
-public async Task<List<CustomerDto>> GetCustomerProfilesAsync()
-{
-    return await context.Customers
-        .Include(c => c.PrivateInfo)
-        .Select(c => new CustomerDto
-        {
-            Id = c.Id,
-            FirstName = c.FirstName,
-            LastName = c.LastName,
-            Email = c.PrivateInfo.Email // Safely excludes passwords and sensitive fields!
-        })
-        .ToListAsync();
-}
+Domain
+└── nothing
 ```
 
-#### 2. Computer Networking (REST Principles)
-Expose the registration action as a RESTful web API. Integrate:
-*   **HTTP Verbs & Status Codes:** Correctly return `201 Created` for registrations, `400 BadRequest` for validations, and `429 TooManyRequests` for rate limits.
-*   **Idempotency & CORS:** Design your endpoints to be safe against duplicate form submissions, and configure secure Cross-Origin Resource Sharing (CORS) rules for frontend client requests.
-
-#### 3. Concurrency Exception Handling
-Handle simultaneous duplicate registrations using unique indexes:
-
-```csharp
-try
-{
-    await repository.AddAsync(customer, privateInfo);
-}
-catch (DbUpdateException ex) when (ex.InnerException is NpgsqlException { SqlState: "23505" })
-{
-    throw new InvalidOperationException("This email is already registered.");
-}
-```
+The API is the composition root and registers Infrastructure implementations.
 
 ---
 
-## 🛡️ Phase 16 - 20: Testing, Caching & Security
+# Phase 1–3 ✅ Complete
 
-#### 1. Password Hashing Abstraction
-Keep your Application layer decoupled from third-party hashing libraries by abstracting the tool:
+Completed:
 
-*   **Application Layer Interface (`csbank.Application`):**
-    ```csharp
-    public interface IPasswordHasher
-    {
-        string HashPassword(string password);
-        bool VerifyPassword(string password, string hashedPassword);
-    }
-    ```
-*   **Infrastructure Layer Implementation (`csbank.Infrastructure`):**
-    ```csharp
-    public class BCryptPasswordHasher : IPasswordHasher
-    {
-        public string HashPassword(string password) => BCrypt.Net.BCrypt.HashPassword(password);
-        public bool VerifyPassword(string password, string hashedPassword) => BCrypt.Net.BCrypt.Verify(password, hashedPassword);
-    }
-    ```
+- Customer Registration endpoint
+- Domain validation
+- Manual mapping
+- DTOs
+- Repository interfaces
+- Application orchestration
+- Dependency Injection
+- Mock implementation
 
-#### 2. Unit Testing
-*   Use **xUnit** to assert your validation rules.
-*   Mock `ICustomerRepository` and `IPasswordHasher` using **NSubstitute** to verify that validations run, passwords hash, and insertions complete properly.
+Current registration flow:
+
+```
+HTTP Request
+
+↓
+
+API Controller
+
+↓
+
+Application Use Case
+
+↓
+
+Domain Service
+        │
+        └── Business Rules
+
+↓
+
+IRepository
+
+↓
+
+(Mock Repository)
+```
+
+Persistence has intentionally not been implemented yet.
+
+---
+
+# Phase 4A — PostgreSQL Fundamentals (Current)
+
+Current focus is learning relational databases before implementing Infrastructure.
+
+Completed:
+
+- CREATE DATABASE
+- CREATE TABLE
+- Schemas
+- Data types
+- INSERT
+- Multi-row INSERT
+- CTE (`WITH`)
+- RETURNING
+- SELECT
+- WHERE
+- ORDER BY
+- INNER JOIN
+- LEFT JOIN
+- Parent → Child relationships
+- One-to-One relationships
+
+Remaining topics:
+
+- UPDATE
+- DELETE
+- Multi-table CRUD
+- Constraints
+- Transactions
+- Indexes
+
+Goal:
+
+Become comfortable manipulating relational data before writing repository implementations.
+
+---
+
+# Phase 4B — Infrastructure (Next)
+
+Replace mock repositories with PostgreSQL-backed repositories using Dapper.
+
+Implement:
+
+- PostgreSQL Connection
+- Dapper
+- Repository implementations
+- SQL Queries
+- Dependency Injection
+
+Registration flow becomes:
+
+```
+HTTP Request
+
+↓
+
+API
+
+↓
+
+Application
+
+↓
+
+Domain Service
+
+↓
+
+IRepository
+
+↓
+
+Infrastructure Repository
+
+↓
+
+PostgreSQL
+```
+
+No business rules should exist inside Infrastructure.
+
+---
+
+# Phase 5 — EF Core
+
+Once Dapper is understood, introduce EF Core.
+
+Learn:
+
+- DbContext
+- DbSet
+- Fluent API
+- Migrations
+- Relationships
+- Change Tracking
+- LINQ
+
+Purpose:
+
+Understand EF Core as an abstraction over SQL rather than relying on it as a black box.
+
+---
+
+# Phase 6 — Database Design
+
+Improve relational modeling.
+
+Topics:
+
+- Primary Keys
+- Foreign Keys
+- Unique Constraints
+- Check Constraints
+- One-to-One
+- One-to-Many
+- Many-to-Many
+- Normalization (1NF–3NF)
+
+---
+
+# Phase 7 — Performance
+
+Database:
+
+- Indexes
+- Query plans
+- Query optimization
+
+Application:
+
+- Big-O analysis
+- Memory usage
+- Collections
+
+Practice:
+
+Compare indexed vs non-indexed lookups using seeded customer data.
+
+---
+
+# Phase 8 — Algorithms
+
+Implement algorithms inside the Application layer.
+
+Sorting:
+
+- QuickSort
+- MergeSort
+
+Searching:
+
+- Binary Search
+
+Purpose:
+
+Understand algorithmic complexity after retrieving data from the database.
+
+---
+
+# Phase 9 — Trees & Hierarchies
+
+Implement branch hierarchies.
+
+Topics:
+
+- Recursive traversal
+- Parent-child trees
+- Aggregation
+- Tree algorithms
+
+---
+
+# Phase 10 — Networking
+
+Expand the REST API.
+
+Topics:
+
+- HTTP Verbs
+- Status Codes
+- REST Principles
+- CORS
+- Idempotency
+
+---
+
+# Phase 11 — Concurrency
+
+Handle concurrent requests.
+
+Topics:
+
+- Transactions
+- Optimistic Concurrency
+- Duplicate registrations
+- Unique constraint violations
+
+---
+
+# Phase 12 — Security
+
+Implement:
+
+- Password hashing abstraction
+- BCrypt
+- Authentication
+- Authorization
+- Secure DTO projection
+
+---
+
+# Phase 13 — Caching
+
+Learn:
+
+- IMemoryCache
+- Distributed Cache
+- Cache invalidation
+
+---
+
+# Phase 14 — Testing
+
+Testing stack:
+
+- xUnit
+- NSubstitute
+
+Test:
+
+- Domain services
+- Use cases
+- Repository abstractions
+- API endpoints
+
+---
+
+# Long-Term Goal
+
+Build a production-quality banking backend while understanding every abstraction underneath it.
+
+The objective is not merely to finish CSBank, but to understand:
+
+- Clean Architecture
+- Relational Database Design
+- PostgreSQL
+- Dapper
+- EF Core
+- Performance
+- Algorithms
+- Networking
+- Security
+- Testing
+
+Each phase builds directly on the previous one, ensuring that every technology is learned through practical implementation rather than isolated tutorials.
