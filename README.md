@@ -1,7 +1,15 @@
 # **My Current Architecture** 
-## Layers
-### **API** ==> **Infrastructure** ==> **Application** ==> **Domain**
-### **API** ==> **Application**
+```mermaid
+flowchart LR
+    subgraph Core [Application Core]
+        Domain["csbank.Domain"]
+        Application["csbank.Application"] --> Domain
+    end
+
+    Infrastructure["csbank.Infrastructure"] --> Application
+    Api["csbank.Api"] --> Application
+    Api --> Infrastructure
+```
 ---
 - Only the Infrastructure and Domain has the Implementation.
 - Domain has no interface, because its service is stateless.
