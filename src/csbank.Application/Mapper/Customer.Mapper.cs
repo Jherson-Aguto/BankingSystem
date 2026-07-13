@@ -23,21 +23,20 @@ internal static class Map
     }
 
     public static PrivateInfoRequest ToDomain(this PrivateInfoDto dto) =>
-        new(dto.Id, dto.Email, dto.PhoneNumber, dto.City, dto.Province,
-        dto.Country, dto.Nationality, dto.Age, dto.BirthDate);
+        new(dto.CustomerId, dto.Email, dto.PhoneNumber, dto.City, dto.Province,
+        dto.Country, dto.Nationality, dto.BirthDate);
 
     public static PrivateInfoDto ToDto(this PrivateInfoRequest dto)
     {
         return new PrivateInfoDto
         {
-            Id = dto.Id,
+            CustomerId = dto.Customer_Id,
             Email = dto.Email,
             PhoneNumber = dto.PhoneNumber,
             City = dto.City,
             Province = dto.Province,
             Country = dto.Country,
             Nationality = dto.Nationality,
-            Age = dto.Age,
             BirthDate = dto.BirthDate
         };
     }
