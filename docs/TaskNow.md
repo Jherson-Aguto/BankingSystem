@@ -4,191 +4,204 @@
 
 **Project:** CSBank
 
-**Current Phase:** Phase 4A — PostgreSQL Fundamentals
+**Architecture Status:** Phase 1–3 Complete ✅
 
-## Goal
+**Current Learning Phase:** Phase 4A — PostgreSQL Fundamentals
 
-Become comfortable manipulating relational data and understanding relational database behavior before implementing the Infrastructure layer with Dapper and later EF Core.
-
-The objective is **not** to become a PostgreSQL expert, but to understand the concepts that ORMs abstract away.
+**Current Project Phase:** Transitioning to Phase 4B
 
 ---
 
-# Progress
+# Mission
 
-## Database Fundamentals
+Complete one final SQL integration exercise (Multi-Table CRUD Capstone), then immediately resume CSBank development by replacing mock repositories with real PostgreSQL implementations using Dapper.
+
+The objective is no longer to learn isolated SQL syntax.
+
+The objective is to apply relational database concepts to real backend development.
+
+---
+
+# Architecture Status
 
 Completed:
 
-- ✅ ERD completed
-- ✅ Database created
-- ✅ PostgreSQL CLI (psql)
-- ✅ Connecting databases (`\c`)
+- ✅ Clean Architecture
+- ✅ Domain Layer
+- ✅ Application Layer
+- ✅ API Layer
+- ✅ Dependency Injection
+- ✅ Manual Mapping
+- ✅ Repository Abstractions
+- ✅ Customer Registration Use Case
+- ✅ Mock Repository Implementation
+
+Current architecture:
+
+```
+HTTP Request
+
+↓
+
+API
+
+↓
+
+Application
+
+↓
+
+Domain Service
+
+↓
+
+IRepository
+
+↓
+
+(Mock Repository)
+```
+
+Current limitation:
+
+Persistence has intentionally been postponed until SQL fundamentals were completed.
+
+---
+
+# PostgreSQL Fundamentals
+
+## Completed
+
+### Database Fundamentals
+
+- ✅ CREATE DATABASE
+- ✅ PostgreSQL CLI
 - ✅ Schemas
 - ✅ CREATE TABLE
-- ✅ PostgreSQL data types
+- ✅ Data Types
 - ✅ NOT NULL
 
 ---
 
-## Data Insertion
+### CRUD
 
 Completed:
 
-- ✅ Single-row INSERT
-- ✅ Multi-row INSERT (single table)
-- ✅ INSERT with RETURNING
-- ✅ Common Table Expressions (WITH)
-- ✅ Parent → Child INSERT using CTE + RETURNING
-
-Example:
-
-```sql
-WITH id AS (
-    INSERT INTO users.customer_details(...)
-    VALUES(...)
-    RETURNING id
-)
-INSERT INTO users.private_information(...)
-SELECT ...
-FROM id;
-```
-
-Understand:
-
-- Parent row is created first.
-- Child row receives the generated primary key as its foreign key.
-- One-to-one insertion workflow.
-
-**Note**
-
-Bulk parent → multiple child insertion using a single SQL statement is intentionally postponed.
-
-This is considered an advanced PostgreSQL technique rather than a required backend foundation.
-
----
-
-## Querying Data
-
-Completed:
-
+- ✅ INSERT
+- ✅ Multi-row INSERT
+- ✅ RETURNING
+- ✅ WITH (CTE)
 - ✅ SELECT
 - ✅ WHERE
 - ✅ ORDER BY
+- ✅ UPDATE
+- ✅ DELETE
 
 ---
 
-## Relationships
+### Relationships
 
 Completed:
 
-- ✅ Primary Key
-- ✅ Foreign Key
-- ✅ One-to-One relationships
-- ✅ One-to-Many relationships (conceptually)
+- ✅ Primary Keys
+- ✅ Foreign Keys
+- ✅ One-to-One
+- ✅ One-to-Many
 - ✅ Parent → Child relationships
-
-Understand:
-
-```
-Parent owns the identity.
-
-Child references the parent.
-```
 
 ---
 
-## JOINs
+### JOINs
 
 Completed:
 
 - ✅ INNER JOIN
 - ✅ LEFT JOIN
 - ✅ RIGHT JOIN
-- ✅ FULL JOIN (conceptually)
+- ✅ FULL JOIN (Conceptual)
 
 Understand:
-
-- INNER JOIN returns matching rows only.
-- LEFT JOIN preserves every row from the left table.
-- RIGHT JOIN preserves every row from the right table.
-- FULL JOIN preserves rows from both tables.
-
-Most importantly:
 
 JOINs reconstruct relational data.
 
-This understanding directly connects to how EF Core materializes object graphs.
+---
+
+### Referential Integrity
+
+Completed:
+
+- ✅ Foreign Keys
+- ✅ ON DELETE
+- ✅ ON UPDATE
+- ✅ CASCADE
+- ✅ NO ACTION
+- ✅ SET NULL
 
 ---
 
-## UPDATE
+### Transactions
 
 Completed:
 
 Understand:
 
-- ✅ Update one column
-- ✅ Update multiple columns
-- ✅ Update parent table
-- ✅ Update child table
+- ✅ Autocommit
+- ✅ BEGIN
+- ✅ COMMIT
+- ✅ ROLLBACK
+- ✅ Failed transaction state
+- ✅ Statement-level atomicity
+- ✅ Transaction-level atomicity
 
-Concepts learned:
+Major realization:
 
-- WHERE determines which rows are updated.
-- Omitting WHERE updates every row.
-- UPDATE is a set-based operation.
-- One UPDATE statement modifies only one table.
-- Primary keys should be preferred when updating a single record.
+A business operation often spans multiple SQL statements.
+
+Transactions make those statements behave as one atomic unit.
 
 ---
 
-## DELETE
+### Constraints
+
+Completed:
+
+- ✅ UNIQUE
+- ✅ CHECK
+
+Understand:
+
+The database is the final guardian of data integrity.
+
+Application validation and database constraints complement one another.
+
+---
+
+### Indexes
 
 Completed:
 
 Understand:
 
-- ✅ Delete child rows
-- ✅ Delete parent rows
-- ✅ Referential integrity
-- ✅ Foreign key behavior
+- ✅ CREATE INDEX
+- ✅ CREATE UNIQUE INDEX
 
-Understand:
+Major concepts:
 
-Deleting the child is allowed.
-
-Deleting the parent depends on the configured foreign key action.
-
----
-
-## Referential Actions
-
-Completed:
-
-Understand:
-
-- ✅ ON DELETE CASCADE
-- ✅ ON DELETE NO ACTION
-- ✅ ON DELETE SET NULL
-
-- ✅ ON UPDATE CASCADE
-- ✅ ON UPDATE NO ACTION
-- ✅ ON UPDATE SET NULL
-
-Most important takeaway:
-
-These are business rules enforced by PostgreSQL.
-
-The database is responsible for maintaining referential integrity.
+- Faster lookups
+- Slower writes
+- Additional storage
+- PRIMARY KEY automatically creates an index
+- UNIQUE automatically creates an index
 
 ---
 
-## ORM Understanding
+### ORM Mental Model
 
-Major conceptual milestone completed:
+Major milestone completed.
 
-Understand that frameworks such as EF Core abstract SQL rather than replace it.
+Understand:
+
+EF Core abstracts SQL.
 
 Examples:
 
@@ -201,243 +214,185 @@ BEGIN TRANSACTION
 
 ↓
 
-UPDATE customer_details
-
-↓
-
-UPDATE private_information
+INSERT / UPDATE / DELETE
 
 ↓
 
 COMMIT
 ```
 
-Likewise:
-
 ```
 .Include(...)
 
 ↓
 
-JOINs or multiple SQL queries
+JOIN
+
+or
+
+Multiple SELECT statements
 
 ↓
 
 Materialize object graph
 ```
 
-Understanding this is one of the primary goals of learning SQL before EF Core.
+Objects do not exist inside PostgreSQL.
+
+Only relational data exists.
+
+ORMs reconstruct object graphs.
 
 ---
 
-# Current Focus (NEXT)
+# Current Task
 
-Only a few SQL topics remain before beginning Dapper.
+## Multi-Table CRUD Capstone
 
----
+Status:
 
-# 1. Transactions (Highest Priority)
+⏳ Ready to Begin
 
-Learn:
+Purpose:
 
-- BEGIN
-- COMMIT
-- ROLLBACK
+This is **not** another SQL lesson.
 
-Exercise:
+This is the bridge between SQL fundamentals and CSBank development.
 
-```sql
-BEGIN;
-
-INSERT Customer;
-
-INSERT Private Information;
-
-INSERT Account;
-
-Force an error;
-
-ROLLBACK;
-```
-
-Verify:
-
-Nothing should be committed.
-
-Goal:
-
-Understand atomic operations.
-
-Understand why banking systems require transactions.
-
----
-
-# 2. Constraints
-
-Learn:
-
-- UNIQUE
-- CHECK
-
-(Foreign Keys and Primary Keys already understood.)
-
-Practice intentionally violating constraints.
-
-Examples:
-
-- Duplicate email
-- Negative balance
-- Invalid foreign key
-
-Goal:
-
-Understand how PostgreSQL protects data integrity.
-
----
-
-# 3. Indexes
-
-Learn:
-
-```sql
-CREATE INDEX;
-
-CREATE UNIQUE INDEX;
-```
-
-Goal:
-
-Understand why indexes improve lookup performance.
-
-Deep optimization is intentionally postponed.
-
----
-
-# 4. Multi-Table CRUD (Capstone)
-
-This is no longer considered a separate SQL topic.
-
-Instead, it serves as the final integration exercise before Phase 4B.
-
-Example schema:
+Use the actual CSBank schema:
 
 ```
 Customer
-    │
-    ├── PrivateInformation
-    ├── Account
-    ├── SavingsAccount
-    └── Loan
+│
+├── PrivateInformation
+├── Account
+├── SavingsAccount
+└── Loan
 ```
 
-Exercise:
+Complete business workflows using everything learned:
 
-- Register customer
+- Register Customer
 - Insert related records
-- Query with JOINs
-- Update related tables
-- Delete related tables
-- Use transactions
+- Query customer information
+- JOIN related tables
+- Update related records
+- Delete related records safely
+- Apply transactions
 - Observe constraints
+- Observe referential integrity
+- Apply indexes where appropriate
 
 Goal:
 
-Become comfortable manipulating complete relational data.
+Stop thinking in isolated SQL statements.
+
+Start thinking in business operations.
 
 ---
 
-# Lower Priority
+# Immediate Next Phase
 
-## ALTER TABLE
+## Phase 4B — Dapper Infrastructure
 
-Understand only the basics.
+After the capstone:
 
-Examples:
+Replace:
 
-```sql
-ALTER TABLE
-ADD COLUMN;
+```
+IRepository
 
-ALTER TABLE
-DROP COLUMN;
+↓
 
-ALTER TABLE
-RENAME COLUMN;
+Mock Repository
 ```
 
-Note:
+with:
 
-Real projects typically use EF Core Migrations.
+```
+IRepository
 
-Understanding the concept is sufficient before moving on.
+↓
 
----
+Infrastructure Repository
 
-# After SQL
+↓
 
-After becoming comfortable with:
+Dapper
 
-- Transactions
-- Constraints
-- Indexes
-- Multi-table CRUD
+↓
 
-Resume CSBank development.
-
----
-
-# Phase 4B — Dapper Infrastructure
+PostgreSQL
+```
 
 Implement:
 
 - PostgreSQL connection
+- Dapper
 - Repository implementations
 - Dependency Injection
-- SQL inside Infrastructure
-- Application → IRepository → Infrastructure flow
+- SQL execution
+- Customer Registration persistence
 
-Goal:
+No business rules belong inside Infrastructure.
 
-Replace mock repositories with real PostgreSQL implementations.
-
-Understand that Dapper executes SQL you already understand rather than hiding it.
+Infrastructure is responsible only for persistence.
 
 ---
 
-# Phase 5 — EF Core
+# Upcoming Roadmap
 
-After Dapper:
+Phase 4B
+- Dapper Infrastructure
 
-Learn:
+↓
 
-- DbContext
-- DbSet
-- Fluent API
-- Migrations
-- Change Tracking
-- LINQ
-- Repository implementations
+Phase 5
+- EF Core
 
-Objective:
+↓
 
-Understand EF Core as a productivity layer built on top of SQL, rather than treating it as a black box.
+Phase 6
+- Relational Database Design
+
+↓
+
+Phase 7
+- Performance
+
+↓
+
+Phase 8
+- Algorithms
+
+↓
+
+Phase 9+
+- Networking
+- Concurrency
+- Security
+- Caching
+- Testing
+- Deployment
 
 ---
 
-# Success Criteria Before Moving On
+# Current Assessment
 
-You should confidently be able to:
+Architecture Foundation:
 
-- ✅ Create relational tables
-- ✅ Insert related data
-- ✅ Query related data
-- ✅ Join tables
-- ✅ Update related data
-- ✅ Delete related data safely
-- ✅ Understand referential integrity
-- ✅ Understand foreign key actions
-- ⏳ Use transactions
-- ⏳ Understand constraints
-- ⏳ Create indexes
+✅ Complete
 
-Once these are comfortable, stop studying standalone SQL and continue learning naturally while building CSBank with Dapper.
+Relational Database Fundamentals:
+
+✅ Complete
+
+Remaining SQL Work:
+
+⏳ Multi-Table CRUD Capstone
+
+Current Milestone:
+
+You are transitioning from learning SQL concepts to implementing real persistence inside CSBank.
+
+The next repository you write will no longer be a mock—it will execute real SQL against PostgreSQL using Dapper.
