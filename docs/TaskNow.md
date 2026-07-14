@@ -1,12 +1,16 @@
 # TaskNow.md
 
-## Current Status
+# Current Status
 
 **Project:** CSBank
 
 **Current Phase:** Phase 4A — PostgreSQL Fundamentals
 
-**Goal:** Become comfortable manipulating relational data before implementing the Infrastructure layer with Dapper and later EF Core.
+## Goal
+
+Become comfortable manipulating relational data and understanding relational database behavior before implementing the Infrastructure layer with Dapper and later EF Core.
+
+The objective is **not** to become a PostgreSQL expert, but to understand the concepts that ORMs abstract away.
 
 ---
 
@@ -14,9 +18,11 @@
 
 ## Database Fundamentals
 
+Completed:
+
 - ✅ ERD completed
 - ✅ Database created
-- ✅ PostgreSQL CLI (`psql`)
+- ✅ PostgreSQL CLI (psql)
 - ✅ Connecting databases (`\c`)
 - ✅ Schemas
 - ✅ CREATE TABLE
@@ -31,9 +37,9 @@ Completed:
 
 - ✅ Single-row INSERT
 - ✅ Multi-row INSERT (single table)
-- ✅ INSERT with `RETURNING`
-- ✅ Common Table Expressions (`WITH`)
-- ✅ Parent → Child insert using CTE + RETURNING
+- ✅ INSERT with RETURNING
+- ✅ Common Table Expressions (WITH)
+- ✅ Parent → Child INSERT using CTE + RETURNING
 
 Example:
 
@@ -50,8 +56,15 @@ FROM id;
 
 Understand:
 
-- Parent generated first
-- Child receives generated PK as FK
+- Parent row is created first.
+- Child row receives the generated primary key as its foreign key.
+- One-to-one insertion workflow.
+
+**Note**
+
+Bulk parent → multiple child insertion using a single SQL statement is intentionally postponed.
+
+This is considered an advanced PostgreSQL technique rather than a required backend foundation.
 
 ---
 
@@ -70,29 +83,18 @@ Completed:
 Completed:
 
 - ✅ Primary Key
-- ✅ Foreign Key concept
+- ✅ Foreign Key
 - ✅ One-to-One relationships
+- ✅ One-to-Many relationships (conceptually)
 - ✅ Parent → Child relationships
-
-Example:
-
-```
-customer_details
-----------------
-id
-
-        │
-        ▼
-
-private_information
--------------------
-customer_id
-```
 
 Understand:
 
-- Parent owns the identity
-- Child references the parent
+```
+Parent owns the identity.
+
+Child references the parent.
+```
 
 ---
 
@@ -102,131 +104,139 @@ Completed:
 
 - ✅ INNER JOIN
 - ✅ LEFT JOIN
+- ✅ RIGHT JOIN
+- ✅ FULL JOIN (conceptually)
 
 Understand:
 
 - INNER JOIN returns matching rows only.
-- LEFT JOIN returns every row from the left table, matching rows from the right when available.
-- RIGHT JOIN and FULL JOIN understood conceptually.
+- LEFT JOIN preserves every row from the left table.
+- RIGHT JOIN preserves every row from the right table.
+- FULL JOIN preserves rows from both tables.
+
+Most importantly:
+
+JOINs reconstruct relational data.
+
+This understanding directly connects to how EF Core materializes object graphs.
+
+---
+
+## UPDATE
+
+Completed:
+
+Understand:
+
+- ✅ Update one column
+- ✅ Update multiple columns
+- ✅ Update parent table
+- ✅ Update child table
+
+Concepts learned:
+
+- WHERE determines which rows are updated.
+- Omitting WHERE updates every row.
+- UPDATE is a set-based operation.
+- One UPDATE statement modifies only one table.
+- Primary keys should be preferred when updating a single record.
+
+---
+
+## DELETE
+
+Completed:
+
+Understand:
+
+- ✅ Delete child rows
+- ✅ Delete parent rows
+- ✅ Referential integrity
+- ✅ Foreign key behavior
+
+Understand:
+
+Deleting the child is allowed.
+
+Deleting the parent depends on the configured foreign key action.
+
+---
+
+## Referential Actions
+
+Completed:
+
+Understand:
+
+- ✅ ON DELETE CASCADE
+- ✅ ON DELETE NO ACTION
+- ✅ ON DELETE SET NULL
+
+- ✅ ON UPDATE CASCADE
+- ✅ ON UPDATE NO ACTION
+- ✅ ON UPDATE SET NULL
+
+Most important takeaway:
+
+These are business rules enforced by PostgreSQL.
+
+The database is responsible for maintaining referential integrity.
+
+---
+
+## ORM Understanding
+
+Major conceptual milestone completed:
+
+Understand that frameworks such as EF Core abstract SQL rather than replace it.
+
+Examples:
+
+```
+SaveChanges()
+
+↓
+
+BEGIN TRANSACTION
+
+↓
+
+UPDATE customer_details
+
+↓
+
+UPDATE private_information
+
+↓
+
+COMMIT
+```
+
+Likewise:
+
+```
+.Include(...)
+
+↓
+
+JOINs or multiple SQL queries
+
+↓
+
+Materialize object graph
+```
+
+Understanding this is one of the primary goals of learning SQL before EF Core.
 
 ---
 
 # Current Focus (NEXT)
 
-This is the remaining SQL knowledge required before returning to CSBank development.
+Only a few SQL topics remain before beginning Dapper.
 
 ---
 
-## 1. UPDATE (Highest Priority)
-
-Become comfortable updating:
-
-- One column
-- Multiple columns
-- Parent table
-- Child table
-
-Examples:
-
-```sql
-UPDATE users.customer_details
-SET
-    first_name = 'John',
-    last_name = 'Doe'
-WHERE id = 1;
-```
-
-and
-
-```sql
-UPDATE users.private_information
-SET
-    email = 'john@example.com',
-    city = 'Ilagan'
-WHERE customer_id = 1;
-```
-
-Goal:
-
-Be able to modify existing customer information confidently.
-
----
-
-## 2. DELETE
-
-Learn:
-
-- Delete child rows
-- Delete parent rows
-- Observe FOREIGN KEY behavior
-
-Practice:
-
-- Why deleting the parent first may fail
-- When CASCADE is appropriate
-- Referential integrity
-
-Goal:
-
-Understand safe deletion in relational databases.
-
----
-
-## 3. Multi-Table CRUD (Highest Priority)
-
-Current weakness:
-
-Managing one parent with multiple related tables.
-
-Practice scenarios like:
-
-```
-Customer
-    │
-    ├── PrivateInformation
-    ├── Account
-    ├── SavingsAccount
-    └── Loan
-```
-
-Exercises:
-
-- Insert entire object graph
-- Update multiple related tables
-- Delete related data correctly
-
-Goal:
-
-Become comfortable manipulating complete relational data, not just single tables.
-
----
-
-## 4. Constraints
-
-Learn:
-
-- PRIMARY KEY
-- FOREIGN KEY
-- UNIQUE
-- CHECK
-
-Practice:
-
-Intentionally violate constraints and observe PostgreSQL errors.
-
-Examples:
-
-- Duplicate email
-- Negative balance
-- Invalid foreign key
-
-Goal:
-
-Understand how PostgreSQL protects data integrity.
-
----
-
-## 5. Transactions
+# 1. Transactions (Highest Priority)
 
 Learn:
 
@@ -236,14 +246,14 @@ Learn:
 
 Exercise:
 
-```
+```sql
 BEGIN;
 
-Insert Customer;
+INSERT Customer;
 
-Insert Private Information;
+INSERT Private Information;
 
-Insert Account;
+INSERT Account;
 
 Force an error;
 
@@ -258,57 +268,119 @@ Goal:
 
 Understand atomic operations.
 
+Understand why banking systems require transactions.
+
 ---
 
-## 6. Indexes
+# 2. Constraints
+
+Learn:
+
+- UNIQUE
+- CHECK
+
+(Foreign Keys and Primary Keys already understood.)
+
+Practice intentionally violating constraints.
+
+Examples:
+
+- Duplicate email
+- Negative balance
+- Invalid foreign key
+
+Goal:
+
+Understand how PostgreSQL protects data integrity.
+
+---
+
+# 3. Indexes
 
 Learn:
 
 ```sql
-CREATE INDEX
+CREATE INDEX;
 
-CREATE UNIQUE INDEX
+CREATE UNIQUE INDEX;
 ```
 
 Goal:
 
 Understand why indexes improve lookup performance.
 
-No deep optimization knowledge is required yet.
+Deep optimization is intentionally postponed.
+
+---
+
+# 4. Multi-Table CRUD (Capstone)
+
+This is no longer considered a separate SQL topic.
+
+Instead, it serves as the final integration exercise before Phase 4B.
+
+Example schema:
+
+```
+Customer
+    │
+    ├── PrivateInformation
+    ├── Account
+    ├── SavingsAccount
+    └── Loan
+```
+
+Exercise:
+
+- Register customer
+- Insert related records
+- Query with JOINs
+- Update related tables
+- Delete related tables
+- Use transactions
+- Observe constraints
+
+Goal:
+
+Become comfortable manipulating complete relational data.
 
 ---
 
 # Lower Priority
 
-Understand basic schema evolution.
+## ALTER TABLE
+
+Understand only the basics.
 
 Examples:
 
 ```sql
 ALTER TABLE
-ADD COLUMN
+ADD COLUMN;
 
 ALTER TABLE
-DROP COLUMN
+DROP COLUMN;
 
 ALTER TABLE
-RENAME COLUMN
+RENAME COLUMN;
 ```
 
 Note:
 
-During real projects, schema changes are usually handled by **EF Core Migrations**, not by manually writing `ALTER TABLE` statements. Understanding the concept is sufficient before moving on.
+Real projects typically use EF Core Migrations.
+
+Understanding the concept is sufficient before moving on.
 
 ---
 
 # After SQL
 
-Once comfortable with:
+After becoming comfortable with:
 
-- CRUD across related tables
-- Constraints
 - Transactions
+- Constraints
 - Indexes
+- Multi-table CRUD
 
 Resume CSBank development.
 
@@ -321,30 +393,34 @@ Implement:
 - PostgreSQL connection
 - Repository implementations
 - Dependency Injection
-- SQL queries inside Infrastructure
+- SQL inside Infrastructure
 - Application → IRepository → Infrastructure flow
 
 Goal:
 
 Replace mock repositories with real PostgreSQL implementations.
 
+Understand that Dapper executes SQL you already understand rather than hiding it.
+
 ---
 
 # Phase 5 — EF Core
 
-After completing Dapper, learn:
+After Dapper:
+
+Learn:
 
 - DbContext
 - DbSet
 - Fluent API
 - Migrations
-- Tracking
+- Change Tracking
 - LINQ
-- Repository implementation using EF Core
+- Repository implementations
 
 Objective:
 
-Understand EF Core as an abstraction over SQL rather than a black box.
+Understand EF Core as a productivity layer built on top of SQL, rather than treating it as a black box.
 
 ---
 
@@ -352,16 +428,16 @@ Understand EF Core as an abstraction over SQL rather than a black box.
 
 You should confidently be able to:
 
-- Create tables
-- Insert related data
-- Query related data
-- Join tables
-- Update related data
-- Delete related data safely
-- Understand constraints
-- Use transactions
-- Create indexes
+- ✅ Create relational tables
+- ✅ Insert related data
+- ✅ Query related data
+- ✅ Join tables
+- ✅ Update related data
+- ✅ Delete related data safely
+- ✅ Understand referential integrity
+- ✅ Understand foreign key actions
+- ⏳ Use transactions
+- ⏳ Understand constraints
+- ⏳ Create indexes
 
-Once these are comfortable, continue building CSBank instead of spending additional time studying standalone SQL.
-
-The remaining learning will naturally occur while implementing real banking features.
+Once these are comfortable, stop studying standalone SQL and continue learning naturally while building CSBank with Dapper.
