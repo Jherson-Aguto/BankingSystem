@@ -14,7 +14,6 @@ public record CheckingAccount
     public Guid Id { get; set; }
     public decimal Balance { get; set; }
     public decimal OverdraftLimit { get; set; }
-    public DateTime CreatedAt { get; set; }
     public ModesOfPayment ModesOfPayment { get; set; }
     public decimal? InterestRate { get; set; }
     public decimal? Fees { get; set; }
@@ -26,6 +25,5 @@ public class SavingsAccount
     public decimal Balance { get; set; }
     public int WithdrawalUsage { get; set; }
     public decimal InterestRate { get; set; }
-    public DateTime CreatedAt { get; set; }
     public decimal? Fees { get; set; }
 };
