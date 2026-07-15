@@ -62,7 +62,7 @@ Treat this as one business operation.
 
 ## 1. Registration
 
-Status: ☐
+Status: [DONE]
 
 Implement a complete customer registration workflow.
 
@@ -78,7 +78,7 @@ Requirements:
 
 ## 2. Read
 
-Status: ☐
+Status: [DONE]
 
 Retrieve a complete customer profile.
 

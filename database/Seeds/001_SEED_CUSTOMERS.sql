@@ -92,4 +92,4 @@ FROM account
 )
 SELECT * FROM customer;
 
-COMMIT;
+ROLLBACK;
