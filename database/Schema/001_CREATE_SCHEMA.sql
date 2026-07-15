@@ -1,0 +1,9 @@
+BEGIN;
+
+CREATE SCHEMA IF NOT EXISTS Users;
+CREATE SCHEMA IF NOT EXISTS Accounts;
+CREATE SCHEMA IF NOT EXISTS Transactions;
+CREATE SCHEMA IF NOT EXISTS Loans;
+CREATE SCHEMA IF NOT EXISTS Audit;
+
+ROLLBACK; --change it to COMMIT if you want to run and save it into your database
