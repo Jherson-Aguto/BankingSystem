@@ -483,4 +483,4 @@ $RECYCLE.BIN/
 
 .vscode
 
-database/
+/database/Query/playground.sql

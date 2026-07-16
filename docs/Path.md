@@ -2,7 +2,9 @@
 
 # CSBank Learning Path
 
-This roadmap is designed to build **CSBank** while learning backend engineering from the ground up. Every phase introduces concepts only after the previous foundation has been understood.
+This roadmap is designed to build **CSBank** while learning backend engineering from the ground up.
+
+Every phase introduces concepts only after the previous foundation has been understood, ensuring that each abstraction is learned through implementation rather than memorization.
 
 The objective is not simply to build a banking system, but to understand **why each technology exists** before using higher-level abstractions.
 
@@ -13,17 +15,35 @@ The objective is not simply to build a banking system, but to understand **why e
 | Phase | Status |
 |--------|--------|
 | Phase 1–3 — Clean Architecture & Domain | ✅ Complete |
-| Phase 4A — PostgreSQL Fundamentals | 🚧 In Progress |
-| Phase 4B — Dapper Infrastructure | ⏳ Next |
-| Phase 5 — EF Core | ⏳ Planned |
+| Phase 4A — PostgreSQL Fundamentals | 🟨 Capstone Remaining |
+| Phase 4B — Dapper Infrastructure | 🚀 Next |
+| Phase 5 — Entity Framework Core | ⏳ Planned |
+
+Current milestone:
+
+You have finished learning the SQL concepts required for backend development.
+
+The final step of Phase 4A is integrating those concepts through the **Multi-Table CRUD Capstone**, after which CSBank development resumes with Dapper.
 
 ---
 
-# Philosophy
+# Learning Philosophy
 
 The learning order is intentional.
 
-```
+```text
+Programming
+
+↓
+
+Object-Oriented Programming
+
+↓
+
+Software Engineering
+
+↓
+
 SQL
 
 ↓
@@ -32,10 +52,10 @@ Dapper
 
 ↓
 
-EF Core
+Entity Framework Core
 ```
 
-Instead of treating EF Core as magic, you'll understand the SQL it generates underneath.
+Every framework should explain an abstraction you already understand rather than introducing hidden behavior.
 
 ---
 
@@ -44,32 +64,33 @@ Instead of treating EF Core as magic, you'll understand the SQL it generates und
 ```mermaid
 graph TD
 
-A[Phase 1-3<br/>Architecture & Domain]
+A[Phase 1–3<br/>Architecture & Domain]
+
 --> B[Phase 4A<br/>PostgreSQL Fundamentals]
 
-B --> C[Phase 4B<br/>Infrastructure with Dapper]
+--> C[Phase 4B<br/>Infrastructure with Dapper]
 
-C --> D[Phase 5<br/>Entity Framework Core]
+--> D[Phase 5<br/>Entity Framework Core]
 
-D --> E[Phase 6<br/>Database Design]
+--> E[Phase 6<br/>Relational Database Design]
 
-E --> F[Phase 7<br/>Performance & Indexes]
+--> F[Phase 7<br/>Performance]
 
-F --> G[Phase 8<br/>Algorithms]
+--> G[Phase 8<br/>Algorithms]
 
-G --> H[Phase 9<br/>Trees & Hierarchies]
+--> H[Phase 9<br/>Trees & Hierarchies]
 
-H --> I[Phase 10<br/>Networking]
+--> I[Phase 10<br/>Networking]
 
-I --> J[Phase 11<br/>Concurrency]
+--> J[Phase 11<br/>Concurrency]
 
-J --> K[Phase 12<br/>Security]
+--> K[Phase 12<br/>Security]
 
-K --> L[Phase 13<br/>Caching]
+--> L[Phase 13<br/>Caching]
 
-L --> M[Phase 14<br/>Testing]
+--> M[Phase 14<br/>Testing]
 
-M --> N[Phase 15<br/>Deployment & DevOps]
+--> N[Phase 15<br/>Deployment & DevOps]
 ```
 
 ---
@@ -78,12 +99,13 @@ M --> N[Phase 15<br/>Deployment & DevOps]
 
 Completed.
 
-Learned:
+Concepts learned:
 
 - Clean Architecture
 - Solution organization
 - Domain models
 - Domain services
+- Business rules
 - DTOs
 - Manual mapping
 - Repository abstraction
@@ -92,7 +114,11 @@ Learned:
 
 Current architecture:
 
-```
+```text
+HTTP Request
+
+↓
+
 API
 
 ↓
@@ -101,7 +127,7 @@ Application
 
 ↓
 
-Domain
+Domain Service
 
 ↓
 
@@ -112,47 +138,129 @@ Repository Interface
 (Mock Repository)
 ```
 
+Outcome:
+
+A complete architecture with mock persistence, ready for a real database implementation.
+
 ---
 
-# Phase 4A — PostgreSQL Fundamentals 🚧
+# Phase 4A — PostgreSQL Fundamentals 🟨
 
-Current phase.
+Status:
 
-Topics:
+SQL concepts complete.
 
-- Database creation
+Capstone remaining.
+
+Completed:
+
+### Database Fundamentals
+
+- CREATE DATABASE
 - Schemas
 - Tables
-- Data types
+- PostgreSQL data types
+
+### CRUD
+
 - INSERT
+- Multi-row INSERT
+- RETURNING
+- Common Table Expressions (`WITH`)
 - SELECT
-- JOIN
-- Relationships
+- WHERE
+- ORDER BY
 - UPDATE
 - DELETE
-- Constraints
+
+### Relationships
+
+- Primary Keys
+- Foreign Keys
+- One-to-One
+- One-to-Many
+
+### JOINs
+
+- INNER JOIN
+- LEFT JOIN
+- RIGHT JOIN
+- FULL JOIN (Conceptual)
+
+### Transactions
+
+- BEGIN
+- COMMIT
+- ROLLBACK
+- Statement-level atomicity
+- Transaction-level atomicity
+
+### Constraints
+
+- UNIQUE
+- CHECK
+
+### Indexes
+
+- CREATE INDEX
+- CREATE UNIQUE INDEX
+
+### ORM Mental Model
+
+Understand that:
+
+- Objects do not exist inside PostgreSQL.
+- Relational data is reconstructed into object graphs.
+- Dapper executes SQL directly.
+- EF Core abstracts SQL through higher-level APIs.
+
+Remaining:
+
+## Multi-Table CRUD Capstone
+
+Implement realistic CSBank workflows using:
+
+- Customer
+- PrivateInformation
+- Account
+- SavingsAccount
+- Loan
+
+Practice:
+
+- INSERT
+- SELECT
+- UPDATE
+- DELETE
+- JOINs
 - Transactions
-- Indexes
+- Constraints
+- Referential integrity
 
 Goal:
 
-Become comfortable manipulating relational data before implementing repositories.
+Stop learning SQL as isolated statements and begin thinking in complete business operations.
+
+Completing this capstone finishes Phase 4A.
 
 ---
 
-# Phase 4B — Infrastructure with Dapper
+# Phase 4B — Infrastructure with Dapper 🚀
+
+Immediately after the capstone.
 
 Implement:
 
 - PostgreSQL connection
 - Dapper
 - Repository implementations
-- SQL queries
+- SQL execution
 - Dependency Injection
+- Customer Registration persistence
 
 Application flow becomes:
 
-```
+```text
 HTTP Request
 
 ↓
@@ -173,7 +281,11 @@ IRepository
 
 ↓
 
-Infrastructure
+Infrastructure Repository
+
+↓
+
+Dapper
 
 ↓
 
@@ -182,7 +294,7 @@ PostgreSQL
 
 Goal:
 
-Replace mock repositories with real SQL implementations.
+Replace mock repositories with real persistence while understanding every SQL statement being executed.
 
 ---
 
@@ -202,22 +314,26 @@ Learn:
 
 Objective:
 
-Understand EF Core as an ORM built on SQL concepts already learned.
+Understand EF Core as a productivity layer built on top of SQL concepts already mastered.
 
 ---
 
 # Phase 6 — Relational Database Design
 
+Improve the existing CSBank schema.
+
 Topics:
 
 - Primary Keys
 - Foreign Keys
-- Unique Constraints
-- Check Constraints
 - One-to-One
 - One-to-Many
 - Many-to-Many
-- Normalization
+- Normalization (1NF–3NF)
+
+Purpose:
+
+Refine database design rather than learning SQL syntax.
 
 ---
 
@@ -225,19 +341,19 @@ Topics:
 
 Database:
 
-- Indexes
 - Query plans
 - Query optimization
+- Index strategy
 
 Application:
 
 - Big-O analysis
-- Memory usage
 - Collection performance
+- Memory usage
 
 Practice:
 
-Benchmark indexed vs non-indexed lookups.
+Benchmark indexed versus non-indexed lookups using seeded CSBank data.
 
 ---
 
@@ -253,20 +369,20 @@ Topics:
 
 Purpose:
 
-Process retrieved database data efficiently.
+Efficiently process data after retrieval from the database.
 
 ---
 
 # Phase 9 — Trees & Hierarchies
 
-Model banking branch structures.
+Model banking structures.
 
 Topics:
 
 - Recursive traversal
 - Tree structures
-- Aggregation
 - Parent-child hierarchies
+- Aggregation
 
 ---
 
@@ -274,25 +390,28 @@ Topics:
 
 Expand the REST API.
 
-Learn:
+Topics:
 
 - HTTP
 - REST
 - Status Codes
-- CORS
 - HTTPS
+- CORS
 - Idempotency
 
 ---
 
 # Phase 11 — Concurrency
 
+Handle simultaneous requests safely.
+
 Topics:
 
-- Transactions
-- Concurrent requests
-- Duplicate registration handling
+- Transaction isolation
 - Optimistic concurrency
+- Duplicate registration handling
+- Concurrent updates
+- Unique constraint conflicts
 
 ---
 
@@ -300,8 +419,8 @@ Topics:
 
 Implement:
 
-- BCrypt
 - Password hashing abstraction
+- BCrypt
 - JWT Authentication
 - Authorization
 - Secure DTO projection
@@ -315,6 +434,7 @@ Learn:
 - IMemoryCache
 - Distributed Cache
 - Redis
+- Cache invalidation
 
 ---
 
@@ -329,8 +449,8 @@ Test:
 
 - Domain services
 - Application use cases
-- Repository abstractions
-- Controllers
+- Repository implementations
+- API endpoints
 
 ---
 
@@ -349,21 +469,23 @@ Learn:
 
 # End Goal
 
-Build a production-quality banking backend while understanding every abstraction used throughout the stack.
+Build a production-quality banking backend while understanding every abstraction throughout the stack.
 
 By the end of CSBank, you should understand:
 
 - Clean Architecture
-- PostgreSQL
 - SQL
+- PostgreSQL
 - Dapper
-- EF Core
+- Entity Framework Core
 - Relational Database Design
 - Performance
 - Algorithms
 - Networking
+- Concurrency
 - Security
+- Caching
 - Testing
 - Deployment
 
-Each phase intentionally builds upon the previous one so that every technology is learned through implementation rather than memorization.
+Every phase intentionally builds upon the previous one so that each new technology reinforces concepts already learned instead of replacing them.
