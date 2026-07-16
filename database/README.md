@@ -9,3 +9,7 @@ Execute the scripts in order:
 5. ...
 
 After the schema is created, run the seed scripts if needed.
+
+
+NOTE: replace ROLLBACK at the end of sql statements with COMMIT
+        if you want to run and save it into the database
