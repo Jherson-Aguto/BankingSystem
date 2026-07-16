@@ -1,56 +1,63 @@
-# Customer Details and Private Information 
+# CSBANK Relational Model
+
+## Legend
+
+- PK = Primary Key
+- FK = Foreign Key
+- UK = Unique Key
+- TIMESTAMPTZ = Timestamp with Time Zone
 
 ```mermaid
 erDiagram
     USERS.CUSTOMER_DETAILS ||--|| USERS.PRIVATE_INFORMATION : has
     USERS.CUSTOMER_DETAILS ||--o{ ACCOUNTS.ACCOUNT_DETAILS : owns
-    ACCOUNTS.ACCOUNT_DETAILS ||--o| ACCOUNTS.CHECKING_ACCOUNT : checking
-    ACCOUNTS.ACCOUNT_DETAILS ||--o| ACCOUNTS.SAVINGS_ACCOUNT : savings
+    ACCOUNTS.ACCOUNT_DETAILS ||--o| ACCOUNTS.CHECKING_ACCOUNT : extends
+    ACCOUNTS.ACCOUNT_DETAILS ||--o| ACCOUNTS.SAVINGS_ACCOUNT : extends
     
     USERS.CUSTOMER_DETAILS {
-        Guid id PK
-        string first_name
-        string last_name
-        string suffix "optional"
-        date registration_date
-        char middle_initial "optional"
+        UUID id PK
+        VARCHAR first_name
+        VARCHAR last_name
+        VARCHAR suffix "optional"
+        TIMESTAMPTZ registration_date
+        CHAR middle_initial "optional"
     }
     
     USERS.PRIVATE_INFORMATION {
-        Guid customer_id PK,FK
-        string email UK
-        string phone_number
-        string city
-        string province
-        string country
-        string nationality
-        string birth_date
+        UUID customer_id PK,FK
+        VARCHAR email UK
+        VARCHAR phone_number
+        VARCHAR city
+        VARCHAR province
+        VARCHAR country
+        VARCHAR nationality
+        DATE birth_date
     }
 
     ACCOUNTS.ACCOUNT_DETAILS{
-        Guid id PK
-        Guid customer_id FK
-        string account_number UK
-        string currency
-        date created_at
+        UUID id PK
+        UUID customer_id FK
+        VARCHAR account_number UK
+        VARCHAR currency
+        TIMESTAMPTZ created_at
         enum account_status "enum: (Active, Frozen, Closed)"
     }
 
     ACCOUNTS.CHECKING_ACCOUNT{
-        Guid account_id PK,FK
-        numeric balance
-        numeric overdraft_limit
+        UUID account_id PK,FK
+        NUMERIC balance
+        NUMERIC overdraft_limit
         enum modes_of_payment "enum: (Debit, Online, Check)"
-        numeric interest_rate
-        numeric fees
+        NUMERIC interest_rate
+        NUMERIC fees
     }
 
     ACCOUNTS.SAVINGS_ACCOUNT{
-        Guid account_id PK,FK
-        numeric balance
-        numeric withdrawal_usage
-        numeric interest_rate
-        numeric fees
+        UUID account_id PK,FK
+        NUMERIC balance
+        NUMERIC withdrawal_usage
+        NUMERIC interest_rate
+        NUMERIC fees
     }
 
 ```
