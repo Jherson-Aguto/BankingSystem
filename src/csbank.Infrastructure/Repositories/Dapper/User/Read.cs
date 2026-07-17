@@ -13,13 +13,13 @@ public class ReadUserRepository(
 ) : IReadUserRepository
 {
     public async Task<UserDetailsDto>
-    GetUserByIdAsync(Guid id)
+    ByIdAsync(Guid id)
     {
         using var connection = await _db.CreateConnectionAsync();
 
         try
         {
-            string sql = ReadUserById.readUserQueryById;
+            string sql = ReadUser.ById;
 
             var data = await connection.QuerySingleAsync<UserDetailsDto>(sql, new { id });
 

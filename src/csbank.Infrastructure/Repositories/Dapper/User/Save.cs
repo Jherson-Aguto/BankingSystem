@@ -8,19 +8,19 @@ using Microsoft.Extensions.Logging;
 
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
-public class SaveUserDetailsRepository
+public class SaveUserRepository
 (IDbConnectionFactory _db,
-ILogger<SaveUserDetailsRepository> logger)
-: ISaveUserDetailsRepository
+ILogger<SaveUserRepository> logger)
+: ISaveUserRepository
 {
-    public async Task SaveCustomerDetailsAsync(CustomerDto customerDetails, PrivateInfoDto privateInformation)
+    public async Task DetailsAsync(CustomerDto customerDetails, PrivateInfoDto privateInformation)
     {
         using var connection = await _db.CreateConnectionAsync();
         var transaction = connection.BeginTransaction();
 
         try
         {
-            string query = SaveUserDetails.SaveCustomerDetailsAndPrivateInformation;
+            string query = SaveUser.DetailsAndPrivateInformation;
 
             var parameters = Map.ToParameters(privateInformation, customerDetails);
 

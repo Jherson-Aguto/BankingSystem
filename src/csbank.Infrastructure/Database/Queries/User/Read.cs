@@ -1,8 +1,8 @@
 namespace CSbank.Infrastructure.Database.PostgreSQL;
 
-public class ReadUserById
+public class ReadUser
 {
-    public const string readUserQueryById = 
+    public const string ById =
     """
     SELECT * FROM users.customer_details c
     LEFT JOIN users.private_information p

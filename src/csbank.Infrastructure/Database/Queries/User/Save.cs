@@ -1,8 +1,8 @@
 namespace CSbank.Infrastructure.Database.PostgreSQL;
 
-public class SaveUserDetails
+public class SaveUser
 {
-    public const string SaveCustomerDetailsAndPrivateInformation = 
+    public const string DetailsAndPrivateInformation =
     """
     WITH customer AS (
         INSERT INTO users.customer_details (
