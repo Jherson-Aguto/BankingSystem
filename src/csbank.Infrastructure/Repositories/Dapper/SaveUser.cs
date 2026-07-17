@@ -15,8 +15,8 @@ ILogger<SaveUserDetailsRepository> logger)
 {
     public async Task SaveCustomerDetailsAsync(CustomerDto customerDetails, PrivateInfoDto privateInformation)
     {
-        var connection = await _db.CreateConnectionAsync();
-        using var transaction = connection.BeginTransaction();
+        using var connection = await _db.CreateConnectionAsync();
+        var transaction = connection.BeginTransaction();
 
         try
         {

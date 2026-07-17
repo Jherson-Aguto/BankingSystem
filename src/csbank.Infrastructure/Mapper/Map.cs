@@ -5,7 +5,8 @@ namespace CSbank.Infrastructure.Mapper;
 public static class Map
 {
     public static Object ToParameters(PrivateInfoDto privateInformation, CustomerDto customerDetails)
-        => new
+    {
+        return new
         {
             firstName = customerDetails.FirstName,
             lastName = customerDetails.LastName,
@@ -20,4 +21,5 @@ public static class Map
             nationality = privateInformation.Nationality,
             birthDate = privateInformation.BirthDate.ToDateTime(TimeOnly.MinValue)
         };
+    }
 }
