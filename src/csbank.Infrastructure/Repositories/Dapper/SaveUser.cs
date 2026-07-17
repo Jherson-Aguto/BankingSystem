@@ -15,26 +15,31 @@ ILogger<SaveUserDetailsRepository> logger)
 {
     public async Task SaveCustomerDetailsAsync(CustomerDto customerDetails, PrivateInfoDto privateInformation)
     {
-        var (connection, transaction) = await _db.CreateConnectionAsync();
-        using (connection)
+        var connection = await _db.CreateConnectionAsync();
+        using var transaction = connection.BeginTransaction();
 
-        await using (transaction)
-            try
-            {
-                string query = SaveUserDetails.SaveCustomerDetailsAndPrivateInformation;
+        try
+        {
+            string query = SaveUserDetails.SaveCustomerDetailsAndPrivateInformation;
 
-                var parameters = Map.ToParameters(privateInformation, customerDetails);
+            var parameters = Map.ToParameters(privateInformation, customerDetails);
 
-                Guid rowsAffected = await connection.QueryFirstAsync<Guid>(query, parameters, transaction);
+            Guid customerId =
+                await connection.QueryFirstAsync<Guid>(
+                    query,
+                    parameters,
+                    transaction);
 
-                await transaction.CommitAsync();
-            }
-            catch (Exception error)
-            {
-                logger.LogError($"Cannot Save Customer Details Rolling Back Transaction...\n{error}");
-                await transaction.RollbackAsync();
-                throw;
-            }
+            transaction.Commit();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex,
+                "Cannot save customer details. Rolling back transaction.");
+
+            transaction.Rollback();
+            throw;
+        }
 
     }
 }
