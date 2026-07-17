@@ -10,17 +10,16 @@ internal static class Map
         dto.Suffix, dto.RegistrationDate, dto.MiddleInitial);
 
     public static CustomerDto ToDto(this CustomerRequest dto)
+    => new CustomerDto
     {
-        return new CustomerDto
-        {
-            Id = dto.Id,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Suffix = dto.Suffix,
-            RegistrationDate = dto.RegistrationDate,
-            MiddleInitial = dto.MiddleInitial
-        };
-    }
+        Id = dto.Id,
+        FirstName = dto.FirstName,
+        LastName = dto.LastName,
+        Suffix = dto.Suffix,
+        RegistrationDate = dto.RegistrationDate,
+        MiddleInitial = dto.MiddleInitial
+    };
+
 
     public static PrivateInfoRequest ToDomain(this PrivateInfoDto dto) =>
         new(dto.CustomerId, dto.Email, dto.PhoneNumber, dto.City, dto.Province,

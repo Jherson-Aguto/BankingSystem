@@ -8,265 +8,388 @@
 
 **Phase 4A — PostgreSQL Fundamentals:** ✅ Complete
 
-**Current Phase:** Phase 4B — Persistence with Dapper
+**Phase 4B — Persistence with Dapper:** 🚧 In Progress (~90%)
 
-**Next Phase:** Phase 5 — Entity Framework Core
+**Next Phase:** Phase 5 — Entity Framework Core (After completing remaining Dapper concepts)
 
 ---
 
 # Today's Objective
 
-Replace the mock persistence layer with a real PostgreSQL implementation using **Dapper**.
+Complete the production-ready Dapper persistence layer and fully understand every component before moving to Entity Framework Core.
 
-The objective is **not** to learn another ORM.
+The goal is no longer simply "making it work."
 
-The objective is to integrate the SQL knowledge gained during Phase 4A into the existing Clean Architecture without changing the Domain, Application, or API layers.
+The goal is understanding:
+
+- how Dapper communicates with ADO.NET
+- how ADO.NET communicates with PostgreSQL
+- why Clean Architecture isolates persistence
+- why Dependency Injection allows swapping implementations
 
 ---
 
-# Phase Goal
+# Current Implementation Status
 
-Replace:
+## Clean Architecture
 
-```text
-Repository Interface
+Status: ✅
 
-↓
-
-Mock Repository
 ```
-
-with
-
-```text
+API
+    ↓
+Application
+    ↓
 Repository Interface
-
-↓
-
-Dapper Repository
-
-↓
-
+    ↓
+Infrastructure (Dapper)
+    ↓
+Npgsql
+    ↓
 PostgreSQL
 ```
 
-Only the persistence implementation should change.
-
-The existing architecture should remain intact.
+No business logic exists inside Infrastructure.
 
 ---
 
-# Learning Objectives
+## PostgreSQL
 
-By the end of Phase 4B, you should understand:
+Status: ✅
 
-- How Dapper executes SQL
+Completed:
+
+- Database schemas
+- Constraints
+- Foreign Keys
+- UUIDs
+- INSERT
+- JOINs
+- CTEs
+- Transactions
 - Parameterized SQL
-- Mapping database rows to C# objects
-- Repository implementations
-- Connection management
-- Dependency Injection for persistence
-- Separating SQL from C# code
-- Infrastructure responsibilities within Clean Architecture
 
 ---
 
-# Tasks
+## Infrastructure
 
-## 1. Infrastructure Organization
+Status: ✅
 
-Status: ☐
-
-Prepare the Infrastructure project.
-
-Recommended structure:
-
-```text
-csbank.Infrastructure
-│
-├── Database
-│   ├── Connection
-│   │   ├── IDbConnectionFactory.cs
-│   │   └── PostgreSqlConnectionFactory.cs
-│   │
-│   └── Sql
-│       ├── Customer
-│       ├── Account
-│       └── Audit
-│
-├── Repositories
-│
-├── DI
-│
-└── Configurations
-```
-
-Do not introduce EF Core.
-
-Do not create DbContext.
-
----
-
-## 2. PostgreSQL Connection
-
-Status: ☐
-
-Learn:
-
-- Npgsql
-- Connection strings
-- Opening database connections
-- Lifetime management
-
-Goal:
-
-Successfully open a PostgreSQL connection from the Infrastructure layer.
-
----
-
-## 3. Dapper Fundamentals
-
-Status: ☐
-
-Learn:
-
-- QueryAsync
-- QuerySingleAsync
-- QueryFirstOrDefaultAsync
-- ExecuteAsync
-
-Understand that Dapper executes SQL—it does not generate SQL.
-
----
-
-## 4. Parameterized SQL
-
-Status: ☐
-
-Convert learning SQL into reusable application SQL.
-
-Instead of:
-
-```sql
-WHERE id = '7003...'
-```
-
-learn:
-
-```sql
-WHERE id = @CustomerId
-```
-
-All user input should become parameters.
-
-Never concatenate SQL strings.
-
----
-
-## 5. SQL File Organization
-
-Status: ☐
-
-Move reusable SQL into Infrastructure.
-
-Example:
+Current structure
 
 ```text
 Infrastructure
+│
+├── Database
+│   ├── Connections
+│   │   ├── IDbConnectionFactory.cs
+│   │   └── PostgreSqlConnectionFactory.cs
+│   │
+│   └── PostgreSQL
+│       └── SaveUserDetails.cs
+│
+├── Mapper
+│
+├── Repositories
+│
+└── DI
+```
 
+---
+
+## Connection Factory
+
+Status: ✅
+
+Implemented:
+
+- IDbConnectionFactory
+- PostgreSqlConnectionFactory
+- Npgsql
+- Connection String
+- appsettings.Development.json
+- Dependency Injection registration
+
+Current understanding:
+
+- One connection per request
+- Connection Pooling
+- Connection Factory responsibility
+- Configuration separation
+
+Still reviewing:
+
+- IServiceProvider factory delegate
+- Configuration binding
+
+---
+
+## Dapper
+
+Status: ✅
+
+Learned:
+
+- ExecuteAsync
+- QueryFirstAsync<T>()
+- Anonymous parameter objects
+- SQL parameter binding
+- Generic result mapping
+
+Understand:
+
+Dapper executes SQL.
+
+It does **not** generate SQL.
+
+---
+
+## Repository
+
+Status: ✅
+
+Implemented:
+
+- SaveUserDetailsRepository
+
+Uses:
+
+- Connection Factory
+- Dapper
+- SQL Constants
+- Parameter Mapping
+- Transactions
+- Logging
+
+---
+
+## SQL Organization
+
+Status: ✅
+
+SQL separated from C#
+
+Current example:
+
+```text
 Database
-
-Sql
-
-Customer
-
-GetCustomerById.sql
-
-GetCustomerProfile.sql
-
-RegisterCustomer.sql
-
-UpdateCustomer.sql
-
-DeleteCustomer.sql
+└── PostgreSQL
+    └── SaveUserDetails.cs
 ```
 
-The SQL written during Phase 4A becomes production-ready by replacing hardcoded values with parameters.
+Future organization:
+
+```text
+Database
+└── PostgreSQL
+    ├── Customer
+    ├── Accounts
+    ├── Transactions
+    └── Audit
+```
 
 ---
 
-## 6. Customer Repository
+## Transactions
 
-Status: ☐
+Status: ✅
 
-Implement the first real repository.
+Implemented:
 
-Suggested order:
+- BeginTransaction()
+- Commit()
+- Rollback()
 
-- GetCustomerById
-- GetCustomerProfile
-- RegisterCustomer
+Still studying:
 
-The repository should:
-
-- Load SQL
-- Execute SQL using Dapper
-- Map results
-- Return Domain/Application objects
-
-Business rules remain outside Infrastructure.
+- IDisposable
+- using
+- await using
+- Transaction lifetime
 
 ---
 
-## 7. Dependency Injection
+## Dependency Injection
 
-Status: ☐
+Status: ✅
 
-Replace the mock repository registration.
+Implemented:
 
-Old:
+- Repository registration
+- Connection Factory registration
+- Configuration injection
 
-```text
-Mock Repository
+Still reviewing:
+
+- Delegate registrations
+
+Example:
+
+```csharp
+builder.Services.AddScoped<IDbConnectionFactory>(
+    provider =>
+    {
+        var connectionString =
+            builder.Configuration.GetConnectionString("DefaultConnection");
+
+        return new PostgreSqlConnectionFactory(connectionString!);
+    });
 ```
 
-New:
+---
 
-```text
-CustomerRepository
+## Configuration
+
+Status: ✅
+
+Implemented:
+
+- appsettings.Development.json
+- ConnectionStrings
+- Environment variable override
+
+Understand:
+
+```
+ConnectionStrings__DefaultConnection
 ```
 
-No API changes should be required.
+can replace
+
+```json
+ConnectionStrings:
+    DefaultConnection
+```
+
+without recompiling.
+
+---
+
+## Logging
+
+Status: ✅
+
+Implemented:
+
+- ILogger<T>
+
+Still to improve:
+
+- Exception handling
+- Global exception middleware
+- ProblemDetails responses
+
+---
+
+# Remaining Learning Objectives
+
+These are the remaining concepts to understand before leaving Dapper.
+
+## 1. ADO.NET
+
+Status: 🚧
+
+Need to fully understand:
+
+- IDbConnection
+- IDbCommand
+- IDataReader
+- IDisposable
+
+Most important realization:
+
+Dapper is built on top of ADO.NET.
+
+---
+
+## 2. Connection Lifecycle
+
+Status: 🚧
+
+Understand exactly:
+
+- Open()
+- Close()
+- Dispose()
+- Connection Pooling
+
+---
+
+## 3. Transactions
+
+Status: 🚧
+
+Need deeper understanding of:
+
+- Isolation
+- Lifetime
+- Rollback behavior
+- Nested transactions
+
+---
+
+## 4. Resource Management
+
+Status: 🚧
+
+Need confidence with:
+
+```csharp
+using
+
+using var
+
+await using
+```
+
+and when each should be used.
+
+---
+
+## 5. Error Handling
+
+Status: 🚧
+
+Improve:
+
+- Global exception middleware
+- API responses
+- Validation responses
+- Logging strategy
 
 ---
 
 # Completion Checklist
 
-Phase 4B is complete when you can confidently answer **yes** to all of the following:
+Phase 4B is complete when all are true:
 
-- ☐ I understand how Dapper executes SQL.
-- ☐ I understand parameterized SQL.
-- ☐ I can execute SQL from C#.
-- ☐ I can map query results to objects.
-- ☐ I understand why repositories belong in Infrastructure.
-- ☐ I replaced mock persistence without changing Domain or Application.
-- ☐ I understand that Dapper is a lightweight data access library rather than an ORM.
+- [x] Repository implemented
+- [x] Dapper integrated
+- [x] SQL separated
+- [x] PostgreSQL connected
+- [x] Connection Factory implemented
+- [x] Dependency Injection configured
+- [x] Transactions implemented
+- [x] Logging implemented
+- [x] Parameterized SQL understood
+- [ ] Fully understand ADO.NET
+- [ ] Fully understand IDisposable / using
+- [ ] Fully understand Transaction lifetime
+- [ ] Comfortable explaining every line of repository code without assistance
 
 ---
 
 # Stop Conditions
 
-If you get stuck, stop and ask:
+Do **not** begin EF Core until the remaining concepts above are understood.
 
-> "What persistence concept am I missing?"
+If stuck, ask:
 
-Do not begin EF Core.
+> "What infrastructure concept am I missing?"
 
-Do not introduce DbContext.
+rather than
 
-Do not introduce LINQ.
-
-Understand Dapper first.
+> "How do I make this compile?"
 
 ---
 
@@ -274,26 +397,30 @@ Understand Dapper first.
 
 Begin **Phase 5 — Entity Framework Core**.
 
-At that point you will already understand:
+By then, EF Core should feel like a convenience layer built on concepts you already understand:
 
+- ADO.NET
+- Npgsql
+- Dapper
 - SQL
 - PostgreSQL
 - Transactions
-- Constraints
-- JOINs
+- Connection Pooling
 - Repository Pattern
-- Dapper
-- Parameterized queries
-- Infrastructure responsibilities
+- Dependency Injection
+- Infrastructure
+- Configuration
+- Logging
+- Parameter Mapping
 
-Only then begin learning:
+Only then begin:
 
 - DbContext
 - DbSet
+- LINQ
+- Change Tracking
+- Migrations
 - Fluent API
 - Entity Configuration
-- LINQ
-- Migrations
-- Change Tracking
 
-The objective is to recognize EF Core as a higher-level abstraction over concepts you already understand rather than treating it as a black box.
+The goal is to recognize Entity Framework Core as an abstraction over lower-level persistence concepts rather than relying on it as a black box.
