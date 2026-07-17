@@ -16,24 +16,24 @@ The project is intentionally designed so that every abstraction is learned only 
 
 Completed:
 
-- Clean Architecture solution structure
-- Domain layer
-- Application layer
-- API layer
-- Manual object mapping
-- Repository abstractions
-- Domain services
-- Dependency Injection architecture
-- Customer Registration use case
-- Mock repository implementation
+* Clean Architecture solution structure
+* Domain layer
+* Application layer
+* API layer
+* Manual object mapping
+* Repository abstractions
+* Domain services
+* Dependency Injection architecture
+* Customer Registration use case
+* Mock repository implementation
 
 Current status:
 
-The architecture foundation is complete.
+The architectural foundation is complete.
 
-The only remaining prerequisite before persistence is the **Multi-Table CRUD Capstone**, which completes Phase 4A.
+The SQL foundation (Phase 4A) has also been completed.
 
-After the capstone, CSBank resumes active development using PostgreSQL and Dapper.
+CSBank now transitions into implementing **real persistence** using PostgreSQL and Dapper while preserving the existing architecture.
 
 ---
 
@@ -41,6 +41,7 @@ After the capstone, CSBank resumes active development using PostgreSQL and Dappe
 
 ```text
 CSBank (Solution)
+
 ├── csbank.Domain
 │   ├── Domain Models
 │   ├── Domain Services
@@ -54,9 +55,10 @@ CSBank (Solution)
 │   └── Application Services
 │
 ├── csbank.Infrastructure
+│   ├── Database
 │   ├── Repository Implementations
 │   ├── Dapper (Phase 4B)
-│   ├── EF Core (Later)
+│   ├── EF Core (Phase 6)
 │   └── Database Connectivity
 │
 └── csbank.Api
@@ -90,15 +92,15 @@ The API remains the Composition Root and is responsible for registering Infrastr
 
 Completed:
 
-- Customer Registration endpoint
-- Domain validation
-- Domain services
-- Manual mapping
-- DTOs
-- Repository interfaces
-- Application orchestration
-- Dependency Injection
-- Mock persistence
+* Customer Registration endpoint
+* Domain validation
+* Domain services
+* Manual mapping
+* DTOs
+* Repository interfaces
+* Application orchestration
+* Dependency Injection
+* Mock persistence
 
 Current request flow:
 
@@ -121,20 +123,20 @@ Domain Service
 
 ↓
 
-IRepository
+Repository Interface
 
 ↓
 
 (Mock Repository)
 ```
 
-This architecture is considered complete.
+Outcome:
+
+A complete Clean Architecture ready for a real persistence implementation.
 
 ---
 
-# Phase 4A — PostgreSQL Fundamentals
-
-**Status:** Nearly Complete (Capstone Remaining)
+# Phase 4A — PostgreSQL Fundamentals ✅
 
 Purpose:
 
@@ -144,123 +146,116 @@ Completed:
 
 ### Database Fundamentals
 
-- ✅ CREATE DATABASE
-- ✅ PostgreSQL CLI
-- ✅ Schemas
-- ✅ CREATE TABLE
-- ✅ Data Types
-- ✅ NOT NULL
+* ✅ CREATE DATABASE
+* ✅ PostgreSQL CLI
+* ✅ Schemas
+* ✅ CREATE TABLE
+* ✅ Data Types
+* ✅ NOT NULL
 
 ### CRUD
 
-- ✅ INSERT
-- ✅ Multi-row INSERT
-- ✅ RETURNING
-- ✅ Common Table Expressions (`WITH`)
-- ✅ SELECT
-- ✅ WHERE
-- ✅ ORDER BY
-- ✅ UPDATE
-- ✅ DELETE
+* ✅ INSERT
+* ✅ Multi-row INSERT
+* ✅ RETURNING
+* ✅ Writable CTEs (`WITH`)
+* ✅ SELECT
+* ✅ WHERE
+* ✅ ORDER BY
+* ✅ UPDATE
+* ✅ DELETE
 
 ### Relationships
 
-- ✅ Primary Keys
-- ✅ Foreign Keys
-- ✅ One-to-One
-- ✅ One-to-Many
+* ✅ Primary Keys
+* ✅ Foreign Keys
+* ✅ One-to-One
+* ✅ One-to-Many
 
 ### JOINs
 
-- ✅ INNER JOIN
-- ✅ LEFT JOIN
-- ✅ RIGHT JOIN
-- ✅ FULL JOIN (Conceptual)
+* ✅ INNER JOIN
+* ✅ LEFT JOIN
+* ✅ RIGHT JOIN
+* ✅ FULL JOIN (Conceptual)
 
 ### Referential Integrity
 
-- ✅ ON DELETE CASCADE
-- ✅ ON DELETE NO ACTION
-- ✅ ON DELETE SET NULL
-- ✅ ON UPDATE CASCADE
-- ✅ ON UPDATE NO ACTION
-- ✅ ON UPDATE SET NULL
+* ✅ ON DELETE CASCADE
+* ✅ ON DELETE NO ACTION
+* ✅ ON DELETE SET NULL
+* ✅ ON UPDATE CASCADE
+* ✅ ON UPDATE NO ACTION
+* ✅ ON UPDATE SET NULL
 
 ### Transactions
 
-- ✅ BEGIN
-- ✅ COMMIT
-- ✅ ROLLBACK
-- ✅ Autocommit
-- ✅ Statement-level atomicity
-- ✅ Transaction-level atomicity
+* ✅ BEGIN
+* ✅ COMMIT
+* ✅ ROLLBACK
+* ✅ Autocommit
+* ✅ Statement-level atomicity
+* ✅ Transaction-level atomicity
 
 ### Constraints
 
-- ✅ UNIQUE
-- ✅ CHECK
+* ✅ UNIQUE
+* ✅ CHECK
 
 ### Indexes
 
-- ✅ CREATE INDEX
-- ✅ CREATE UNIQUE INDEX
+* ✅ CREATE INDEX
+* ✅ CREATE UNIQUE INDEX
+
+### Query Design
+
+* ✅ Business-oriented queries
+* ✅ Explicit column selection
+* ✅ GROUP BY
+* ✅ COUNT
+* ✅ Aggregation basics
+
+### Multi-Table CRUD Capstone
+
+Completed.
+
+Implemented:
+
+* Customer Registration
+* Customer Retrieval
+* Customer Updates
+* Customer Deletion
+* Multi-table JOINs
+* Transactions
+* Constraints
+* Referential Integrity
 
 ### ORM Mental Model
 
-Major conceptual milestone:
+Major conceptual milestones:
 
 Understand that:
 
-- Dapper executes SQL directly.
-- EF Core abstracts SQL.
-- Objects do not exist inside PostgreSQL.
-- JOINs reconstruct relational data.
-- `SaveChanges()` represents multiple SQL statements inside a transaction.
+* PostgreSQL stores relational data—not objects.
+* JOINs reconstruct relational data into object graphs.
+* Dapper executes SQL directly.
+* EF Core builds on top of SQL rather than replacing it.
+* `SaveChanges()` ultimately results in SQL statements executed inside transactions.
 
-Remaining:
+Outcome:
 
-## Multi-Table CRUD Capstone
-
-The capstone is not a new SQL topic.
-
-Instead, it integrates everything learned into realistic CSBank workflows.
-
-Target schema:
-
-```text
-Customer
-│
-├── PrivateInformation
-├── Account
-├── SavingsAccount
-└── Loan
-```
-
-Objectives:
-
-- Register customers
-- Create related records
-- Query complete customer information
-- Update related data
-- Delete related data safely
-- Apply transactions
-- Observe constraints
-- Observe referential integrity
-
-Goal:
-
-Transition from isolated SQL statements to complete business operations.
+Transitioned from thinking in isolated SQL statements to complete business operations.
 
 ---
 
-# Phase 4B — Infrastructure (Next)
+# Phase 4B — Infrastructure with Dapper 🚧
 
-After completing the capstone, persistence will finally be implemented.
+Current Phase.
 
 Replace:
 
 ```text
-IRepository
+Repository Interface
 
 ↓
 
@@ -270,7 +265,7 @@ IRepository
 with:
 
 ```text
-IRepository
+Repository Interface
 
 ↓
 
@@ -287,13 +282,36 @@ PostgreSQL
 
 Implement:
 
-- PostgreSQL connection
-- Dapper
-- Repository implementations
-- SQL execution
-- Dependency Injection
+* PostgreSQL connection
+* Npgsql
+* Dapper
+* Connection Factory
+* Repository implementations
+* SQL execution
+* Parameterized SQL
+* Dependency Injection
 
-Customer Registration flow becomes:
+Recommended Infrastructure organization:
+
+```text
+Infrastructure
+
+├── Database
+│   ├── Connection
+│   └── Sql
+│
+├── Repositories
+│
+├── Configurations
+│
+└── DI
+```
+
+Business rules remain inside the Domain layer.
+
+Infrastructure remains responsible only for persistence.
+
+Current request flow becomes:
 
 ```text
 HTTP Request
@@ -312,7 +330,7 @@ Domain Service
 
 ↓
 
-IRepository
+Repository Interface
 
 ↓
 
@@ -327,48 +345,57 @@ Dapper
 PostgreSQL
 ```
 
-Business rules remain inside the Domain layer.
-
-Infrastructure is responsible only for persistence.
-
 ---
 
-# Phase 5 — EF Core
+# Phase 5 — Relational Database Design
 
-Only after understanding SQL and Dapper.
-
-Learn:
-
-- DbContext
-- DbSet
-- Fluent API
-- Migrations
-- Relationships
-- Change Tracking
-- LINQ
-
-Purpose:
-
-Understand EF Core as a productivity layer built on top of SQL rather than treating it as a black box.
-
----
-
-# Phase 6 — Relational Database Design
-
-Improve relational modeling.
+After understanding SQL execution through Dapper, refine the database itself.
 
 Topics:
 
-- Primary Keys
-- Foreign Keys
-- One-to-One
-- One-to-Many
-- Many-to-Many
-- Normalization (1NF–3NF)
+* One-to-One
+* One-to-Many
+* Many-to-Many
+* Composite Keys
+* Candidate Keys
+* Alternate Keys
+* Normalization (1NF–3NF)
+* Denormalization trade-offs
+* Constraint design
+* Index strategy
+* Schema evolution
+* ERD refinement
 
 Purpose:
 
-Refine the existing CSBank database rather than learning SQL syntax.
+Improve the existing CSBank schema using sound database engineering principles before introducing higher-level ORM abstractions.
+
+---
+
+# Phase 6 — Entity Framework Core
+
+Only after understanding:
+
+* SQL
+* Dapper
+* Repository implementations
+* Relational database design
+
+Learn:
+
+* DbContext
+* DbSet
+* Entity Configuration
+* Fluent API
+* LINQ
+* Change Tracking
+* Relationship Mapping
+* Value Conversions
+* Migrations
+
+Purpose:
+
+Understand EF Core as a productivity layer built on top of concepts already understood rather than treating it as a black box.
 
 ---
 
@@ -376,19 +403,20 @@ Refine the existing CSBank database rather than learning SQL syntax.
 
 Database:
 
-- Query plans
-- Query optimization
-- Index strategy
+* Query plans
+* EXPLAIN ANALYZE
+* Query optimization
+* Index strategy
 
 Application:
 
-- Big-O analysis
-- Collection performance
-- Memory usage
+* Big-O analysis
+* Collection performance
+* Memory usage
 
 Practice:
 
-Compare indexed and non-indexed queries using seeded CSBank data.
+Compare indexed and non-indexed queries using realistic seeded CSBank data.
 
 ---
 
@@ -398,9 +426,10 @@ Implement algorithms inside the Application layer.
 
 Topics:
 
-- Binary Search
-- QuickSort
-- MergeSort
+* Binary Search
+* Merge Sort
+* Quick Sort
+* Efficient collection processing
 
 Purpose:
 
@@ -414,10 +443,10 @@ Implement hierarchical banking structures.
 
 Topics:
 
-- Recursive traversal
-- Parent-child trees
-- Aggregation
-- Tree algorithms
+* Recursive traversal
+* Parent-child trees
+* Aggregation
+* Tree algorithms
 
 ---
 
@@ -427,12 +456,13 @@ Expand the REST API.
 
 Topics:
 
-- HTTP
-- REST
-- Status Codes
-- CORS
-- HTTPS
-- Idempotency
+* HTTP
+* REST
+* Status Codes
+* HTTPS
+* CORS
+* Idempotency
+* API design principles
 
 ---
 
@@ -442,11 +472,12 @@ Handle concurrent requests safely.
 
 Topics:
 
-- Optimistic concurrency
-- Duplicate registrations
-- Transaction isolation
-- Concurrent updates
-- Unique constraint handling
+* Optimistic concurrency
+* Transaction isolation
+* Concurrent updates
+* Duplicate registrations
+* Unique constraint handling
+* Race conditions
 
 ---
 
@@ -454,11 +485,13 @@ Topics:
 
 Implement:
 
-- Password hashing abstraction
-- BCrypt
-- Authentication
-- Authorization
-- Secure DTO projection
+* Password hashing abstraction
+* BCrypt
+* Authentication
+* Authorization
+* Secure DTO projection
+* Input validation
+* SQL Injection prevention
 
 ---
 
@@ -466,10 +499,11 @@ Implement:
 
 Learn:
 
-- IMemoryCache
-- Distributed Cache
-- Redis
-- Cache invalidation
+* IMemoryCache
+* Distributed Cache
+* Redis
+* Cache invalidation
+* Cache-aside pattern
 
 ---
 
@@ -477,15 +511,30 @@ Learn:
 
 Testing stack:
 
-- xUnit
-- NSubstitute
+* xUnit
+* NSubstitute
 
 Test:
 
-- Domain services
-- Application use cases
-- Repository implementations
-- API endpoints
+* Domain services
+* Application use cases
+* Repository implementations
+* API endpoints
+* Integration tests
+
+---
+
+# Phase 15 — Deployment & DevOps
+
+Learn:
+
+* Docker
+* Docker Compose
+* CI/CD
+* Environment configuration
+* Cloud deployment
+* Logging
+* Monitoring
 
 ---
 
@@ -497,20 +546,22 @@ The objective is not merely to finish CSBank.
 
 The objective is to understand:
 
-- Clean Architecture
-- Relational Database Design
-- PostgreSQL
-- SQL
-- Dapper
-- EF Core
-- Performance
-- Algorithms
-- Networking
-- Concurrency
-- Security
-- Caching
-- Testing
+* Clean Architecture
+* PostgreSQL
+* SQL
+* Database Engineering
+* Dapper
+* Relational Database Design
+* Entity Framework Core
+* Performance
+* Algorithms
+* Networking
+* Concurrency
+* Security
+* Caching
+* Testing
+* Deployment
 
-Each phase intentionally builds on the previous one so every technology is learned through implementation rather than memorization.
+Every phase intentionally builds on the previous one so that each abstraction explains the next.
 
-By the end of this roadmap, CSBank should serve not only as a portfolio project, but also as a practical demonstration of backend engineering principles from database fundamentals to production-ready architecture.
+By the end of this roadmap, CSBank should serve not only as a portfolio project, but also as a practical demonstration of backend engineering principles—from relational database fundamentals through production-ready backend architecture.
