@@ -7,7 +7,6 @@ public class PrivateInfoDto
     public Guid CustomerId { get; set; }
 
     [Required]
-    [RegularExpression(@"[\w.-]+@[\w.-]+\.[a-z]{2,}")]
     public string Email { get; set; } = string.Empty;
 
     [Required]

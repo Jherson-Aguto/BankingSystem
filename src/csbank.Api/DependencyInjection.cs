@@ -1,3 +1,4 @@
+using CSbank.Domain.Services;
 using CSBank.Application.Interfaces;
 using CSBank.Application.Services;
 
@@ -8,7 +9,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IRegisterCustomer, RegisterCustomerService>();
-
+        services.AddScoped<RegisterServiceDomain>();
         return services;
     }
 
