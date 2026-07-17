@@ -8,11 +8,11 @@ namespace CSBank.Application.Services;
 
 public class RegisterCustomerService
 (RegisterServiceDomain register,
-ISaveUserDetailsRepository _save) : IRegisterCustomer
+ISaveUserRepository _save) : IRegister
 {
 
     public async Task<(CustomerDto customerData, PrivateInfoDto privateInfoData)>
-    Register(CustomerDto customerDto, PrivateInfoDto privateInfo)
+    CustomerAsync(CustomerDto customerDto, PrivateInfoDto privateInfo)
     {
         var customerData = await register.RegisterCustomerDetails(Map.ToDomain(customerDto));
         var privateInfoData = await register.RegisterCustomerPrivateInfo(Map.ToDomain(privateInfo));
@@ -20,7 +20,7 @@ ISaveUserDetailsRepository _save) : IRegisterCustomer
         var customerResults = Map.ToDto(customerData);
         var privateInfoResults = Map.ToDto(privateInfoData);
 
-        await _save.SaveCustomerDetailsAsync(customerResults, privateInfoResults);
+        await _save.DetailsAsync(customerResults, privateInfoResults);
 
         return (customerData: customerResults, privateInfoData: privateInfoResults);
     }

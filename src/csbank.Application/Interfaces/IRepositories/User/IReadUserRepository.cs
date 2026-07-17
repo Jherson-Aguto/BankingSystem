@@ -5,5 +5,5 @@ namespace CSBank.Application.Interfaces.IRepositories;
 public interface IReadUserRepository
 {
     Task<UserDetailsDto>
-    GetUserByIdAsync(Guid id);
+    ByIdAsync(Guid id);
 }

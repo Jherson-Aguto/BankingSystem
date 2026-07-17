@@ -6,14 +6,14 @@ namespace CSBank.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RegisterCustomerController(IRegisterCustomer _register) : ControllerBase
+public class RegisterCustomerController(IRegister _register) : ControllerBase
 {
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest r)
     {
         try
         {
-            var result = await _register.Register(r.CustomerDto, r.PrivateInfoDto);
+            var result = await _register.CustomerAsync(r.CustomerDto, r.PrivateInfoDto);
 
             return Ok(new RegisterRequest(
                 result.customerData,
