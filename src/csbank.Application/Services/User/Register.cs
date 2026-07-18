@@ -8,7 +8,7 @@ namespace CSBank.Application.Services;
 
 public class RegisterCustomerService
 (RegisterServiceDomain register,
-ISaveUserRepository _save) : IRegister
+ISaveUserRepository _save) : IRegisterService
 {
 
     public async Task<(CustomerDto customerData, PrivateInfoDto privateInfoData)>

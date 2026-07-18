@@ -4,7 +4,7 @@ namespace CSbank.Infrastructure.Mapper;
 
 public static class Map
 {
-    public static Object ToParameters(PrivateInfoDto privateInformation, CustomerDto customerDetails)
+    internal static Object ToParameters(PrivateInfoDto privateInformation, CustomerDto customerDetails)
     {
         return new
         {
