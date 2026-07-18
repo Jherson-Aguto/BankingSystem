@@ -6,7 +6,7 @@ namespace CSBank.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RegisterCustomerController(IRegister _register) : ControllerBase
+public class RegisterUserController(IRegisterService _register) : ControllerBase
 {
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest r)

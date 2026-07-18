@@ -21,20 +21,19 @@ public class CustomerDto
     public char? MiddleInitial { get; set; } = null;
 };
 
-public class UserDetailsDto
-{
-    public Guid Id;
-    public string FirstName = string.Empty;
-    public string LastName = string.Empty;
-    public DateTime RegistrationDate;
-    public Guid Customer_Id;
-    public string Email = string.Empty;
-    public string PhoneNumber = string.Empty;
-    public string City = string.Empty;
-    public string Province = string.Empty;
-    public string Country = string.Empty;
-    public string Nationality = string.Empty;
-    public DateOnly BirthDate;
-    public char? MiddleInitial = null;
-    public string? Suffix = null;
-}
+public record UserDetailsDto(
+    Guid Id,
+    string first_name,
+    string last_name,
+    string? suffix,
+    DateTime registration_date,
+    char? middle_initial,
+    Guid customer_id,
+    string email,
+    string phone_number,
+    string city,
+    string province,
+    string country,
+    string nationality,
+    DateOnly birth_date
+);

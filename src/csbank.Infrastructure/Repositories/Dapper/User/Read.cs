@@ -21,9 +21,9 @@ public class ReadUserRepository(
         {
             string sql = ReadUser.ById;
 
-            var data = await connection.QuerySingleAsync<UserDetailsDto>(sql, new { id });
+            var data = await connection.QuerySingleOrDefaultAsync<UserDetailsDto>(sql, new { id });
 
-            return data;
+            return data!;
         }
         catch (Exception error)
         {
