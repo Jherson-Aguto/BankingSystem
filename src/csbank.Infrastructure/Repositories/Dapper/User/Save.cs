@@ -16,7 +16,7 @@ ILogger<SaveUserRepository> logger)
     public async Task DetailsAsync(CustomerDto customerDetails, PrivateInfoDto privateInformation)
     {
         using var connection = await _db.CreateConnectionAsync();
-       using var transaction = connection.BeginTransaction();
+        using var transaction = connection.BeginTransaction();
 
         try
         {
@@ -25,7 +25,7 @@ ILogger<SaveUserRepository> logger)
             var parameters = Map.ToParameters(privateInformation, customerDetails);
 
             Guid customerId =
-                await connection.QueryFirstAsync<Guid>(
+                await connection.QuerySingleAsync<Guid>(
                     query,
                     parameters,
                     transaction);

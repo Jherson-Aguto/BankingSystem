@@ -1,4 +1,4 @@
-namespace CSBank.Application;
+namespace CSBank.Api;
 
 public record Response<T>(bool Success, T Data, string? ErrorMessage, string? ErrorCode)
 {
