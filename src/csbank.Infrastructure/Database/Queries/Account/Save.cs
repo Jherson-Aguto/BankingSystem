@@ -16,4 +16,24 @@ public sealed class SaveAccount
     )
     RETURNING id AS Id;
     """;
+
+    public const string checking =
+    """
+    INSERT INTO accounts.checking_account(
+        account_id
+    )
+    VALUES(
+        @accountId
+    );
+    """;
+
+    public const string savings =
+    """
+    INSERT INTO accounts.savings_account(
+        account_id
+    )
+    VALUES(
+        @accountId
+    );
+    """;
 }

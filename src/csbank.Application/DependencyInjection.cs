@@ -14,7 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IReadUserService, ReadUserService>();
         services.AddScoped<IRegisterCustomerService, RegisterCustomerService>();
         services.AddScoped<IRegisterAccountsService, RegisterAccountsService>();
-
+        
         //Domain Services
         services.AddScoped<UserDomainService>();
         services.AddScoped<AccountDomainService>();

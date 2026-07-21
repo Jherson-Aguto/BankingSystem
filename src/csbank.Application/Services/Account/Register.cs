@@ -25,4 +25,10 @@ public class RegisterAccountsService(
 
         return await saveAccounts.DetailsAsync(dto);
     }
+
+    public async Task AccountTypeCreationAsync(Guid accountId, bool? IsChecking = false)
+    {
+        await saveAccounts.AccountTypeCreationAsync(accountId, IsChecking);
+    }
+
 }
