@@ -9,8 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class SaveUserRepository
-(IDbConnectionFactory _db,
-ILogger<SaveUserRepository> logger)
+(IDbConnectionFactory _db)
 : ISaveUserRepository
 {
     public async Task DetailsAsync(CustomerDto customerDetails, PrivateInfoDto privateInformation)
@@ -32,11 +31,8 @@ ILogger<SaveUserRepository> logger)
 
             transaction.Commit();
         }
-        catch (Exception ex)
+        catch
         {
-            logger.LogError(ex,
-                "Cannot save customer details. Rolling back transaction.");
-
             transaction.Rollback();
             throw;
         }

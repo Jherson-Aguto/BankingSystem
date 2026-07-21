@@ -15,6 +15,7 @@ public sealed class SaveAccount
         @currency,
         @createdAt,
         @accountStatus::accounts.account_status
-    );
+    )
+    RETURNING id AS Id;
     """;
 }

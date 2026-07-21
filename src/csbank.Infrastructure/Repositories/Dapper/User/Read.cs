@@ -8,8 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class ReadUserRepository(
-    IDbConnectionFactory _db,
-    ILogger<ReadUserRepository> logger
+    IDbConnectionFactory _db
 ) : IReadUserRepository
 {
     public async Task<UserDetailsDto>
@@ -36,9 +35,8 @@ public class ReadUserRepository(
 
             return data!;
         }
-        catch (Exception error)
+        catch
         {
-            logger.LogError(error, "Cannot read user data.");
             throw;
         }
     }

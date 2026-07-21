@@ -8,28 +8,31 @@ using Microsoft.Extensions.Logging;
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class SaveAccountsRepository(
-    IDbConnectionFactory db,
-    ILogger<SaveAccountsRepository> logger)
+    IDbConnectionFactory db)
     : ISaveAccountsRepository
 {
-    public async Task DetailsAsync(AccountDto accountDto)
+    public async Task<Guid> DetailsAsync(AccountDto accountDto)
     {
         string sql = SaveAccount.Details;
 
         using var connection = await db.CreateConnectionAsync();
+
         using var transaction = connection.BeginTransaction();
 
         try
         {
-            Console.WriteLine($"Account Status Repository Before mapping: {accountDto.AccountStatus}");
             var parameters = MapAccount.ToParameters(accountDto);
-            await connection.ExecuteAsync(sql, parameters);
+
+            Guid id = await connection.QuerySingleAsync<Guid>(sql, parameters, transaction);
+
             transaction.Commit();
+
+            return id;
         }
         catch
         {
             transaction.Rollback();
-            logger.LogError("Cannot save account details");
+
             throw;
         }
     }

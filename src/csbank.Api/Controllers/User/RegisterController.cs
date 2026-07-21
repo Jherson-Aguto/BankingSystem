@@ -1,3 +1,4 @@
+using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces;
 using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;
@@ -12,16 +13,14 @@ public class RegisterUserController(IRegisterCustomerService _register) : Contro
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest r)
     {
-        try
-        {
-            var result = await _register.CustomerAsync(r.CustomerDto, r.PrivateInfoDto);
+        var result = await _register.CustomerAsync(r.CustomerDto, r.PrivateInfoDto);
 
-            return Ok(ApiResponse<(CustomerDto, PrivateInfoDto)>.Ok(success: true, data: result));
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Registration failed: {ex}");
-        }
+        return Ok(ApiResponse<(
+            CustomerDto,
+            PrivateInfoDto)>
+            .Ok(
+                success: true,
+                data: result));
     }
     public record RegisterRequest(CustomerDto CustomerDto, PrivateInfoDto PrivateInfoDto);
 }

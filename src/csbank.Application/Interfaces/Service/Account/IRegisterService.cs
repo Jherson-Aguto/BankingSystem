@@ -4,5 +4,5 @@ namespace CSBank.Application.Interfaces.Services;
 
 public interface IRegisterAccountsService
 {
-    Task DetailsAsync(AccountDto accountDto);
+    Task<Guid> DetailsAsync(AccountDto accountDto);
 }

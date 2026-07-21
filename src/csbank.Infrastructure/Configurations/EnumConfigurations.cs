@@ -1,6 +1,5 @@
 using CSBank.Application.Models;
 using Npgsql;
-using Npgsql.NameTranslation;
 
 namespace CSbank.Infrastructure.Configurations;
 
