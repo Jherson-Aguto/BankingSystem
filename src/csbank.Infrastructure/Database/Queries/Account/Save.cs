@@ -6,16 +6,34 @@ public sealed class SaveAccount
         customer_id,
         account_number,
         currency,
-        created_at,
         account_status    
     )
     VALUES(
         @customerId,
         @accountNumber,
         @currency,
-        @createdAt,
         @accountStatus::accounts.account_status
     )
     RETURNING id AS Id;
+    """;
+
+    public const string checking =
+    """
+    INSERT INTO accounts.checking_account(
+        account_id
+    )
+    VALUES(
+        @accountId
+    );
+    """;
+
+    public const string savings =
+    """
+    INSERT INTO accounts.savings_account(
+        account_id
+    )
+    VALUES(
+        @accountId
+    );
     """;
 }

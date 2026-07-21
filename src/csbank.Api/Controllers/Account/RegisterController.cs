@@ -22,4 +22,17 @@ public class AccountsController(
             .Ok(success: true,
                 data));
     }
+
+    [HttpPost("accountType/{id:Guid}")]
+    public async Task<IActionResult> AccountTypeCreationAsync(
+        [FromRoute] Guid id,
+        [FromQuery] bool? isChecking = false)
+    {
+        await registerAccounts.AccountTypeCreationAsync(id, isChecking);
+
+        return Ok(
+            ApiResponse<string>
+            .Ok(success: true,
+            data: "Successfully Created!"));
+    }
 }

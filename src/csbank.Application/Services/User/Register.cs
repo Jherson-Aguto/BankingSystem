@@ -7,7 +7,7 @@ using CSBank.Application.Models;
 namespace CSBank.Application.Services;
 
 public class RegisterCustomerService
-(RegisterServiceDomain register,
+(UserDomainService register,
 ISaveUserRepository _save) : IRegisterCustomerService
 {
 

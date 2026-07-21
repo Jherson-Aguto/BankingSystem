@@ -2,7 +2,7 @@ using CSbank.Domain.Request;
 
 namespace CSbank.Domain.Services;
 
-public class RegisterServiceDomain
+public class UserDomainService
 {
     public async Task<CustomerRequest> RegisterCustomerDetails(CustomerRequest customerDetails)
         => customerDetails;

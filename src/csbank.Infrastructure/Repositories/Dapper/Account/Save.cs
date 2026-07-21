@@ -1,9 +1,8 @@
+using CSbank.Application.Mapper;
 using CSbank.Infrastructure.Database.Connections;
-using CSbank.Infrastructure.Mapper;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Application.Models;
 using Dapper;
-using Microsoft.Extensions.Logging;
 
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
@@ -28,6 +27,33 @@ public class SaveAccountsRepository(
             transaction.Commit();
 
             return id;
+        }
+        catch
+        {
+            transaction.Rollback();
+
+            throw;
+        }
+    }
+
+    public async Task AccountTypeCreationAsync(Guid accountId, bool? IsChecking = false)
+    {
+        string checkingSql = SaveAccount.checking;
+
+        string savingsSql = SaveAccount.savings;
+
+        using var connection = await db.CreateConnectionAsync();
+
+        using var transaction = connection.BeginTransaction();
+
+        try
+        {
+            if (IsChecking == false)
+                await connection.ExecuteAsync(savingsSql, new { accountId }, transaction);
+            else
+                await connection.ExecuteAsync(checkingSql, new { accountId }, transaction);
+
+            transaction.Commit();
         }
         catch
         {

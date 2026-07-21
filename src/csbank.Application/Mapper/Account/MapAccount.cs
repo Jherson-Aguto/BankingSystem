@@ -1,12 +1,10 @@
-using System.Data;
 using CSBank.Application.Models;
-using Dapper;
 
-namespace CSbank.Infrastructure.Mapper;
+namespace CSbank.Application.Mapper;
 
-internal static class MapAccount
+public static class MapAccount
 {
-    internal static Object ToParameters(AccountDto dto)
+    public static Object ToParameters(AccountDto dto)
     {
         return new
         {
