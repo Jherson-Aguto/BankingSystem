@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS accounts.checking_account(
     account_id UUID PRIMARY KEY REFERENCES accounts.account_details(id) ON DELETE CASCADE,
     balance NUMERIC(12, 4) NOT NULL CHECK(balance >= 0) DEFAULT 0,
     overdraft_limit NUMERIC(12, 4) NOT NULL CHECK(overdraft_limit >= 0) DEFAULT 0,
-    modes_of_payment accounts.modes_of_payment NOT NULL,
+    modes_of_payment accounts.modes_of_payment NOT NULL DEFAULT 'Online',
     interest_rate NUMERIC(12, 4) CHECK(interest_rate BETWEEN 0 AND 100),
     fees NUMERIC(12, 4) CHECK(fees >= 0)
 );
