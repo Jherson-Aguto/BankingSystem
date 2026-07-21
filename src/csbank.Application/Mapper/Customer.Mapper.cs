@@ -3,13 +3,13 @@ using CSBank.Application.Models;
 
 namespace CSBank.Application.Mapper;
 
-internal static class Map
+public static class Map
 {
-    public static CustomerRequest ToDomain(this CustomerDto dto) =>
+    internal static CustomerRequest ToDomain(this CustomerDto dto) =>
         new(dto.Id, dto.FirstName, dto.LastName,
         dto.Suffix, dto.RegistrationDate, dto.MiddleInitial);
 
-    public static CustomerDto ToDto(this CustomerRequest dto)
+    internal static CustomerDto ToDto(this CustomerRequest dto)
     => new CustomerDto
     {
         Id = dto.Id,
@@ -21,11 +21,11 @@ internal static class Map
     };
 
 
-    public static PrivateInfoRequest ToDomain(this PrivateInfoDto dto) =>
+    internal static PrivateInfoRequest ToDomain(this PrivateInfoDto dto) =>
         new(dto.CustomerId, dto.Email, dto.PhoneNumber, dto.City, dto.Province,
         dto.Country, dto.Nationality, dto.BirthDate);
 
-    public static PrivateInfoDto ToDto(this PrivateInfoRequest dto)
+    internal static PrivateInfoDto ToDto(this PrivateInfoRequest dto)
     {
         return new PrivateInfoDto
         {
@@ -37,6 +37,25 @@ internal static class Map
             Country = dto.Country,
             Nationality = dto.Nationality,
             BirthDate = dto.BirthDate
+        };
+    }
+
+    public static Object ToParameters(PrivateInfoDto privateInformation, CustomerDto customerDetails)
+    {
+        return new
+        {
+            firstName = customerDetails.FirstName,
+            lastName = customerDetails.LastName,
+            suffix = customerDetails.Suffix,
+            registrationDate = DateTime.UtcNow,
+            middleInitial = customerDetails.MiddleInitial,
+            email = privateInformation.Email,
+            phoneNumber = privateInformation.PhoneNumber,
+            city = privateInformation.City,
+            province = privateInformation.Province,
+            country = privateInformation.Country,
+            nationality = privateInformation.Nationality,
+            birthDate = privateInformation.BirthDate.ToDateTime(TimeOnly.MinValue)
         };
     }
 }

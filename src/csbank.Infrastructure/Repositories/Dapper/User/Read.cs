@@ -8,8 +8,8 @@ using Microsoft.Extensions.Logging;
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class ReadUserRepository(
-    IDbConnectionFactory _db
-) : IReadUserRepository
+    IDbConnectionFactory _db)
+    : IReadUserRepository
 {
     public async Task<UserDetailsDto>
     ByIdAsync(Guid id)
