@@ -8,7 +8,7 @@
 
 **Architecture Status:** ✅ Stable
 
-**Current Feature:** Banking Operations
+**Current Feature:** Create Account
 
 Current implementation:
 
@@ -18,6 +18,10 @@ Customer Profile
 
 Create Account
         ✅
+    ├── Account Number Generation
+    │       ✅ (Domain Service)
+    └── Account Persistence
+            ✅
 
 Create Checking Account
         ⏳
@@ -44,29 +48,59 @@ Transaction History
 
 # Immediate Objective
 
-Continue implementing the remaining banking operations using the existing architecture.
+Implement the remaining banking operations using the existing architecture.
 
-The primary objective is no longer to redesign the Infrastructure layer.
+The architectural foundation is considered stable.
 
-Instead, reinforce the engineering concepts already learned by repeatedly applying them to real business operations.
+The current objective is to strengthen software engineering skills by modeling business operations and implementing them without introducing new architectural patterns.
 
-Every new feature should strengthen understanding of:
+Each feature should reinforce:
 
+- Domain modeling
+- Business rules
 - Repository design
 - Use case orchestration
-- Domain rules
 - Transaction boundaries
 - SQL design
 - API design
-- Infrastructure responsibilities
 
-rather than introducing new architectural patterns.
+---
+
+# Current Learning Focus
+
+## Domain Modeling
+
+Before implementing a feature, identify the business workflow first.
+
+Development should begin with the domain rather than the implementation.
+
+Typical workflow:
+
+```text
+Business Requirement
+        ↓
+Business Workflow
+        ↓
+Business Rules
+        ↓
+Domain Model
+        ↓
+Application Orchestration
+        ↓
+Repository Design
+        ↓
+Infrastructure Implementation
+```
+
+Current milestone:
+
+- ✅ Account Number Generation implemented as a Domain Service.
+- ✅ Application Service orchestrates the account creation workflow by invoking the Domain Service.
+- ⏳ Continue applying this approach to future banking operations.
 
 ---
 
 # Current Engineering Focus
-
-The architecture is now considered stable.
 
 Continue applying the established request flow:
 
@@ -88,10 +122,11 @@ Dapper
 PostgreSQL
 ```
 
-While implementing each feature, continue evaluating:
+For every new feature, continue evaluating:
 
+- What business problem is being solved?
 - Which layer owns this responsibility?
 - Does this belong in the Domain, Application, Infrastructure, or API?
 - Does this operation require a transaction?
-- Is the SQL efficient and business-oriented?
 - Are business invariants preserved?
+- Is the persistence implementation efficient and maintainable?
