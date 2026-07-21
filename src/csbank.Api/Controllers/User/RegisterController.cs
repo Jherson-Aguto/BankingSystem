@@ -1,4 +1,5 @@
 using CSBank.Application.Interfaces;
+using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ namespace CSBank.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RegisterUserController(IRegisterService _register) : ControllerBase
+public class RegisterUserController(IRegisterCustomerService _register) : ControllerBase
 {
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest r)
@@ -15,10 +16,7 @@ public class RegisterUserController(IRegisterService _register) : ControllerBase
         {
             var result = await _register.CustomerAsync(r.CustomerDto, r.PrivateInfoDto);
 
-            return Ok(new RegisterRequest(
-                result.customerData,
-                result.privateInfoData
-            ));
+            return Ok(ApiResponse<(CustomerDto, PrivateInfoDto)>.Ok(success: true, data: result));
         }
         catch (Exception ex)
         {

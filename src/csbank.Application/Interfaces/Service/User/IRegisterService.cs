@@ -1,8 +1,8 @@
 using CSBank.Application.Models;
 
-namespace CSBank.Application.Interfaces;
+namespace CSBank.Application.Interfaces.Services;
 
-public interface IRegisterService
+public interface IRegisterCustomerService
 {
     Task<(CustomerDto customerData, PrivateInfoDto privateInfoData)> CustomerAsync
     (CustomerDto customerDto, PrivateInfoDto privateInfo);

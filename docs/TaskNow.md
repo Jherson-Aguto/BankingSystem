@@ -4,468 +4,228 @@
 
 **Project:** CSBank
 
-**Architecture (Phase 1–3):** ✅ Complete
+**Current Phase:** Phase 4B — Persistence Layer Engineering 🚧 (~98%)
 
-**Phase 4A — PostgreSQL Fundamentals:** ✅ Complete
+**Current Feature:** Customer Profile → Create Account
 
-**Phase 4B — Persistence Engineering (Dapper):** 🚧 ~98% Complete
+**Current Focus:** Complete the remaining Infrastructure startup concepts while continuing to implement banking features.
 
-**Current Focus:** Implement banking features to reinforce backend engineering and repository design.
-
-**Next Milestone:** Complete the core banking persistence layer while refining the database model.
-
-**Next Phase:** **Phase 5 — Database Engineering**
+**Next Phase:** Phase 5 — Relational Database Design
 
 ---
 
-# Today's Objective
+# Immediate Objective
 
-Continue building CSBank by implementing real banking use cases.
+Continue implementing the account creation workflow while strengthening my understanding of the Infrastructure layer.
 
-The objective is **not** to learn additional Dapper syntax.
-
-The objective is to strengthen:
-
-* Repository design
-* Database modeling
-* API use-case design
-* Transaction boundaries
-* Domain-oriented thinking
-
-Infrastructure is now considered a stable foundation.
-
----
-
-# Current Implementation Status
-
-## Clean Architecture
-
-Status: ✅
+Current implementation:
 
 ```text
-API
-    ↓
-Application
-    ↓
-Repository Interfaces
-    ↓
-Infrastructure (Dapper)
-    ↓
-Npgsql
-    ↓
-PostgreSQL
+Customer Profile
+        ↓
+Create Account
+        ↓
+Create Checking Account
+        ↓
+Create Savings Account
 ```
 
-Business logic remains independent of Infrastructure.
-
-Infrastructure remains an implementation detail.
+The objective is not only to finish the persistence layer, but also to understand how the application is composed during startup.
 
 ---
 
-## PostgreSQL
+# Current Learning Priority
 
-Status: ✅
-
-Completed:
-
-* Database schemas
-* UUID primary keys
-* Foreign keys
-* Constraints
-* INSERT
-* UPDATE
-* JOIN
-* CTEs
-* Transactions
-* Parameterized SQL
-
-Comfortable designing and querying a normalized relational database.
-
----
-
-## Persistence Engineering (Dapper)
-
-Status: ✅ (Fundamentals Complete)
-
-Comfortable using:
-
-* ExecuteAsync()
-* QueryFirstAsync<T>()
-* QuerySingleAsync<T>()
-* QuerySingleOrDefaultAsync<T>()
-* Anonymous parameter objects
-* SQL aliases
-* Composite DTOs
-* Multi Mapping
-* splitOn
-* Transactions
-* RETURNING
-* Writable CTEs
-
-Understand the distinction between:
-
-Writing:
-
-```text
-DTO
-    ↓
-Map.ToParameters()
-    ↓
-Execute / Query
-```
-
-Reading:
-
-```text
-SQL
-    ↓
-Dapper Mapping
-    ↓
-DTO
-```
-
-Reading joined data:
-
-```text
-SQL JOIN
-    ↓
-Multi Mapping
-    ↓
-Composite DTO
-```
-
----
-
-## Repository Layer
-
-Status: ✅
-
-Implemented:
-
-* Register Customer
-* Get Customer By Id
-
-Repositories currently use:
-
-* Connection Factory
-* Dapper
-* SQL constants
-* Parameter mapping
-* Transactions
-* Logging
-* Composite DTO projection
-
-Repositories expose application use cases rather than database tables.
-
----
-
-## Connection Factory
-
-Status: ✅
-
-Implemented:
-
-* IDbConnectionFactory
-* PostgreSqlConnectionFactory
-* Dependency Injection
-* Connection pooling
-* Configuration separation
-
-Understand:
-
-* One connection per repository operation
-* Resource lifetime
-* Responsibility boundaries
-
----
-
-## Transactions
-
-Status: ✅
-
-Understand:
-
-* BeginTransaction()
-* Commit()
-* Rollback()
-* Dispose()
-* Transaction ownership
-* Repository transaction boundaries
-
-Future features will reinforce:
-
-* Atomicity
-* Consistency
-* Isolation
-* Rollback behavior
-
----
-
-## Dependency Injection
-
-Status: ✅
-
-Implemented:
-
-* Repository registrations
-* Connection Factory registration
-* Configuration injection
-
-API remains the Composition Root.
-
----
-
-## DTO Design
-
-Status: ✅
-
-Understand:
-
-* DTOs model API responses
-* Composite DTOs
-* Reuse over duplication
-* SQL aliases
-* Constructor/property mapping
-* Dapper materialization
-
----
-
-## API Design
-
-Status: ✅
-
-Current philosophy:
-
-Endpoints represent business use cases.
-
-Examples:
-
-```text
-GET /users/{id}
-```
-
-↓
-
-User summary
-
-```text
-GET /users/{id}/profile
-```
-
-↓
-
-Customer profile with related information
-
-Responses are designed around client needs—not table structures.
-
----
-
-## Logging
-
-Status: ✅
-
-Implemented:
-
-* ILogger<T>
-
-Future improvements:
-
-* Global Exception Middleware
-* ProblemDetails
-* Structured logging
-
----
-
-# Current Learning Objectives
-
-These topics should be learned naturally while implementing banking features.
-
-## 1. Database Engineering
+## Infrastructure Startup
 
 Current focus:
 
-* Banking schema refinement
-* Relationship design
-* Constraints
-* Indexes
-* Normalization
-* Query optimization
-
----
-
-## 2. Resource Management
+```text
+Program.cs
+        ↓
+Composition Root
+        ↓
+Configuration
+        ↓
+Dependency Injection
+        ↓
+NpgsqlDataSource
+        ↓
+Connection Factory
+        ↓
+Repositories
+        ↓
+PostgreSQL
+```
 
 Current understanding:
 
-* using
-* using var
-* IDisposable
+- The API acts as the Composition Root.
+- Infrastructure owns communication with PostgreSQL.
+- Configuration belongs at application startup.
+- Repositories should only execute persistence operations.
+- Startup code should compose the application, not contain business logic.
 
-Continue learning:
+### Learn
 
-* await using
-* IAsyncDisposable
-
-when appropriate.
-
----
-
-## 3. ADO.NET
+#### Composition Root
 
 Understand:
 
-* IDbConnection
-* Connection lifecycle
-* NpgsqlConnection
+- Why the Composition Root exists
+- How the application is assembled
+- Why Program.cs owns application composition
+- What belongs in Program.cs versus Infrastructure
 
-Recognize that Dapper builds upon:
+#### Dependency Injection
 
-* IDbCommand
-* IDataReader
+Understand:
 
-Deep ADO.NET internals are not currently a priority.
+- Dependency registration
+- Service lifetimes
+    - Singleton
+    - Scoped
+    - Transient
+- Why abstractions are registered instead of concrete implementations
+- How dependencies flow through the application
+
+#### Connection Factory
+
+Understand:
+
+- Why repositories request connections instead of creating them
+- Why connection creation is centralized
+- How connection factories improve separation of concerns
+
+#### Npgsql
+
+Understand:
+
+- NpgsqlDataSource
+- NpgsqlDataSourceBuilder
+- PostgreSQL ENUM mapping
+- CLR enum mapping
+- Connection pooling
+- One-time Infrastructure configuration
+- Why these responsibilities belong outside repositories
+
+Goal:
+
+Understand the responsibility of each Infrastructure component and how they collaborate during application startup rather than memorizing framework APIs.
 
 ---
 
-## 4. Error Handling
-
-Future work:
-
-* Global Exception Middleware
-* ProblemDetails
-* Validation responses
-* Consistent API errors
-
----
-
-# Immediate Next Features
-
-Recommended order:
+# Remaining Features
 
 ```text
-✅ Register Customer
-
-↓
-
-✅ Get Customer By Id
-
-↓
-
-Get Customer Profile
-
-↓
-
+Customer Profile
+        ↓
+Create Account
+        ↓
 Create Checking Account
-
-↓
-
+        ↓
 Create Savings Account
-
-↓
-
+        ↓
 Deposit
-
-↓
-
+        ↓
 Withdraw
-
-↓
-
+        ↓
 Transfer
-
-↓
-
+        ↓
 Transaction History
 ```
 
 Each feature should reinforce:
 
-* Repository design
-* Transactions
-* Business rules
-* Database modeling
+- Repository design
+- Business use cases
+- Transaction boundaries
+- Database modeling
+- API design
+- Domain responsibilities
+- Infrastructure responsibilities
 
-rather than introducing new Dapper concepts.
-
----
-
-# Completion Checklist
-
-Current progress:
-
-* [x] Clean Architecture established
-* [x] PostgreSQL integrated
-* [x] Dapper fundamentals mastered
-* [x] Repository pattern implemented
-* [x] Connection Factory implemented
-* [x] Dependency Injection configured
-* [x] Transactions implemented
-* [x] Logging implemented
-* [x] Parameterized SQL understood
-* [x] DTO projection understood
-* [x] Composite DTOs implemented
-* [x] Multi Mapping understood
-* [x] SQL alias strategy established
-* [x] Basic ADO.NET architecture understood
-* [x] Resource lifetime (`using`, `IDisposable`) understood
-* [ ] Global exception handling
-* [ ] Complete core banking repository features
+rather than simply introducing new framework APIs.
 
 ---
 
 # Current Learning Philosophy
 
-Continue building CSBank.
+Continue building CSBank as the primary learning vehicle.
 
 Development should follow this cycle:
 
 ```text
-Implement Feature
+Business Requirement
         ↓
-Encounter New Concept
+Identify the Problem
         ↓
-Learn That Concept
+Understand the Engineering Concept
         ↓
-Apply It
+Determine Responsibility
+        ↓
+Place It in the Correct Layer
+        ↓
+Learn the Required Framework API
+        ↓
+Implement
         ↓
 Continue Building
 ```
 
-Do not pause progress solely to master every underlying abstraction.
-
-The project itself remains the primary learning vehicle.
+The objective is to permanently learn engineering concepts while treating framework APIs as reference material.
 
 ---
 
-# Phase 5 Preview — Database Engineering
+# Phase 4B Exit Criteria
 
-The next phase focuses on strengthening the persistence model before expanding business workflows.
+Phase 4B is complete when the Infrastructure layer provides a complete and well-understood persistence foundation.
 
-Topics include:
+Remaining concepts:
 
-* Banking schema refinement
-* Account modeling
-* Transaction modeling
-* Constraints
-* Index strategy
-* Relationship refinement
-* Query optimization
-* Migration planning
+- Composition Root
+- Dependency Injection registration
+- Service lifetimes
+- Configuration
+- Connection Factory
+- NpgsqlDataSource
+- PostgreSQL ENUM ↔ CLR enum mapping
+- Remaining banking repository implementations
 
-This phase prepares the system for more sophisticated business operations.
+Infrastructure should become a stable platform that supports future business features without requiring architectural changes.
+
+---
+
+# Phase 5 Preview — Relational Database Design
+
+After the persistence layer is complete, shift focus to improving the database model itself.
+
+Topics:
+
+- Banking schema refinement
+- Relationship refinement
+- Constraint design
+- Index strategy
+- Normalization (1NF–3NF)
+- Schema evolution
+- Query optimization
+- ERD refinement
+
+The emphasis shifts from persistence implementation to database engineering.
 
 ---
 
 # Phase 6 Preview — Business Operations
 
-Once the database model is stable, implement the core banking capabilities:
+Once the persistence layer and database model are stable, implement the core banking capabilities.
 
-* Customer Profile
-* Create Checking Account
-* Create Savings Account
-* Deposit
-* Withdraw
-* Transfer
-* Transaction History
+Features:
 
-The emphasis shifts from persistence mechanics to business rules, consistency, and domain modeling.
+- Customer Profile
+- Create Accounts
+- Deposit
+- Withdraw
+- Transfer
+- Transaction History
+
+The emphasis shifts from persistence mechanics to business capability modeling, transaction consistency, domain rules, and software engineering decisions.

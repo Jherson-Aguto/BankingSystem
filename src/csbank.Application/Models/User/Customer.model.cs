@@ -4,7 +4,7 @@ namespace CSBank.Application.Models;
 
 public class CustomerDto
 {
-    public Guid Id { get; set; }
+    public Guid? Id { get; set; }
 
     [Required]
     [StringLength(100, MinimumLength = 2, ErrorMessage = "First name must be in between 2 to 100 characters!")]

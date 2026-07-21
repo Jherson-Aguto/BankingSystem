@@ -1,6 +1,6 @@
-using CSbank.Infrastructure.Database.Connections;
+
 using CSbank.Infrastructure.DI;
-using CSBank.Api.DI;
+using CSBank.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,13 +8,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices();
-
-builder.Services.AddScoped<IDbConnectionFactory>(_ =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    return new PostgreSqlConnectionFactory(connectionString!);
-});
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 

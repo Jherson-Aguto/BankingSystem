@@ -1,4 +1,4 @@
-using CSBank.Application.Interfaces;
+using CSBank.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSBank.Api.Controllers;

@@ -2,7 +2,7 @@ using CSBank.Application.Models;
 
 namespace CSBank.Application.Interfaces.Services;
 
-public interface IReadUserService
+public interface IRegisterAccountsService
 {
-    Task<UserDetailsDto> ByIdAsync(Guid id);
+    Task DetailsAsync(AccountDto accountDto);
 }

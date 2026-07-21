@@ -2,7 +2,8 @@ namespace CSBank.Application.Models;
 
 public class AccountDto
 {
-    public Guid Id { get; set; }
+    public Guid? Id { get; set; }
+    public Guid CustomerId { get; set; }
     public string AccountNumber { get; set; } = string.Empty;
     public string Currency { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }

@@ -22,7 +22,7 @@ ILogger<SaveUserRepository> logger)
         {
             string query = SaveUser.DetailsAndPrivateInformation;
 
-            var parameters = Map.ToParameters(privateInformation, customerDetails);
+            var parameters = MapUser.ToParameters(privateInformation, customerDetails);
 
             Guid customerId =
                 await connection.QuerySingleAsync<Guid>(

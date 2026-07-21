@@ -1,6 +1,6 @@
 namespace CSbank.Infrastructure.Database.PostgreSQL;
 
-public class SaveUser
+public sealed class SaveUser
 {
     public const string DetailsAndPrivateInformation =
     """
