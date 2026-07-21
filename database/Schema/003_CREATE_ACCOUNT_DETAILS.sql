@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS accounts.account_details(
     customer_id UUID REFERENCES users.Customer_Details(id) ON DELETE CASCADE,
     account_number VARCHAR(100) NOT NULL UNIQUE,
     currency VARCHAR(100) NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     account_status accounts.account_status NOT NULL     
 );
 
