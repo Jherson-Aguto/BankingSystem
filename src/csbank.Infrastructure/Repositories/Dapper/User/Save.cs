@@ -9,34 +9,30 @@ using Microsoft.Extensions.Logging;
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class SaveUserRepository
-(IDbConnectionFactory _db,
-ILogger<SaveUserRepository> logger)
+(IDbConnectionFactory _db)
 : ISaveUserRepository
 {
     public async Task DetailsAsync(CustomerDto customerDetails, PrivateInfoDto privateInformation)
     {
         using var connection = await _db.CreateConnectionAsync();
-       using var transaction = connection.BeginTransaction();
+        using var transaction = connection.BeginTransaction();
 
         try
         {
             string query = SaveUser.DetailsAndPrivateInformation;
 
-            var parameters = Map.ToParameters(privateInformation, customerDetails);
+            var parameters = MapUser.ToParameters(privateInformation, customerDetails);
 
             Guid customerId =
-                await connection.QueryFirstAsync<Guid>(
+                await connection.QuerySingleAsync<Guid>(
                     query,
                     parameters,
                     transaction);
 
             transaction.Commit();
         }
-        catch (Exception ex)
+        catch
         {
-            logger.LogError(ex,
-                "Cannot save customer details. Rolling back transaction.");
-
             transaction.Rollback();
             throw;
         }

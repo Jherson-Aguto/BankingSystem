@@ -1,5 +1,5 @@
-using CSBank.Application.Interfaces;
 using CSBank.Application.Interfaces.IRepositories;
+using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;
 
 namespace CSBank.Application.Services;

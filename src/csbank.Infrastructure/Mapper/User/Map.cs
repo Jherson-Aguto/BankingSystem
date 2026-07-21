@@ -2,7 +2,7 @@ using CSBank.Application.Models;
 
 namespace CSbank.Infrastructure.Mapper;
 
-public static class Map
+internal static class MapUser
 {
     internal static Object ToParameters(PrivateInfoDto privateInformation, CustomerDto customerDetails)
     {

@@ -1,4 +1,6 @@
-using CSBank.Application.Interfaces;
+using CSBank.Api.Middleware;
+using CSBank.Application.Interfaces.Services;
+using CSBank.Application.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSBank.Api.Controllers;
@@ -7,27 +9,17 @@ namespace CSBank.Api.Controllers;
 [Route("api/[controller]")]
 public class ReadUserController(IReadUserService readUser) : ControllerBase
 {
-    [HttpGet("{id}")]
+    [HttpGet("{id:Guid}")]
     public async Task<IActionResult> ByIdAsync(Guid id)
     {
-        try
-        {
-            var user = await readUser.ByIdAsync(id);
+        UserDetailsDto? user = await readUser.ByIdAsync(id);
 
-            if (user is null)
-            {
-                return NotFound(new
-                {
-                    Message = "User not Found",
-                    UserId = id
-                });
-            }
+        if (user is null)
+            throw new NotFoundException($"Account with ID: {id} was not found");
 
-            return Ok(user);
-        }
-        catch (Exception)
-        {
-            return StatusCode(statusCode: 500);
-        }
+        return Ok(ApiResponse<UserDetailsDto>.Ok(
+            success: true,
+            data: user));
+
     }
 }
