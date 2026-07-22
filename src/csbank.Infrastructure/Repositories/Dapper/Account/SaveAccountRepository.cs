@@ -1,5 +1,6 @@
 using CSbank.Application.Mapper;
 using CSbank.Infrastructure.Database.Connections;
+using CSbank.Infrastructure.Database.Queries;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Application.Models;
 using Dapper;

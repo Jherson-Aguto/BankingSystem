@@ -1,4 +1,4 @@
-namespace CSbank.Infrastructure.Database.PostgreSQL;
+namespace CSbank.Infrastructure.Database.Queries;
 
 public sealed class ReadUser
 {

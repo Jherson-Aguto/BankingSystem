@@ -1,3 +1,6 @@
+
+namespace CSbank.Infrastructure.Database.Queries;
+
 public sealed class SaveAccount
 {
     public const string Details =

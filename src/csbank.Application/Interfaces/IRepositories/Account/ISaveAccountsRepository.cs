@@ -9,5 +9,4 @@ public interface ISaveAccountsRepository
         Guid accountId,
         string accountNumber,
         bool? IsChecking = false);
-
 }
