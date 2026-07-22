@@ -5,5 +5,5 @@ namespace CSBank.Application.Interfaces.Services;
 public interface IRegisterAccountsService
 {
     Task<Guid> DetailsAsync(AccountDto accountDto);
-    Task AccountTypeCreationAsync(Guid accountId, bool? IsChecking = false);
+    Task<Guid?> AccountTypeCreationAsync(Guid accountId, string accountNumber, bool? IsChecking = false);
 }
