@@ -3,7 +3,6 @@ using CSbank.Infrastructure.Database.PostgreSQL;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Application.Models;
 using Dapper;
-using Microsoft.Extensions.Logging;
 
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
