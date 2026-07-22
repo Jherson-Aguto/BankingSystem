@@ -13,7 +13,8 @@ erDiagram
     USERS.CUSTOMER_DETAILS ||--o{ ACCOUNTS.ACCOUNT_DETAILS : owns
     ACCOUNTS.ACCOUNT_DETAILS ||--o| ACCOUNTS.CHECKING_ACCOUNT : extends
     ACCOUNTS.ACCOUNT_DETAILS ||--o| ACCOUNTS.SAVINGS_ACCOUNT : extends
-    
+    ACCOUNTS.ACCOUNT_DETAILS ||--o{ TRANSACTIONS.TRANSACTION_HISTORY : has
+
     USERS.CUSTOMER_DETAILS {
         UUID id PK
         VARCHAR first_name
@@ -60,4 +61,28 @@ erDiagram
         NUMERIC fees
     }
 
+    AUDITS.AUDIT_LOGS{
+        UUID id PK
+        enum entity_name "enum: ( Customer, Account, CheckingAccount, SavingsAccount, Transaction)"
+        UUID entity_id
+        enum action "enum: (Created, Updated, Deleted, Login, Logout)"
+        UUID performed_by
+        TIMESTAMPTZ performed_at
+        JSONB old_values
+        JSONB new_values
+        INET ip_address
+        VARCHAR user_agent
+    }
+
+    TRANSACTIONS.TRANSACTION_HISTORY{
+        UUID id PK
+        UUID account_id FK
+        enum transaction_type "enum: (Deposit, Withdraw, TransferIn, TransferOut, Interest, Fee)"
+        NUMERIC amount
+        NUMERIC balance_before
+        NUMERIC balance_after
+        VARCHAR reference_number UK
+        TEXT description
+        TIMESTAMPTZ created_at 
+    }
 ```
