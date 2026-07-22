@@ -58,11 +58,7 @@ public class SaveAccountsRepository(
                 queriedAccountId = await connection
                     .QuerySingleAsync<Guid>(
                         savingsSql,
-                        new
-                        {
-                            AccountId = accountId,
-                            AccountNumber = accountNumber
-                        },
+                        new { accountId, accountNumber },
                         transaction);
             }
             else
@@ -70,11 +66,7 @@ public class SaveAccountsRepository(
                 queriedAccountId = await connection
                     .QuerySingleAsync<Guid>(
                         checkingSql,
-                        new
-                        {
-                            accountId,
-                            accountNumber
-                        },
+                        new { accountId, accountNumber },
                         transaction);
             }
             transaction.Commit();
