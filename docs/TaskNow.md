@@ -4,11 +4,11 @@
 
 **Project:** CSBank
 
-**Current Phase:** Phase 4B — Infrastructure & Persistence Engineering 🚧 (Feature Implementation)
+**Current Phase:** Phase 4B — Infrastructure & Persistence Engineering 🚧 (Business Operations)
 
 **Architecture Status:** ✅ Stable
 
-**Current Feature:** Create Account
+**Current Feature:** Deposit
 
 Current implementation:
 
@@ -24,10 +24,10 @@ Create Account
             ✅
 
 Create Checking Account
-        ⏳
+        ✅
 
 Create Savings Account
-        ⏳
+        ✅
 
 Deposit
         ⏳
@@ -48,33 +48,32 @@ Transaction History
 
 # Immediate Objective
 
-Implement the remaining banking operations using the existing architecture.
+Implement the remaining banking operations using the established architecture.
 
-The architectural foundation is considered stable.
+The architectural foundation is now considered stable.
 
-The current objective is to strengthen software engineering skills by modeling business operations and implementing them without introducing new architectural patterns.
+Current development should focus on modeling business behavior rather than introducing new architectural concepts.
 
-Each feature should reinforce:
+Each completed feature should reinforce:
 
 - Domain modeling
 - Business rules
+- Application orchestration
 - Repository design
-- Use case orchestration
 - Transaction boundaries
 - SQL design
 - API design
+- Exception handling
 
 ---
 
 # Current Learning Focus
 
-## Domain Modeling
+## Business Operation Modeling
 
-Before implementing a feature, identify the business workflow first.
+Development begins with understanding the business process before writing code.
 
-Development should begin with the domain rather than the implementation.
-
-Typical workflow:
+Follow this workflow:
 
 ```text
 Business Requirement
@@ -85,18 +84,22 @@ Business Rules
         ↓
 Domain Model
         ↓
-Application Orchestration
+Application Service
         ↓
 Repository Design
         ↓
 Infrastructure Implementation
+        ↓
+HTTP API
 ```
 
-Current milestone:
+Current milestones:
 
 - ✅ Account Number Generation implemented as a Domain Service.
-- ✅ Application Service orchestrates the account creation workflow by invoking the Domain Service.
-- ⏳ Continue applying this approach to future banking operations.
+- ✅ Application Service orchestrates account creation.
+- ✅ Checking and Savings account creation implemented.
+- ✅ Database constraints enforce one Checking and one Savings account per Account.
+- ✅ Global exception handling translates infrastructure failures into appropriate HTTP responses.
 
 ---
 
@@ -122,11 +125,30 @@ Dapper
 PostgreSQL
 ```
 
-For every new feature, continue evaluating:
+For every new feature, continue asking:
 
 - What business problem is being solved?
+- What is the business workflow?
 - Which layer owns this responsibility?
-- Does this belong in the Domain, Application, Infrastructure, or API?
+- Should this rule exist in the Domain or be enforced by the database?
 - Does this operation require a transaction?
-- Are business invariants preserved?
-- Is the persistence implementation efficient and maintainable?
+- Which database constraints protect this invariant?
+- Is the persistence implementation simple, efficient, and maintainable?
+
+---
+
+# Next Feature — Deposit
+
+Primary objective:
+
+Model the Deposit operation as a complete business use case.
+
+Focus on:
+
+- Deposit workflow
+- Account validation
+- Transaction recording
+- Balance updates
+- Transaction boundaries
+- Business invariants
+- Repository coordination
