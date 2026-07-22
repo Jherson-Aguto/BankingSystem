@@ -36,11 +36,12 @@ public class SaveAccountsRepository(
         }
     }
 
-    public async Task AccountTypeCreationAsync(Guid accountId, bool? IsChecking = false)
+    public async Task<Guid?> AccountTypeCreationAsync(
+        Guid accountId,
+        string accountNumber,
+        bool? IsChecking = false)
     {
         string checkingSql = SaveAccount.checking;
-
-        string savingsSql = SaveAccount.savings;
 
         using var connection = await db.CreateConnectionAsync();
 
@@ -48,12 +49,37 @@ public class SaveAccountsRepository(
 
         try
         {
-            if (IsChecking == false)
-                await connection.ExecuteAsync(savingsSql, new { accountId }, transaction);
-            else
-                await connection.ExecuteAsync(checkingSql, new { accountId }, transaction);
+            Guid queriedAccountId = new();
 
+            if (IsChecking == false)
+            {
+                string savingsSql = SaveAccount.savings;
+
+                queriedAccountId = await connection
+                    .QuerySingleAsync<Guid>(
+                        savingsSql,
+                        new
+                        {
+                            AccountId = accountId,
+                            AccountNumber = accountNumber
+                        },
+                        transaction);
+            }
+            else
+            {
+                queriedAccountId = await connection
+                    .QuerySingleAsync<Guid>(
+                        checkingSql,
+                        new
+                        {
+                            accountId,
+                            accountNumber
+                        },
+                        transaction);
+            }
             transaction.Commit();
+
+            return queriedAccountId;
         }
         catch
         {

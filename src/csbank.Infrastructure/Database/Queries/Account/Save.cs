@@ -19,21 +19,45 @@ public sealed class SaveAccount
 
     public const string checking =
     """
-    INSERT INTO accounts.checking_account(
-        account_id
+    WITH account AS (
+        SELECT
+            id,
+            account_number
+        FROM accounts.account_details
+        WHERE
+            id = @accountId AND
+            account_number = @accountNumber
+    ),
+    checking AS (
+        INSERT INTO accounts.checking_account(
+            account_id
     )
-    VALUES(
-        @accountId
-    );
+        SELECT
+            account.id
+        FROM account
+    )
+    SELECT id AS AccountId FROM account;
     """;
 
     public const string savings =
     """
-    INSERT INTO accounts.savings_account(
-        account_id
+    WITH account AS (
+        SELECT
+            id,
+            account_number
+        FROM accounts.account_details
+        WHERE
+            id = @accountId AND
+            account_number = @accountNumber 
+    ),
+    savings AS (
+        INSERT INTO accounts.savings_account(
+            account_id
     )
-    VALUES(
-        @accountId
-    );
+        SELECT
+            account.id
+        FROM account
+    )
+    SELECT id As AccountId FROM account;
     """;
 }
