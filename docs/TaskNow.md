@@ -40,6 +40,9 @@ Transfer
 
 Transaction History
         ⏳
+
+Audit Logging
+        ⏳
 ```
 
 **Next Phase:** Phase 5 — Relational Database Design
@@ -48,22 +51,19 @@ Transaction History
 
 # Immediate Objective
 
-Implement the remaining banking operations using the established architecture.
+Implement the Deposit business operation using the established architecture.
 
-The architectural foundation is now considered stable.
+The focus is no longer on building architecture.
 
-Current development should focus on modeling business behavior rather than introducing new architectural concepts.
+The focus is now on modeling business operations that are:
 
-Each completed feature should reinforce:
+- Atomic
+- Transaction-safe
+- Business-oriented
+- Efficient
+- Maintainable
 
-- Domain modeling
-- Business rules
-- Application orchestration
-- Repository design
-- Transaction boundaries
-- SQL design
-- API design
-- Exception handling
+Continue following the existing architecture while leveraging PostgreSQL to execute complete business operations.
 
 ---
 
@@ -71,9 +71,9 @@ Each completed feature should reinforce:
 
 ## Business Operation Modeling
 
-Development begins with understanding the business process before writing code.
+Every feature begins with the business requirement.
 
-Follow this workflow:
+Development workflow:
 
 ```text
 Business Requirement
@@ -82,11 +82,13 @@ Business Workflow
         ↓
 Business Rules
         ↓
-Domain Model
+Domain Decision
         ↓
-Application Service
+Application Orchestration
         ↓
-Repository Design
+Repository Contract
+        ↓
+SQL Design
         ↓
 Infrastructure Implementation
         ↓
@@ -97,9 +99,13 @@ Current milestones:
 
 - ✅ Account Number Generation implemented as a Domain Service.
 - ✅ Application Service orchestrates account creation.
-- ✅ Checking and Savings account creation implemented.
-- ✅ Database constraints enforce one Checking and one Savings account per Account.
-- ✅ Global exception handling translates infrastructure failures into appropriate HTTP responses.
+- ✅ Create Checking Account implemented.
+- ✅ Create Savings Account implemented.
+- ✅ Database constraints enforce one Checking Account per Account.
+- ✅ Database constraints enforce one Savings Account per Account.
+- ✅ Global exception handling maps PostgreSQL exceptions to HTTP responses.
+- ✅ Transaction History (Ledger) schema designed.
+- ✅ Audit Log schema designed using PostgreSQL ENUM, JSONB and INET types.
 
 ---
 
@@ -125,15 +131,16 @@ Dapper
 PostgreSQL
 ```
 
-For every new feature, continue asking:
+For every feature, continue asking:
 
 - What business problem is being solved?
 - What is the business workflow?
 - Which layer owns this responsibility?
-- Should this rule exist in the Domain or be enforced by the database?
+- Should this rule exist in the Domain or be enforced by PostgreSQL?
 - Does this operation require a transaction?
-- Which database constraints protect this invariant?
-- Is the persistence implementation simple, efficient, and maintainable?
+- Can this business operation be executed efficiently in a single SQL statement?
+- Which constraints protect the business invariant?
+- Is the persistence implementation simple, efficient and maintainable?
 
 ---
 
@@ -141,14 +148,39 @@ For every new feature, continue asking:
 
 Primary objective:
 
-Model the Deposit operation as a complete business use case.
+Implement Deposit as a complete banking business operation.
 
-Focus on:
+Business workflow:
 
-- Deposit workflow
-- Account validation
-- Transaction recording
+```text
+Receive Deposit Request
+        ↓
+Locate Account
+        ↓
+Acquire Row Lock (FOR UPDATE)
+        ↓
+Validate Business Rules
+        ↓
+Calculate New Balance
+        ↓
+Record Transaction History
+        ↓
+Update Account Balance
+        ↓
+Commit Transaction
+        ↓
+Return Result
+```
+
+Primary learning goals:
+
+- Row-level locking (`FOR UPDATE`)
+- Transaction consistency
+- Race condition prevention
+- Atomic business operations
+- Ledger recording
 - Balance updates
-- Transaction boundaries
-- Business invariants
-- Repository coordination
+- Exception handling
+- Single SQL statement business operations
+
+The objective is to understand how relational databases guarantee consistency during concurrent financial operations while keeping business rules properly separated from persistence concerns.
