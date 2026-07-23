@@ -4,5 +4,5 @@ namespace CSbank.Application.Interfaces.IRepositories;
 
 public interface IDepositRepository
 {
-    Task<decimal> DepositBalance(DepositDto depositDto);
+    Task<DepositOutputDto> DepositBalanceAsync(DepositDto depositDto);
 }

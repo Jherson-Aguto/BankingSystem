@@ -4,5 +4,5 @@ namespace CSbank.Application.Interfaces.Services;
 
 public interface IDepositService
 {
-    Task<decimal> DepositBalance(DepositDto depositDto);
+    Task<DepositOutputDto> DepositBalanceAsync(DepositDto depositDto);
 }

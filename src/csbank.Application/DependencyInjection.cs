@@ -1,3 +1,4 @@
+using CSbank.Application.Interfaces.Services;
 using CSbank.Domain.Services;
 using CSbank.Domain.Services.Account;
 using CSBank.Application.Interfaces.Services;
@@ -14,7 +15,8 @@ public static class DependencyInjection
         services.AddScoped<IReadUserService, ReadUserService>();
         services.AddScoped<IRegisterCustomerService, RegisterCustomerService>();
         services.AddScoped<IRegisterAccountsService, RegisterAccountsService>();
-        
+        services.AddScoped<IDepositService, DepositService>();
+
         //Domain Services
         services.AddScoped<UserDomainService>();
         services.AddScoped<AccountDomainService>();
