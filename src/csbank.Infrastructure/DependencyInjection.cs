@@ -17,6 +17,7 @@ public static class DependencyInjection
         services.AddScoped<ISaveUserRepository, SaveUserRepository>();
         services.AddScoped<IReadUserRepository, ReadUserRepository>();
         services.AddScoped<ISaveAccountsRepository, SaveAccountsRepository>();
+        services.AddScoped<HelperFunctions>();
 
         //connection
         var connectionString = configuration.GetConnectionString("DefaultConnection");
