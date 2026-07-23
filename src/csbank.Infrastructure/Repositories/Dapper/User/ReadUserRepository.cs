@@ -7,36 +7,27 @@ using Dapper;
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class ReadUserRepository(
-    IDbConnectionFactory _db)
+    HelperFunctions db)
     : IReadUserRepository
 {
-    public async Task<UserDetailsDto>
-    ByIdAsync(Guid id)
+    public async Task<UserDetailsDto> ByIdAsync(Guid id)
     {
-        using var connection = await _db.CreateConnectionAsync();
-
-        try
-        {
-            string sql = ReadUser.ById;
-
-            var data =
-            (
-                await connection.QueryAsync<
+        return await db.ExecuteAsync(
+            async (connection) =>
+            {
+                var data = (await connection.QueryAsync<
                         CustomerDto,
                         PrivateInfoDto,
                         UserDetailsDto>
-                            (sql,
+                            (ReadUser.ById,
                             (CustomerDto, PrivateInfoDto) =>
                                 new UserDetailsDto(CustomerDto, PrivateInfoDto),
                             new { id },
-                            splitOn: "CustomerId")
-                ).SingleOrDefault();
+                            splitOn: "CustomerId"))
+                        .SingleOrDefault();
 
-            return data!;
-        }
-        catch
-        {
-            throw;
-        }
+                return data!;
+            }
+        );
     }
 }

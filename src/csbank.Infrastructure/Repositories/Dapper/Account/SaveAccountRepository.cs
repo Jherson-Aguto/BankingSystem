@@ -8,33 +8,21 @@ using Dapper;
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class SaveAccountsRepository(
-    IDbConnectionFactory db)
+    HelperFunctions db)
     : ISaveAccountsRepository
 {
     public async Task<Guid> DetailsAsync(AccountDto accountDto)
     {
-        string sql = SaveAccount.Details;
-
-        using var connection = await db.CreateConnectionAsync();
-
-        using var transaction = connection.BeginTransaction();
-
-        try
-        {
-            var parameters = MapAccount.ToParameters(accountDto);
-
-            Guid id = await connection.QuerySingleAsync<Guid>(sql, parameters, transaction);
-
-            transaction.Commit();
-
-            return id;
-        }
-        catch
-        {
-            transaction.Rollback();
-
-            throw;
-        }
+        return await db.ExecuteTransactionAsync(
+            async (connection, transaction) =>
+            {
+                return await connection.QuerySingleAsync<Guid>(
+                    SaveAccount.Details,
+                    MapAccount.ToParameters(accountDto),
+                    transaction
+                );
+            }
+        );
     }
 
     public async Task<Guid?> AccountTypeCreationAsync(
@@ -42,43 +30,21 @@ public class SaveAccountsRepository(
         string accountNumber,
         bool? IsChecking = false)
     {
-        string checkingSql = SaveAccount.checking;
-
-        using var connection = await db.CreateConnectionAsync();
-
-        using var transaction = connection.BeginTransaction();
-
-        try
-        {
-            Guid queriedAccountId = new();
-
-            if (IsChecking == false)
+        return await db.ExecuteTransactionAsync(
+            async (connection, transaction) =>
             {
-                string savingsSql = SaveAccount.savings;
+                string sql = IsChecking switch
+                {
+                    true => SaveAccount.checking,
+                    _ => SaveAccount.savings
+                };
 
-                queriedAccountId = await connection
+                return await connection
                     .QuerySingleAsync<Guid>(
-                        savingsSql,
+                        sql,
                         new { accountId, accountNumber },
                         transaction);
             }
-            else
-            {
-                queriedAccountId = await connection
-                    .QuerySingleAsync<Guid>(
-                        checkingSql,
-                        new { accountId, accountNumber },
-                        transaction);
-            }
-            transaction.Commit();
-
-            return queriedAccountId;
-        }
-        catch
-        {
-            transaction.Rollback();
-
-            throw;
-        }
+        );
     }
 }

@@ -1,5 +1,4 @@
 using System.Data;
-using CSbank.Infrastructure.Configurations;
 using CSbank.Infrastructure.Database.Connections;
 using Npgsql;
 
