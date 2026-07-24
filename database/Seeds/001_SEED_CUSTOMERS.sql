@@ -49,7 +49,7 @@ account AS (
     )
     SELECT
         customer.id,
-        'PH31BNOR00000012345678',
+        'PHB97C3EBC34DD4536A3',
         'PHP',
         CURRENT_TIMESTAMP,
         'Active'

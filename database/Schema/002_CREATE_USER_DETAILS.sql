@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS Users.Customer_Details(
 );
 
 CREATE TABLE IF NOT EXISTS Users.Private_Information(
-    customer_id UUID PRIMARY KEY DEFAULT gen_random_uuid() REFERENCES Users.Customer_Details(id) ON DELETE CASCADE,
+    customer_id UUID PRIMARY KEY REFERENCES Users.Customer_Details(id) ON DELETE CASCADE,
     email VARCHAR(254) NOT NULL UNIQUE,
     phone_number VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
