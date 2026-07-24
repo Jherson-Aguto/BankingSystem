@@ -4,5 +4,7 @@ namespace CSbank.Application.Interfaces.IRepositories;
 
 public interface IDepositRepository
 {
-    Task<DepositOutputDto> DepositBalanceAsync(DepositDto depositDto);
+    Task<DepositRepositoryOutputDto?> DepositBalanceAsync(
+        DepositDto depositDto,
+        string? referenceNumber);
 }

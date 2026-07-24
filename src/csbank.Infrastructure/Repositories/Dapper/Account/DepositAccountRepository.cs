@@ -7,7 +7,7 @@ namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class DepositRepository(HelperFunctions db) : IDepositRepository
 {
-    public async Task<DepositOutputDto> DepositBalanceAsync(DepositDto depositDto)
+    public async Task<DepositRepositoryOutputDto?> DepositBalanceAsync(DepositDto depositDto, string? referenceNumber)
     {
         return await db.ExecuteTransactionAsync(
             async (connection, transaction) =>
@@ -18,13 +18,15 @@ public class DepositRepository(HelperFunctions db) : IDepositRepository
                     _ => DepositQuery.DepositSavings
                 };
 
-                return await connection.QuerySingleAsync<DepositOutputDto>(
+                return await connection.QuerySingleOrDefaultAsync<DepositRepositoryOutputDto>(
                     sql,
                     new
                     {
                         depositDto.AccountId,
                         depositDto.AccountNumber,
-                        depositDto.DepositValue
+                        depositDto.DepositValue,
+                        depositDto.Description,
+                        referenceNumber
                     },
                     transaction
                 );

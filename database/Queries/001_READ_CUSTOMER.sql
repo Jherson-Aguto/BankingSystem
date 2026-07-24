@@ -1,6 +1,5 @@
-SELECT * FROM  accounts.account_details a
-LEFT JOIN accounts.savings_account sa
-ON sa.account_id = a.id;
+SELECT * FROM accounts.account_details
+WHERE id = 'b3ec19b9-25a3-441a-9632-15d204d905e9'
 
 
 --For learning [SELECT *] isfine.

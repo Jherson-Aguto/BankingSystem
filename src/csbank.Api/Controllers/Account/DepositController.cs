@@ -15,8 +15,11 @@ public class DepositController(IDepositService deposit) : ControllerBase
         if (depositDto.DepositValue <= 0)
             throw new ValidationException("Deposit amount must be greater than zero");
 
-        var result = await deposit.DepositBalanceAsync(depositDto);
+        DepositOutputDto? result = await deposit.DepositBalanceAsync(depositDto);
 
-        return Ok(result);
+        return Ok(
+            ApiResponse<DepositOutputDto>.Ok(
+                success: true,
+                data: result));
     }
 }

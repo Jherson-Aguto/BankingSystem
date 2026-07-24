@@ -17,6 +17,7 @@ public sealed class DepositQuery
             ad.id = @AccountId
             AND ad.account_number = @AccountNumber
             AND @DepositValue > 0
+            AND ad.account_status = 'Active'
         FOR UPDATE
     ),
     updated_balance AS (
@@ -29,16 +30,48 @@ public sealed class DepositQuery
         WHERE 
             la.account_id = sa.account_id
         RETURNING
-            la.account_id AS account_id,
-            la.balance AS before_balance,
-            sa.balance AS after_balance
+            la.account_id,
+            la.balance AS balance_before,
+            sa.balance AS balance_after
+    ),
+    recorded_transaction AS (
+        INSERT INTO
+            transactions.transaction_history(
+                account_id,
+                transaction_type,
+                amount,
+                balance_before,
+                balance_after,
+                reference_number,
+                description
+        )
+        SELECT
+            ub.account_id,
+            'Deposit',
+            @DepositValue,
+            ub.balance_before,
+            ub.balance_after,
+            @ReferenceNumber,
+            CASE
+                WHEN @Description IS NULL OR @Description = '' THEN 'No Description'
+                ELSE @Description
+            END
+        FROM 
+            updated_balance AS ub
+        RETURNING
+            id,
+            created_at
     )
     SELECT
-        account_id AS AccountId,
-        before_balance AS BeforeBalance,
-        after_balance AS AfterBalance
-    FROM
-        updated_balance;
+        ub.account_id AS AccountId,
+        rt.id AS TransactionId,
+        ub.balance_before AS BeforeBalance,
+        ub.balance_after AS AfterBalance,
+        rt.created_at AS TransactionDate
+    FROM 
+        updated_balance AS ub
+    CROSS JOIN
+        recorded_transaction AS rt;
     """;
 
     public const string DepositChecking =
@@ -56,6 +89,7 @@ public sealed class DepositQuery
             ad.id = @AccountId
             AND ad.account_number = @AccountNumber
             AND @DepositValue > 0
+            AND ad.account_status = 'Active'
         FOR UPDATE
     ),
     updated_balance AS (
@@ -68,15 +102,47 @@ public sealed class DepositQuery
         WHERE
             la.account_id = ca.account_id
         RETURNING
-            la.account_id AS account_id,
-            la.balance AS before_balance,
-            ca.balance AS after_balance
+            la.account_id,
+            la.balance AS balance_before,
+            ca.balance AS balance_after
+    ),
+    recorded_transaction AS (
+        INSERT INTO 
+            transactions.transaction_history(
+                account_id,
+                transaction_type,
+                amount,
+                balance_before,
+                balance_after,
+                reference_number,
+                description    
+        )
+        SELECT
+            ub.account_id,
+            'Deposit',
+            @DepositValue,
+            ub.balance_before,
+            ub.balance_after,
+            @ReferenceNumber,
+            CASE
+                WHEN @Description IS NULL OR @Description = '' THEN 'No description'
+                ELSE @Description
+            END
+        FROM 
+            updated_balance AS ub
+        RETURNING
+            id,
+            created_at
     )
     SELECT
-        account_id AS AccountId,
-        before_balance AS BeforeBalance,
-        after_balance AS AfterBalance
+        ub.account_id AS AccountId,
+        rt.id AS TransactionId,
+        ub.balance_before AS BeforeBalance,
+        ub.balance_after AS AfterBalance,
+        rt.created_at AS TransactionDate
     FROM
-        updated_balance
+        updated_balance AS ub
+    CROSS JOIN
+        recorded_transaction AS rt;
     """;
 }
