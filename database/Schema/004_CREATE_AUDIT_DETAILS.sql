@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS audit.audit_logs(
     performed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     old_values JSONB,
     new_values JSONB,
-    ip_address INET,
+    ip_address INET DEFAULT inet_client_addr(),
     user_agent VARCHAR(254)
 );
 
