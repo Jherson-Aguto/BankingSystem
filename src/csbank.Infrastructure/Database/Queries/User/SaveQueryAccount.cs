@@ -42,6 +42,19 @@ public sealed class SaveUser
             @nationality,
             @birthDate
         FROM customer
+    ),
+    recorded_logs AS (
+        INSERT INTO 
+            audit.audit_logs(
+                entity_name,
+                action,
+                performed_by
+        )
+        SELECT
+            'Customer',
+            'Created',
+            c.id
+        FROM customer AS c
     )
     SELECT * FROM customer;
     """;
