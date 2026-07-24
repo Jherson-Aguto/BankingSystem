@@ -5,5 +5,10 @@
     <Project Path="src/csbank.Domain/csbank.Domain.csproj" />
     <Project Path="src/csbank.Infrastructure/csbank.Infrastructure.csproj" />
   </Folder>
-  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/">
+    <Project Path="Tests/csbank.Api.test/csbank.Api.test.csproj" />
+    <Project Path="Tests/csbank.Application.test/csbank.Application.test.csproj" />
+    <Project Path="Tests/csbank.Domain.test/csbank.Domain.test.csproj" />
+    <Project Path="Tests/csbank.Infrastructure.test/csbank.Infrastructure.test.csproj" />
+  </Folder>
 </Solution>
