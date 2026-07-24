@@ -13,7 +13,7 @@ public class DepositService(
 {
     public async Task<DepositOutputDto?> DepositBalanceAsync(DepositDto depositDto)
     {
-        string referenceNumber = domainService.GenerateReferenceNumber(DateTime.UtcNow);
+        string referenceNumber = domainService.GenerateReferenceNumber();
 
         DepositRepositoryOutputDto? repositoryOutput = await deposit.DepositBalanceAsync(depositDto, referenceNumber);
 

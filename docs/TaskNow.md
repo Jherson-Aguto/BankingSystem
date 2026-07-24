@@ -40,10 +40,10 @@ Deposit
     │       🚧
     ├── Row Locking (FOR UPDATE)
     │       ✅
-    ├── Balance Update CTE
+    ├── Balance Update CTE      
     │       ✅
     ├── Transaction History CTE
-    │       ⏳
+    │       ✅
     ├── Audit Log CTE
     │       ⏳
     ├── Repository
