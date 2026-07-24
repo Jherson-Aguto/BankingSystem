@@ -1,27 +1,36 @@
 using CSbank.Application.Interfaces.IRepositories;
 using CSbank.Application.Models;
-using CSbank.Infrastructure.Database.Connections;
+using CSbank.Infrastructure.Database.Queries;
+using Dapper;
 
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
-public class DepositRepository(IDbConnectionFactory db) : IDepositRepository
+public class DepositRepository(HelperFunctions db) : IDepositRepository
 {
-    public async Task<decimal> DepositBalance(DepositDto depositDto)
+    public async Task<DepositRepositoryOutputDto?> DepositBalanceAsync(DepositDto depositDto, string? referenceNumber)
     {
-        using var connection = await db.CreateConnectionAsync();
-        using var transaction = connection.BeginTransaction();
+        return await db.ExecuteTransactionAsync(
+            async (connection, transaction) =>
+            {
+                string sql = depositDto.IsChecking switch
+                {
+                    true => DepositQuery.DepositChecking,
+                    _ => DepositQuery.DepositSavings
+                };
 
-        try
-        {
-
-
-            transaction.Commit();
-            return 1;
-        }
-        catch
-        {
-            transaction.Rollback();
-            throw;
-        }
+                return await connection.QuerySingleOrDefaultAsync<DepositRepositoryOutputDto>(
+                    sql,
+                    new
+                    {
+                        depositDto.AccountId,
+                        depositDto.AccountNumber,
+                        depositDto.DepositValue,
+                        depositDto.Description,
+                        referenceNumber
+                    },
+                    transaction
+                );
+            }
+        );
     }
 }

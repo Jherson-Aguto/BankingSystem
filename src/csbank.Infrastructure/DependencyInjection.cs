@@ -1,4 +1,5 @@
 using System.Data;
+using CSbank.Application.Interfaces.IRepositories;
 using CSbank.Infrastructure.Configurations;
 using CSbank.Infrastructure.Database.Connections;
 using CSbank.Infrastructure.Repositories.Dapper;
@@ -14,9 +15,13 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructureServices
     (this IServiceCollection services, IConfiguration configuration)
     {
+        //infra
         services.AddScoped<ISaveUserRepository, SaveUserRepository>();
         services.AddScoped<IReadUserRepository, ReadUserRepository>();
         services.AddScoped<ISaveAccountsRepository, SaveAccountsRepository>();
+        services.AddScoped<IDepositRepository, DepositRepository>();
+
+        //helper
         services.AddScoped<HelperFunctions>();
 
         //connection

@@ -1,12 +1,5 @@
-SELECT * FROM users.customer_details c
-LEFT JOIN users.private_information p
-ON c.id = p.customer_id
-LEFT JOIN accounts.account_details a
-ON a.customer_id = c.id
-LEFT JOIN accounts.checking_account ca
-ON ca.account_id = a.id
-LEFT JOIN accounts.savings_account sa
-ON sa.account_id = a.id;
+SELECT * FROM accounts.account_details
+WHERE id = 'b3ec19b9-25a3-441a-9632-15d204d905e9'
 
 
 --For learning [SELECT *] isfine.

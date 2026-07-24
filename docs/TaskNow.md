@@ -37,7 +37,7 @@ Deposit
     ├── Business Workflow
     │       ✅
     ├── SQL Workflow
-    │       ✅
+    │       🚧
     ├── Row Locking (FOR UPDATE)
     │       ✅
     ├── Balance Update CTE
@@ -47,13 +47,17 @@ Deposit
     ├── Audit Log CTE
     │       ⏳
     ├── Repository
-    │       ⏳
+    │       ✅
     ├── Application Service
-    │       ⏳
+    │       ✅
     ├── Controller
-    │       ⏳
+    │       ✅
+    ├── Higher-Order Transaction Executor
+    │       ✅
+    ├── DTO Mapping
+    │       ✅
     └── Testing
-            ⏳
+            🚧
 
 Withdraw
         ⏳
@@ -72,20 +76,20 @@ Audit Logging
 
 # Immediate Objective
 
-Complete the Deposit business operation end-to-end using the established architecture.
+Complete the Deposit business operation as a complete banking transaction.
 
-Current priorities:
+Remaining work:
 
-- Complete the remaining SQL workflow.
-- Finish repository implementation.
-- Integrate the Application layer.
-- Expose the HTTP endpoint.
-- Validate transactional correctness.
+- Finish Transaction History recording.
+- Finish Audit Log recording.
+- Return the final business response.
+- Verify rollback behavior.
 - Test concurrent deposits.
+- Apply the same engineering pattern to Withdraw.
 
-The architectural foundation is complete.
+The architecture is now stable.
 
-The current focus is engineering complete, transaction-safe business operations.
+The focus is engineering complete business operations rather than building new infrastructure.
 
 ---
 
@@ -93,7 +97,7 @@ The current focus is engineering complete, transaction-safe business operations.
 
 ## Business Operation Engineering
 
-Every feature should follow the same development process.
+Every feature follows the same engineering pipeline.
 
 ```text
 Business Requirement
@@ -131,35 +135,35 @@ Infrastructure Implementation
 HTTP API
 ```
 
-The objective is to solve the business problem before writing implementation code.
+Implementation follows the business process—not the other way around.
 
 ---
 
 # Current Persistence Philosophy
 
-Repositories should focus only on persistence orchestration.
+Repositories are persistence orchestrators.
 
-Responsibilities:
+Repository responsibilities:
 
-- Select SQL
-- Supply parameters
+- Choose SQL
+- Prepare parameters
 - Execute SQL
-- Return results
+- Return business result
 
-Repositories should not own:
+Repositories no longer manage:
 
-- Connection creation
-- Transaction lifecycle
+- Database connections
+- Transaction creation
 - Commit
 - Rollback
 
-These responsibilities belong to reusable Infrastructure components.
+These concerns have been extracted into reusable Infrastructure components.
 
 ---
 
-# Repository Execution Flow
+# Repository Execution Architecture
 
-Current repository architecture:
+Current persistence execution flow:
 
 ```text
 Repository
@@ -174,11 +178,15 @@ Higher-Order Function
 
 ↓
 
-Connection
+Connection Factory
 
 ↓
 
-Transaction
+Database Connection
+
+↓
+
+Database Transaction
 
 ↓
 
@@ -189,7 +197,7 @@ Dapper
 PostgreSQL
 ```
 
-Infrastructure owns:
+Infrastructure now owns:
 
 - Connection lifecycle
 - Transaction lifecycle
@@ -197,13 +205,13 @@ Infrastructure owns:
 - Rollback
 - Exception propagation
 
-Repositories supply only the business-specific SQL operation.
+Repositories now contain almost exclusively business-specific persistence logic.
 
 ---
 
 # Current SQL Philosophy
 
-Whenever appropriate, a complete business operation should execute as:
+Whenever practical, an entire banking business operation should execute as:
 
 ```text
 One Transaction
@@ -221,75 +229,114 @@ Multiple CTEs
 One Database Round Trip
 ```
 
-PostgreSQL should perform relational work whenever possible.
+Current Deposit implementation already includes:
 
-The Application layer remains focused on orchestration rather than persistence logic.
+- Account lookup
+- Row locking
+- Balance update
+- Returning business result
+
+Upcoming CTEs:
+
+- Transaction History
+- Audit Log
+
+The objective is to leverage PostgreSQL as a relational engine rather than treating it as simple storage.
 
 ---
 
 # Current Learning Focus
 
-Current concepts being reinforced:
-
 ## Persistence Engineering
 
-- Repository design
-- Repository Executor
+Current concepts:
+
+- Repository pattern
+- Repository executor
 - Higher-Order Functions
-- SQL organization
+- Delegates
+- Func<>
+- Lambda expressions
+- Transaction abstraction
 - Parameterized SQL
-- Transaction management
+- Dapper mapping
+- Record materialization
 
 ---
 
 ## Business Operations Engineering
 
+Current concepts:
+
 - Business workflow modeling
 - Atomic operations
-- Transaction consistency
-- Ledger-based accounting
+- Ledger architecture
 - Audit logging
-- Separation of business rules and persistence
+- Separation of Domain and Persistence
+- Business-oriented SQL design
 
 ---
 
 ## PostgreSQL
 
-Current focus:
+Current concepts:
 
 - Common Table Expressions (CTEs)
-- `FOR UPDATE`
+- FOR UPDATE
 - Row-level locking
+- UPDATE ... RETURNING
 - Transactions
-- Race condition prevention
 - Atomic SQL workflows
+- Race condition prevention
 
 Major realization:
 
-A database transaction begins in C# but is executed by PostgreSQL.
+A database transaction is initiated by the application but executed entirely by PostgreSQL.
 
-The SQL statement runs inside the transaction boundary established by the application.
+The application defines the transaction boundary.
+
+PostgreSQL guarantees atomic execution within that boundary.
+
+---
+
+## C# Language Concepts
+
+Recently learned and applied:
+
+- Higher-Order Functions
+- Delegates
+- `Func<>`
+- Lambda Expressions
+- Passing behavior as parameters
+- Reusable transaction execution
+- Separation of reusable infrastructure from business logic
+
+Major realization:
+
+LINQ did not introduce lambda expressions or Higher-Order Functions.
+
+They are C# language features that LINQ heavily utilizes.
 
 ---
 
 # Current Engineering Checklist
 
-Continue asking these questions for every feature:
+Continue asking for every feature:
 
 ## Business
 
 - What business problem is being solved?
-- What is the complete business workflow?
-- Which business rules belong in the Domain?
+- What is the business workflow?
+- Which rules belong in the Domain?
 
 ---
 
 ## Persistence
 
-- Which invariants should PostgreSQL enforce?
-- Does this require a transaction?
-- Can PostgreSQL perform more of the work?
-- Can this operation execute in one SQL statement?
+- Which invariants belong in PostgreSQL?
+- Does this operation require a transaction?
+- Can PostgreSQL execute more of the workflow?
+- Can the operation execute in one SQL statement?
 - Can database round trips be reduced?
 
 ---
@@ -297,26 +344,52 @@ Continue asking these questions for every feature:
 ## Architecture
 
 - Which layer owns this responsibility?
-- Is the repository only orchestrating persistence?
 - Is Infrastructure reusable?
-- Is the implementation simple, maintainable and scalable?
+- Is the repository only orchestrating persistence?
+- Is the solution simple, maintainable and scalable?
 
 ---
 
 # Next Milestones
 
-Complete Deposit:
+## Deposit
 
-1. Finish `updated_balance` workflow.
-2. Insert transaction history.
-3. Insert audit log.
-4. Return final result.
-5. Finish repository.
-6. Finish application service.
-7. Finish controller.
-8. Test successful deposits.
-9. Test concurrent deposits.
-10. Validate rollback behavior.
+1. Finish Transaction History CTE.
+2. Finish Audit Log CTE.
+3. Return complete business response.
+4. Test successful deposits.
+5. Test invalid deposits.
+6. Test concurrent deposits.
+7. Verify rollback behavior.
+
+---
+
+## Withdraw
+
+Implement using the same engineering pattern:
+
+- Row locking
+- Business validation
+- Balance update
+- Ledger recording
+- Audit logging
+- Single SQL statement
+- Single transaction
+
+---
+
+## Transfer
+
+Implement as the first multi-account atomic transaction:
+
+- Lock sender
+- Lock receiver
+- Validate funds
+- Debit sender
+- Credit receiver
+- Record two ledger entries
+- Record audit log
+- Commit atomically
 
 ---
 
@@ -324,12 +397,15 @@ Complete Deposit:
 
 Recent milestones achieved:
 
-- ✅ Transitioned from CRUD repositories to business operation modeling.
+- ✅ Transitioned from CRUD repositories to complete business operation modeling.
+- ✅ Designed Deposit as a PostgreSQL workflow instead of multiple CRUD operations.
 - ✅ Implemented reusable transaction management using Higher-Order Functions.
 - ✅ Connected Delegates, `Func<>`, Lambda Expressions and Higher-Order Functions conceptually.
 - ✅ Understood row-level locking using `FOR UPDATE`.
-- ✅ Designed immutable ledger architecture.
-- ✅ Adopted one SQL statement per business operation when appropriate.
-- ✅ Shifted from framework-focused development toward software engineering patterns.
+- ✅ Successfully implemented and tested the first end-to-end Deposit operation.
+- ✅ Successfully mapped SQL results directly into immutable DTOs using Dapper.
+- ✅ Learned to diagnose framework-layer issues (Controller, Dapper, SQL) independently.
+- ✅ Shifted from thinking in CRUD operations toward transaction-safe business workflows.
+- ✅ Began treating PostgreSQL as an execution engine rather than only a persistence layer.
 
-Current priority remains completing the Deposit feature before continuing with Withdraw, Transfer and full audit logging integration.
+The current objective remains completing the Deposit feature before implementing Withdraw, Transfer, Transaction History, and full Audit Logging.
