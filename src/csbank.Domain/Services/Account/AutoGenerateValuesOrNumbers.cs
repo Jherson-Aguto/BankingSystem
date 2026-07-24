@@ -4,21 +4,30 @@ public class AccountDomainService
 {
     public string GenerateAccountNumber(string currency)
     {
-        string uniqueId = Guid.NewGuid().ToString("N");
-        string cut = uniqueId[..18];
-        string code = currency[..2];
+        if (string.IsNullOrWhiteSpace(currency))
+            throw new ArgumentException(
+                "Currency code is required.",
+                nameof(currency));
 
-        return string.Concat(code, cut).ToUpperInvariant();
+        if (currency.Length < 2)
+            throw new ArgumentException(
+                "Currency code must contain at least two characters.",
+                nameof(currency));
+
+        string uniqueId = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+        string code = currency[..2];
+        string cleanCut = new string(uniqueId.Where(char.IsDigit).ToArray());
+
+        return string.Concat(code, cleanCut[..14]).ToUpperInvariant();
     }
 
-    public string GenerateReferenceNumber(DateTime? transactionDate)
+    public string GenerateReferenceNumber()
     {
-        string uniqueId = Guid.NewGuid().ToString("n");
-        string numbers = string.Concat(uniqueId.Where(char.IsDigit));
-        string cut = numbers[..12];
-        string stringDate = transactionDate.ToString()!;
-        string noSpaces = stringDate.Replace(" ", string.Empty);
+        string uniqueId = Guid.NewGuid().ToString("N");
+        string cleanId = new string(uniqueId.Where(char.IsDigit).ToArray()!);
+        string date = DateTime.UtcNow.ToString();
+        string cleanDate = new string(date.Where(char.IsDigit).ToArray());
 
-        return string.Concat(noSpaces, cut);
+        return string.Concat(cleanDate, cleanId);
     }
 }
