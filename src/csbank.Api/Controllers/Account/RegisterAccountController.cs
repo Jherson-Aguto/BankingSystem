@@ -23,13 +23,13 @@ public class AccountsController(
                 data));
     }
 
-    [HttpPost("accountType/{id:Guid}")]
+    [HttpPost("accountType/{accountId:Guid}")]
     public async Task<IActionResult> AccountTypeCreationAsync(
-        [FromRoute] Guid id,
+        [FromRoute] Guid accountId,
         [FromQuery] string accountNumber,
         [FromQuery] bool? isChecking = false)
     {
-        Guid? queriedAccountId = await registerAccounts.AccountTypeCreationAsync(id, accountNumber, isChecking);
+        Guid? queriedAccountId = await registerAccounts.AccountTypeCreationAsync(accountId, accountNumber, isChecking);
 
         if (queriedAccountId is null)
             throw new NotFoundException($"No account matches Account id and number");

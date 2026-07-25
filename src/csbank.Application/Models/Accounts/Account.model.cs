@@ -10,6 +10,8 @@ public class AccountDto
     public AccountStatus AccountStatus { get; set; } = AccountStatus.Active;
 };
 
+// public record 
+
 public record CheckingAccount
 {
     public Guid? Id { get; set; }
