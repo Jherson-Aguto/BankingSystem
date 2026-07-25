@@ -30,7 +30,7 @@ public static class MapAccount
                 DepositValue: depositDto.DepositValue,
                 Description: depositDto.Description,
                 ReferenceNumber: ReferenceNumberInput,
-                TransactionType: TransactionTypes.Deposit,
+                TransactionType: TransactionTypes.Deposit.ToString(),
                 TransactionDate: repoDto.TransactionDate
             );
 }

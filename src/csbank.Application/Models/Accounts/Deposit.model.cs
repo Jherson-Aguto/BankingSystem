@@ -17,7 +17,7 @@ public record DepositOutputDto(
     decimal AfterBalance,
     decimal DepositValue,
     string? ReferenceNumber,
-    TransactionTypes? TransactionType,
+    string? TransactionType,
     DateTime? TransactionDate,
     string? Description = null
 );
