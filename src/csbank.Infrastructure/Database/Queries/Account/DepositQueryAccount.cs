@@ -7,10 +7,11 @@ public sealed class DepositQuery
     WITH locked_account AS (
         SELECT
             sa.account_id,
+            ad.customer_id,
             sa.balance
         FROM 
             accounts.account_details ad
-        JOIN 
+        JOIN
             accounts.savings_account sa
             ON ad.id = sa.account_id
         WHERE 
@@ -61,6 +62,32 @@ public sealed class DepositQuery
         RETURNING
             id,
             created_at
+    ),
+    recorded_audit AS (
+        INSERT INTO
+            audit.audit_logs(
+                entity_name,
+                entity_id,
+                action,
+                performed_by,
+                old_values,
+                new_values
+    )
+        SELECT
+            'SavingsAccount',
+            ub.account_id,
+            'Updated',
+            la.customer_id,
+            jsonb_build_object(
+                'balance', ub.balance_before
+            ),
+            jsonb_build_object(
+                'balance', ub.balance_after
+            )
+        FROM
+            locked_account AS la
+        CROSS JOIN
+            updated_balance AS ub
     )
     SELECT
         ub.account_id AS AccountId,
@@ -79,7 +106,8 @@ public sealed class DepositQuery
     WITH locked_account AS (
         SELECT
             ca.account_id,
-            ca.balance
+            ca.balance,
+            ad.customer_id
         FROM 
             accounts.account_details ad
         JOIN 
@@ -133,6 +161,32 @@ public sealed class DepositQuery
         RETURNING
             id,
             created_at
+    ),
+    recorded_audit AS (
+        INSERT INTO
+            audit.audit_logs(
+                entity_name,
+                entity_id,
+                action,
+                performed_by,
+                old_values,
+                new_values
+    )
+        SELECT
+            'CheckingAccount',
+            ub.account_id,
+            'Updated',
+            la.customer_id,
+            jsonb_build_object(
+                'balance', ub.balance_before
+            ),
+            jsonb_build_object(
+                'balance', ub.balance_after
+            )
+        FROM
+            locked_account AS la
+        CROSS JOIN
+            updated_balance AS ub
     )
     SELECT
         ub.account_id AS AccountId,
