@@ -16,10 +16,10 @@ public record DepositOutputDto(
     decimal BeforeBalance,
     decimal AfterBalance,
     decimal DepositValue,
-    string? Description,
     string? ReferenceNumber,
     TransactionTypes? TransactionType,
-    DateTime? TransactionDate
+    DateTime? TransactionDate,
+    string? Description = null
 );
 
 public record DepositRepositoryOutputDto(
