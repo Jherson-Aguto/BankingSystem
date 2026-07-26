@@ -11,8 +11,8 @@
 erDiagram
     USERS.CUSTOMER_DETAILS ||--|| USERS.PRIVATE_INFORMATION : has
     USERS.CUSTOMER_DETAILS ||--o{ ACCOUNTS.ACCOUNT_DETAILS : owns
-    ACCOUNTS.ACCOUNT_DETAILS ||--o| ACCOUNTS.CHECKING_ACCOUNT : extends
-    ACCOUNTS.ACCOUNT_DETAILS ||--o| ACCOUNTS.SAVINGS_ACCOUNT : extends
+    ACCOUNTS.ACCOUNT_DETAILS ||--|| ACCOUNTS.CHECKING_ACCOUNT : extends
+    ACCOUNTS.ACCOUNT_DETAILS ||--|| ACCOUNTS.SAVINGS_ACCOUNT : extends
     ACCOUNTS.ACCOUNT_DETAILS ||--o{ TRANSACTIONS.TRANSACTION_HISTORY : has
 
     USERS.CUSTOMER_DETAILS {
@@ -39,14 +39,15 @@ erDiagram
         UUID id PK
         UUID customer_id FK
         VARCHAR account_number UK
+        enum account_type "enum: (Savings, Checking)"
         VARCHAR currency
+        NUMERIC balance
         TIMESTAMPTZ created_at
         enum account_status "enum: (Active, Frozen, Closed)"
     }
 
     ACCOUNTS.CHECKING_ACCOUNT{
         UUID account_id PK,FK
-        NUMERIC balance
         NUMERIC overdraft_limit
         enum modes_of_payment "enum: (Debit, Online, Check)"
         NUMERIC interest_rate
@@ -55,7 +56,6 @@ erDiagram
 
     ACCOUNTS.SAVINGS_ACCOUNT{
         UUID account_id PK,FK
-        NUMERIC balance
         NUMERIC withdrawal_usage
         NUMERIC interest_rate
         NUMERIC fees
