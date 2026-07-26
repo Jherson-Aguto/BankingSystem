@@ -8,7 +8,7 @@ public sealed class DepositQuery
         SELECT
             ad.customer_id,
             ad.balance,
-            ad.id,
+            ad.id
         FROM
             accounts.account_details AS ad
         WHERE
@@ -21,9 +21,9 @@ public sealed class DepositQuery
         UPDATE
             accounts.account_details AS ad
         SET balance = ad.balance + @DepositValue
+        FROM locked_account AS la
         WHERE
             la.id = ad.id
-        FROM locked_account AS la
         RETURNING
             la.balance AS balance_before,
             ad.balance AS balance_after,
@@ -97,7 +97,7 @@ public sealed class DepositQuery
     SELECT
         ct.id,
         ct.account_id AS AccountId,
-        ct.transaction_type AS TransactionType,
+        ct.transaction_type::text AS TransactionType,
         ct.amount,
         ct.balance_before AS BalanceBefore,
         ct.balance_after AS BalanceAfter,

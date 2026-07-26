@@ -5,7 +5,7 @@ namespace CSbank.Application.Models;
 public record TransactionDto(
     Guid Id,
     Guid AccountId,
-    TransactionTypes TransactionType,
+    string TransactionType,
     decimal Amount,
     decimal BalanceBefore,
     decimal BalanceAfter,

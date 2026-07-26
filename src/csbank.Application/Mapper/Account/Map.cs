@@ -16,6 +16,7 @@ public static class MapAccount
         => new RequestDepositDto(
             AccountNumber: requestDepositDto.AccountNumber,
             DepositValue: requestDepositDto.DepositValue,
+            Description: requestDepositDto.Description,
             ReferenceNumber: referenceNumber
         );
 
