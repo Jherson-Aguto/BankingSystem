@@ -27,6 +27,7 @@ public sealed class TransferQuery
         WHERE
             ad.account_number = @AccountNumber
         AND la.id = ad.id
+        AND ad.balance >= @TransferFundValue
         RETURNING
             ad.balance,
             ad.id,
@@ -36,10 +37,10 @@ public sealed class TransferQuery
         UPDATE accounts.account_details ad
         SET
             balance = ad.balance + @TransferFundValue
-        FROM locked_account AS la
+        FROM transfer_out AS t_o
         WHERE
             ad.account_number = @RecipientAccountNumber
-        AND la.id = ad.id
+        AND t_o IS NOT NULL
         RETURNING
             ad.balance,
             ad.id

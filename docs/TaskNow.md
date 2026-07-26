@@ -8,7 +8,7 @@
 
 **Architecture Status:** ✅ Stable
 
-**Current Feature:** Deposit (Finalization)
+**Current Feature:** Business Operation Validation & Concurrency Testing
 
 **Next Phase:** Phase 5 — Relational Database Design
 
@@ -73,11 +73,27 @@ Deposit
     └── Business Response
             ✅
 
-Withdraw
-        ⏳
-
 Transfer
-        ⏳
+    ├── Multi-Account Transaction
+    │       ✅
+    ├── Dual Row Locking
+    │       ✅
+    ├── Atomic Debit/Credit
+    │       ✅
+    ├── Dual Transaction History
+    │       ✅
+    ├── Audit Logging
+    │       ✅
+    ├── Repository
+    │       ✅
+    ├── Application Service
+    │       ✅
+    ├── Controller
+    │       ✅
+    ├── Dapper Multi-Mapping
+    │       ✅
+    └── Business Response
+            ✅
 
 Transaction History
         ✅ Infrastructure Implemented
@@ -98,18 +114,20 @@ Domain Testing
 
 # Immediate Objective
 
-Complete the remaining banking business operations.
+Validate and harden the completed banking operations.
 
 Current priorities:
 
-- Verify Deposit rollback scenarios.
-- Verify concurrent Deposit behavior.
-- Implement Withdraw using the same engineering pattern.
-- Implement Transfer as the first multi-account atomic transaction.
+- Verify Deposit rollback behavior.
+- Verify Transfer rollback behavior.
+- Stress-test concurrent Deposits.
+- Stress-test concurrent Transfers.
+- Improve API responses where appropriate.
+- Refactor SQL if simplification opportunities are discovered.
 
-The architectural foundation is now considered stable.
+The architectural foundation and core banking operations are now considered complete for Phase 4B.
 
-Current development focuses on completing business workflows rather than introducing new infrastructure.
+Development has shifted from implementation toward validation, robustness, and engineering refinement.
 
 ---
 
@@ -240,23 +258,23 @@ One SQL Statement
 
 ↓
 
-Multiple CTEs
+Multiple Writable CTEs
 
 ↓
 
 One Database Round Trip
 ```
 
-Deposit now performs:
+Current business operations leverage PostgreSQL to perform:
 
-- Account lookup
 - Row locking
-- Balance update
-- Transaction history recording
+- Business validation
+- Balance updates
+- Transaction history
 - Audit logging
 - Business result projection
 
-The objective is to leverage PostgreSQL as an execution engine instead of treating it as simple storage.
+The database acts as an execution engine rather than passive storage.
 
 ---
 
@@ -276,6 +294,9 @@ Current concepts:
 - Parameterized SQL
 - Dapper materialization
 - Record mapping
+- Dapper multi-mapping
+- splitOn
+- SQL result projection
 
 ---
 
@@ -287,6 +308,7 @@ Current concepts:
 - Atomic operations
 - Ledger architecture
 - Audit logging
+- Multi-account transactions
 - Separation of Domain and Persistence
 - Business-oriented SQL design
 
@@ -297,19 +319,20 @@ Current concepts:
 Current concepts:
 
 - Common Table Expressions (CTEs)
+- Writable CTE workflows
 - FOR UPDATE
 - Row-level locking
 - UPDATE ... RETURNING
-- Writable CTE workflows
-- Transactions
+- INSERT ... RETURNING
 - Atomic SQL execution
+- Transaction boundaries
 - Race condition prevention
 - JSONB audit snapshots
 - PostgreSQL ENUM integration
 
 Major realization:
 
-A transaction boundary is created by the application, while PostgreSQL guarantees atomic execution inside that boundary.
+A transaction boundary is created by the application, while PostgreSQL guarantees atomic execution within that boundary.
 
 ---
 
@@ -322,14 +345,17 @@ Recently learned and applied:
 - Func<>
 - Lambda Expressions
 - Reusable transaction execution
-- Separation of reusable Infrastructure behavior
+- Dapper multi-mapping
+- Generic overload resolution
+- Immutable DTO projection
 - Basic xUnit fundamentals
 - Parallel execution testing
 
 Major realizations:
 
 - LINQ did not introduce lambda expressions or Higher-Order Functions.
-- xUnit is a tool for verifying software behavior—not the goal itself.
+- xUnit verifies software behavior rather than serving as the learning objective.
+- Dapper maps SQL result sets based entirely on column order and aliases.
 
 ---
 
@@ -366,40 +392,25 @@ Continue asking for every feature:
 
 # Next Milestones
 
-## Deposit
+## Validation
 
-1. Verify rollback behavior.
-2. Stress-test concurrent deposits.
-3. Refine API responses if necessary.
-
----
-
-## Withdraw
-
-Implement using the established engineering pattern:
-
-- Row locking
-- Business validation
-- Balance update
-- Transaction history
-- Audit logging
-- Single SQL statement
-- Single transaction
+- Verify rollback scenarios.
+- Verify concurrent operations.
+- Validate transaction consistency.
+- Validate audit integrity.
+- Validate ledger consistency.
 
 ---
 
-## Transfer
+## Phase 5 Preparation
 
-Implement the first true multi-account atomic workflow:
+After validation is complete:
 
-- Lock sender
-- Lock receiver
-- Validate available funds
-- Debit sender
-- Credit receiver
-- Record two transaction history entries
-- Record audit log
-- Commit atomically
+- Begin Relational Database Design.
+- Review normalization.
+- Improve indexing strategy.
+- Refine ERD.
+- Evaluate schema evolution opportunities.
 
 ---
 
@@ -408,27 +419,17 @@ Implement the first true multi-account atomic workflow:
 Recent milestones achieved:
 
 - ✅ Transitioned from CRUD repositories to complete business operation modeling.
-- ✅ Designed Deposit as a PostgreSQL workflow instead of multiple CRUD operations.
-- ✅ Implemented reusable transaction execution using Higher-Order Functions.
+- ✅ Implemented Deposit as a complete PostgreSQL workflow.
+- ✅ Implemented Transfer as a multi-account atomic transaction.
+- ✅ Built reusable transaction execution using Higher-Order Functions.
 - ✅ Connected Delegates, Func<>, Lambda Expressions, and Higher-Order Functions conceptually.
 - ✅ Understood row-level locking using FOR UPDATE.
-- ✅ Implemented Transaction History recording using writable CTEs.
+- ✅ Implemented Transaction History using writable CTEs.
 - ✅ Implemented Audit Logging directly inside SQL workflows.
-- ✅ Implemented audit logging for:
-  - Customer Registration
-  - Customer Private Information
-  - Account Creation
-  - Checking Account Creation
-  - Savings Account Creation
-  - Deposit
-- ✅ Successfully mapped SQL results into immutable DTOs using Dapper.
-- ✅ Learned to diagnose framework-layer issues independently (Controller, Dapper, SQL, Npgsql).
-- ✅ Began treating PostgreSQL as an execution engine instead of only a persistence store.
-- ✅ Built and validated a Domain Service for account/reference number generation.
-- ✅ Created initial xUnit tests covering:
-  - Unique account numbers
-  - Unique reference numbers
-  - Concurrent generation
-  - Input validation
+- ✅ Implemented Dapper multi-mapping for composite business responses.
+- ✅ Learned to diagnose SQL, Dapper, Npgsql, and framework-level issues independently.
+- ✅ Began treating PostgreSQL as an execution engine rather than only a persistence store.
+- ✅ Built and validated Domain Services for account/reference number generation.
+- ✅ Created initial xUnit tests covering uniqueness, concurrency, and validation.
 
-The current objective is to complete Withdraw and Transfer using the same transaction-safe engineering approach before moving into Relational Database Design.
+The implementation phase of the core banking operations is now complete. The remaining work for Phase 4B focuses on validation, concurrency testing, rollback verification, and engineering refinement before progressing to Relational Database Design.
