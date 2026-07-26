@@ -20,6 +20,7 @@ public sealed class SaveAccount
             'Savings',
             @Currency,
             'Active'
+        )
         RETURNING
             id,
             customer_id,
@@ -28,7 +29,7 @@ public sealed class SaveAccount
             currency,
             balance,
             created_at,
-            account_status,
+            account_status
     ),
     savings AS (
         INSERT INTO accounts.savings_account(
@@ -37,7 +38,7 @@ public sealed class SaveAccount
         SELECT
             a.id
         FROM account AS a
-    )
+    ),
     recorded_audit AS (
         INSERT INTO 
             audit.audit_logs (
@@ -83,6 +84,7 @@ public sealed class SaveAccount
             'Checking',
             @Currency,
             'Active'
+        )
         RETURNING
             id,
             customer_id,
@@ -91,7 +93,7 @@ public sealed class SaveAccount
             currency,
             balance,
             created_at,
-            account_status,
+            account_status
     ),
     checking AS (
         INSERT INTO accounts.checking_account(
@@ -100,7 +102,7 @@ public sealed class SaveAccount
         SELECT
             a.id
         FROM account AS a
-    )
+    ),
     recorded_audit AS (
         INSERT INTO 
             audit.audit_logs (
@@ -120,11 +122,11 @@ public sealed class SaveAccount
         a.id,
         a.customer_id AS CustomerId,
         a.account_number AS AccountNumber,
-        a.account_type AS AccountType,
+        a.account_type::text AS AccountType,
         a.currency,
         a.balance,
         a.created_at AS CreatedAt,
-        a.account_status AS AccountStatus
+        a.account_status::text AS AccountStatus
     FROM account AS a
     """;
 }

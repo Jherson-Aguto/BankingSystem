@@ -3,6 +3,7 @@ using CSbank.Application.Interfaces.IRepositories;
 using CSbank.Infrastructure.Configurations;
 using CSbank.Infrastructure.Database.Connections;
 using CSbank.Infrastructure.Repositories.Dapper;
+using CSbank.Infrastructure.Utils;
 using CSBank.Application.Interfaces.IRepositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ public static class DependencyInjection
         services.AddScoped<IDepositRepository, DepositRepository>();
 
         //helper
-        services.AddScoped<HelperFunctions>();
+        services.AddScoped<HelperFactory>();
 
         //connection
         var connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -31,7 +32,8 @@ public static class DependencyInjection
         var dataSource = builder.Build();
         services.AddSingleton(dataSource);
         services.AddScoped<IDbConnectionFactory, PostgreSqlConnectionFactory>();
-        //
+        
+        
 
 
         return services;

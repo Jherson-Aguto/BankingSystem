@@ -5,11 +5,11 @@ public record AccountDto
     Guid? Id,
     Guid CustomerId,
     string? AccountNumber,
-    AccountTypes AccountType,
+    string AccountType,
     string Currency,
     decimal Balance,
     DateTime? CreatedAt,
-    AccountStatus AccountStatus
+    string AccountStatus
 );
 
 public record CheckingAccount

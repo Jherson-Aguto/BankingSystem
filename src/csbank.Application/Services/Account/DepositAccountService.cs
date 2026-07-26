@@ -3,6 +3,7 @@ using CSbank.Application.Interfaces.Services;
 using CSbank.Application.Mapper;
 using CSbank.Application.Models;
 using CSbank.Domain.Services.Account;
+using CSBank.Application.Models;
 
 namespace CSBank.Application.Services;
 
@@ -11,15 +12,12 @@ public class DepositService(
     AccountDomainService domainService
 ) : IDepositService
 {
-    public async Task<DepositOutputDto?> DepositBalanceAsync(DepositDto depositDto)
+    public async Task<TransactionDto> DepositAmountAsync(RequestDepositDto requestDepositDto, AccountTypes accountType)
     {
         string referenceNumber = domainService.GenerateReferenceNumber();
 
-        DepositRepositoryOutputDto? repositoryOutput = await deposit.DepositBalanceAsync(depositDto, referenceNumber);
+        RequestDepositDto dto = MapAccount.ToParameters(requestDepositDto, referenceNumber);
 
-        if (repositoryOutput is null)
-            throw new ArgumentNullException("Account not found, please create the selected account type.");
-
-        return MapAccount.ToParameters(depositDto, repositoryOutput!, referenceNumber);
+        return await deposit.DepositAmount(dto, accountType);
     }
 }

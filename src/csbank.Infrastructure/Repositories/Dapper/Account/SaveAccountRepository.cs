@@ -23,7 +23,7 @@ public class SaveAccountsRepository(
                     _ => throw new ArgumentOutOfRangeException(nameof(accountType))
                 };
 
-                return await connection.QuerySingleAsync(
+                return await connection.QuerySingleAsync<AccountDto>(
                     sql,
                     requestAccountDto,
                     transaction);

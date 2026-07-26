@@ -1,3 +1,4 @@
+using CSbank.Application.Models;
 using CSBank.Application.Models;
 
 namespace CSbank.Application.Mapper;
@@ -8,7 +9,14 @@ public static class MapAccount
         => new RequestAccountDto(
             CustomerId: requestAccountDto.CustomerId,
             AccountNumber: accountNumber,
-            Currency: requestAccountDto.AccountNumber
+            Currency: requestAccountDto.Currency
+        );
+
+    public static RequestDepositDto ToParameters(RequestDepositDto requestDepositDto, string referenceNumber)
+        => new RequestDepositDto(
+            AccountNumber: requestDepositDto.AccountNumber,
+            DepositValue: requestDepositDto.DepositValue,
+            ReferenceNumber: referenceNumber
         );
 
 }
