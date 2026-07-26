@@ -1,10 +1,11 @@
 using System.Data;
 using CSbank.Infrastructure.Database.Connections;
 
-public class HelperFunctions(
-    IDbConnectionFactory db)
+namespace CSbank.Infrastructure.Utils;
+
+public class HelperFactory(IDbConnectionFactory db)
 {
-    public async Task<T> ExecuteTransactionAsync<T>(
+    public async Task<T> TransactionOperationAsync<T>(
         Func<IDbConnection, IDbTransaction, Task<T>> operation)
     {
         using var connection = await db.CreateConnectionAsync();
@@ -27,11 +28,13 @@ public class HelperFunctions(
         }
     }
 
-    public async Task<T> ExecuteAsync<T>(
+    public async Task<T> OperationAsync<T>(
         Func<IDbConnection, Task<T>> operation)
     {
         using var connection = await db.CreateConnectionAsync();
 
-        return await operation(connection);
+        T result = await operation(connection);
+
+        return result;
     }
 }

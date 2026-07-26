@@ -20,7 +20,7 @@ public class AccountTest1(AccountDomainService accountService) : IClassFixture<A
     [InlineData("PHP")]
     [InlineData("USD")]
     [InlineData("EUR")]
-    [InlineData("GPB")]
+    [InlineData("GBP")]
     [InlineData("JPY")]
     public void ShouldGenerateUniqueAccountNumber(string? currency)
     {
@@ -48,5 +48,22 @@ public class AccountTest1(AccountDomainService accountService) : IClassFixture<A
         });
 
         Assert.Distinct(results);
+    }
+
+    [Fact]
+    public void ShouldContain20Characters()
+    {
+        ConcurrentBag<string> results = new();
+
+        Parallel.For(0, 100_000,
+        i =>
+        {
+            results.Add(accountService.GenerateReferenceNumber());
+        });
+
+        Assert.All(results, result =>
+        {
+            Assert.Equal(20, result.Count());
+        });
     }
 }

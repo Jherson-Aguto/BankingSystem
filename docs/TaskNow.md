@@ -8,7 +8,7 @@
 
 **Architecture Status:** ✅ Stable
 
-**Current Feature:** Deposit
+**Current Feature:** Deposit (Finalization)
 
 **Next Phase:** Phase 5 — Relational Database Design
 
@@ -20,32 +20,46 @@
 Customer Profile
         ✅
 
+Register Customer
+    ├── Customer Registration
+    │       ✅
+    ├── Private Information
+    │       ✅
+    └── Audit Logging
+            ✅
+
 Create Account
         ✅
     ├── Account Number Generation
     │       ✅ Domain Service
-    └── Account Persistence
+    ├── Account Persistence
+    │       ✅
+    └── Audit Logging
             ✅
 
 Create Checking Account
         ✅
+    └── Audit Logging
+            ✅
 
 Create Savings Account
         ✅
+    └── Audit Logging
+            ✅
 
 Deposit
     ├── Business Workflow
     │       ✅
     ├── SQL Workflow
-    │       🚧
+    │       ✅
     ├── Row Locking (FOR UPDATE)
     │       ✅
-    ├── Balance Update CTE      
+    ├── Balance Update CTE
     │       ✅
     ├── Transaction History CTE
     │       ✅
     ├── Audit Log CTE
-    │       ⏳
+    │       ✅
     ├── Repository
     │       ✅
     ├── Application Service
@@ -56,8 +70,8 @@ Deposit
     │       ✅
     ├── DTO Mapping
     │       ✅
-    └── Testing
-            🚧
+    └── Business Response
+            ✅
 
 Withdraw
         ⏳
@@ -66,30 +80,36 @@ Transfer
         ⏳
 
 Transaction History
-        🚧 Schema Complete
+        ✅ Infrastructure Implemented
 
 Audit Logging
-        🚧 Schema Complete
+        ✅ Infrastructure Implemented
+
+Domain Testing
+    ├── Account Number Generator
+    │       ✅
+    ├── Reference Number Generator
+    │       ✅
+    └── Concurrent Uniqueness
+            ✅
 ```
 
 ---
 
 # Immediate Objective
 
-Complete the Deposit business operation as a complete banking transaction.
+Complete the remaining banking business operations.
 
-Remaining work:
+Current priorities:
 
-- Finish Transaction History recording.
-- Finish Audit Log recording.
-- Return the final business response.
-- Verify rollback behavior.
-- Test concurrent deposits.
-- Apply the same engineering pattern to Withdraw.
+- Verify Deposit rollback scenarios.
+- Verify concurrent Deposit behavior.
+- Implement Withdraw using the same engineering pattern.
+- Implement Transfer as the first multi-account atomic transaction.
 
-The architecture is now stable.
+The architectural foundation is now considered stable.
 
-The focus is engineering complete business operations rather than building new infrastructure.
+Current development focuses on completing business workflows rather than introducing new infrastructure.
 
 ---
 
@@ -145,25 +165,23 @@ Repositories are persistence orchestrators.
 
 Repository responsibilities:
 
-- Choose SQL
+- Select SQL
 - Prepare parameters
 - Execute SQL
-- Return business result
+- Materialize business results
 
 Repositories no longer manage:
 
-- Database connections
+- Connection creation
 - Transaction creation
 - Commit
 - Rollback
 
-These concerns have been extracted into reusable Infrastructure components.
+Those responsibilities belong to reusable Infrastructure components.
 
 ---
 
 # Repository Execution Architecture
-
-Current persistence execution flow:
 
 ```text
 Repository
@@ -197,7 +215,7 @@ Dapper
 PostgreSQL
 ```
 
-Infrastructure now owns:
+Infrastructure owns:
 
 - Connection lifecycle
 - Transaction lifecycle
@@ -205,13 +223,13 @@ Infrastructure now owns:
 - Rollback
 - Exception propagation
 
-Repositories now contain almost exclusively business-specific persistence logic.
+Repositories contain almost exclusively business-specific persistence logic.
 
 ---
 
 # Current SQL Philosophy
 
-Whenever practical, an entire banking business operation should execute as:
+Whenever practical, one banking business operation executes as:
 
 ```text
 One Transaction
@@ -229,19 +247,16 @@ Multiple CTEs
 One Database Round Trip
 ```
 
-Current Deposit implementation already includes:
+Deposit now performs:
 
 - Account lookup
 - Row locking
 - Balance update
-- Returning business result
+- Transaction history recording
+- Audit logging
+- Business result projection
 
-Upcoming CTEs:
-
-- Transaction History
-- Audit Log
-
-The objective is to leverage PostgreSQL as a relational engine rather than treating it as simple storage.
+The objective is to leverage PostgreSQL as an execution engine instead of treating it as simple storage.
 
 ---
 
@@ -251,16 +266,16 @@ The objective is to leverage PostgreSQL as a relational engine rather than treat
 
 Current concepts:
 
-- Repository pattern
-- Repository executor
+- Repository Pattern
+- Repository Executor
 - Higher-Order Functions
 - Delegates
 - Func<>
-- Lambda expressions
+- Lambda Expressions
 - Transaction abstraction
 - Parameterized SQL
-- Dapper mapping
-- Record materialization
+- Dapper materialization
+- Record mapping
 
 ---
 
@@ -285,17 +300,16 @@ Current concepts:
 - FOR UPDATE
 - Row-level locking
 - UPDATE ... RETURNING
+- Writable CTE workflows
 - Transactions
-- Atomic SQL workflows
+- Atomic SQL execution
 - Race condition prevention
+- JSONB audit snapshots
+- PostgreSQL ENUM integration
 
 Major realization:
 
-A database transaction is initiated by the application but executed entirely by PostgreSQL.
-
-The application defines the transaction boundary.
-
-PostgreSQL guarantees atomic execution within that boundary.
+A transaction boundary is created by the application, while PostgreSQL guarantees atomic execution inside that boundary.
 
 ---
 
@@ -305,17 +319,17 @@ Recently learned and applied:
 
 - Higher-Order Functions
 - Delegates
-- `Func<>`
+- Func<>
 - Lambda Expressions
-- Passing behavior as parameters
 - Reusable transaction execution
-- Separation of reusable infrastructure from business logic
+- Separation of reusable Infrastructure behavior
+- Basic xUnit fundamentals
+- Parallel execution testing
 
-Major realization:
+Major realizations:
 
-LINQ did not introduce lambda expressions or Higher-Order Functions.
-
-They are C# language features that LINQ heavily utilizes.
+- LINQ did not introduce lambda expressions or Higher-Order Functions.
+- xUnit is a tool for verifying software behavior—not the goal itself.
 
 ---
 
@@ -336,7 +350,7 @@ Continue asking for every feature:
 - Which invariants belong in PostgreSQL?
 - Does this operation require a transaction?
 - Can PostgreSQL execute more of the workflow?
-- Can the operation execute in one SQL statement?
+- Can the operation execute as one SQL statement?
 - Can database round trips be reduced?
 
 ---
@@ -345,8 +359,8 @@ Continue asking for every feature:
 
 - Which layer owns this responsibility?
 - Is Infrastructure reusable?
-- Is the repository only orchestrating persistence?
-- Is the solution simple, maintainable and scalable?
+- Is the repository orchestrating persistence only?
+- Is the implementation simple, maintainable, and scalable?
 
 ---
 
@@ -354,24 +368,20 @@ Continue asking for every feature:
 
 ## Deposit
 
-1. Finish Transaction History CTE.
-2. Finish Audit Log CTE.
-3. Return complete business response.
-4. Test successful deposits.
-5. Test invalid deposits.
-6. Test concurrent deposits.
-7. Verify rollback behavior.
+1. Verify rollback behavior.
+2. Stress-test concurrent deposits.
+3. Refine API responses if necessary.
 
 ---
 
 ## Withdraw
 
-Implement using the same engineering pattern:
+Implement using the established engineering pattern:
 
 - Row locking
 - Business validation
 - Balance update
-- Ledger recording
+- Transaction history
 - Audit logging
 - Single SQL statement
 - Single transaction
@@ -380,14 +390,14 @@ Implement using the same engineering pattern:
 
 ## Transfer
 
-Implement as the first multi-account atomic transaction:
+Implement the first true multi-account atomic workflow:
 
 - Lock sender
 - Lock receiver
-- Validate funds
+- Validate available funds
 - Debit sender
 - Credit receiver
-- Record two ledger entries
+- Record two transaction history entries
 - Record audit log
 - Commit atomically
 
@@ -399,13 +409,26 @@ Recent milestones achieved:
 
 - ✅ Transitioned from CRUD repositories to complete business operation modeling.
 - ✅ Designed Deposit as a PostgreSQL workflow instead of multiple CRUD operations.
-- ✅ Implemented reusable transaction management using Higher-Order Functions.
-- ✅ Connected Delegates, `Func<>`, Lambda Expressions and Higher-Order Functions conceptually.
-- ✅ Understood row-level locking using `FOR UPDATE`.
-- ✅ Successfully implemented and tested the first end-to-end Deposit operation.
-- ✅ Successfully mapped SQL results directly into immutable DTOs using Dapper.
-- ✅ Learned to diagnose framework-layer issues (Controller, Dapper, SQL) independently.
-- ✅ Shifted from thinking in CRUD operations toward transaction-safe business workflows.
-- ✅ Began treating PostgreSQL as an execution engine rather than only a persistence layer.
+- ✅ Implemented reusable transaction execution using Higher-Order Functions.
+- ✅ Connected Delegates, Func<>, Lambda Expressions, and Higher-Order Functions conceptually.
+- ✅ Understood row-level locking using FOR UPDATE.
+- ✅ Implemented Transaction History recording using writable CTEs.
+- ✅ Implemented Audit Logging directly inside SQL workflows.
+- ✅ Implemented audit logging for:
+  - Customer Registration
+  - Customer Private Information
+  - Account Creation
+  - Checking Account Creation
+  - Savings Account Creation
+  - Deposit
+- ✅ Successfully mapped SQL results into immutable DTOs using Dapper.
+- ✅ Learned to diagnose framework-layer issues independently (Controller, Dapper, SQL, Npgsql).
+- ✅ Began treating PostgreSQL as an execution engine instead of only a persistence store.
+- ✅ Built and validated a Domain Service for account/reference number generation.
+- ✅ Created initial xUnit tests covering:
+  - Unique account numbers
+  - Unique reference numbers
+  - Concurrent generation
+  - Input validation
 
-The current objective remains completing the Deposit feature before implementing Withdraw, Transfer, Transaction History, and full Audit Logging.
+The current objective is to complete Withdraw and Transfer using the same transaction-safe engineering approach before moving into Relational Database Design.

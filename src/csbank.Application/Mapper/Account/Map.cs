@@ -5,32 +5,27 @@ namespace CSbank.Application.Mapper;
 
 public static class MapAccount
 {
-    public static Object ToParameters(AccountDto dto)
-    {
-        return new
-        {
-            CustomerId = dto.CustomerId,
-            AccountNumber = dto.AccountNumber,
-            Currency = dto.Currency,
-            CreatedAt = dto.CreatedAt,
-            AccountStatus = dto.AccountStatus.ToString()
-        };
-    }
+    public static RequestAccountDto ToParameters(RequestAccountDto requestAccountDto, string accountNumber)
+        => new RequestAccountDto(
+            CustomerId: requestAccountDto.CustomerId,
+            AccountNumber: accountNumber,
+            Currency: requestAccountDto.Currency
+        );
 
-    public static DepositOutputDto ToParameters(
-        DepositDto depositDto,
-        DepositRepositoryOutputDto repoDto,
-        string? ReferenceNumberInput)
-            => new DepositOutputDto
-            (
-                AccountId: repoDto!.AccountId,
-                TransactionId: repoDto.TransactionId,
-                BeforeBalance: repoDto.BeforeBalance,
-                AfterBalance: repoDto.AfterBalance,
-                DepositValue: depositDto.DepositValue,
-                Description: depositDto.Description,
-                ReferenceNumber: ReferenceNumberInput,
-                TransactionType: TransactionTypes.Deposit,
-                TransactionDate: repoDto.TransactionDate
-            );
+    public static RequestDepositDto ToParameters(RequestDepositDto requestDepositDto, string referenceNumber)
+        => new RequestDepositDto(
+            AccountNumber: requestDepositDto.AccountNumber,
+            DepositValue: requestDepositDto.DepositValue,
+            Description: requestDepositDto.Description,
+            ReferenceNumber: referenceNumber
+        );
+
+    public static RequestParameterDto ToParameters(RequestTransferDto requestTransferDto, string referenceNumber)
+        => new RequestParameterDto(
+            AccountNumber: requestTransferDto.AccountNumber,
+            TransferFundValue: requestTransferDto.TransferFundValue,
+            RecipientAccountNumber: requestTransferDto.RecipientAccountNumber,
+            ReferenceNumber: referenceNumber,
+            Description: requestTransferDto.Description
+        );
 }

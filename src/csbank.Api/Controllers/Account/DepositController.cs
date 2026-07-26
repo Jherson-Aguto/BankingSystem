@@ -1,6 +1,7 @@
 using CSbank.Application.Interfaces.Services;
 using CSbank.Application.Models;
 using CSBank.Api.Middleware;
+using CSBank.Application.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSBank.Api.Controllers;
@@ -9,17 +10,19 @@ namespace CSBank.Api.Controllers;
 [Route("api/[controller]")]
 public class DepositController(IDepositService deposit) : ControllerBase
 {
-    [HttpPost("deposit")]
-    public async Task<IActionResult> DepositAsync(DepositDto depositDto)
+    [HttpPost("amount")]
+    public async Task<IActionResult> DepositAmount(RequestDepositDto requestDepositDto, AccountTypes accountType)
     {
-        if (depositDto.DepositValue <= 0)
-            throw new ValidationException("Deposit amount must be greater than zero");
+        if (requestDepositDto.DepositValue <= 0)
+            throw new ValidationException("Deposit amount must be greater than 0");
 
-        DepositOutputDto? result = await deposit.DepositBalanceAsync(depositDto);
+        TransactionDto result = await deposit.DepositAmountAsync(requestDepositDto, accountType);
 
         return Ok(
-            ApiResponse<DepositOutputDto>.Ok(
-                success: true,
-                data: result));
+            ApiResponse<TransactionDto>.Ok(
+                success:true,
+                data:result
+            )
+        );
     }
 }

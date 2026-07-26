@@ -1,8 +1,9 @@
-using CSBank.Application.Models;
+using CSbank.Application.Models;
 
-namespace CSBank.Application.Interfaces.IRepositories;
+namespace CSBank.Application.Interfaces.Services;
 
-public interface ITransferService
+public interface ITransferFundService
 {
-    Task TransferOut(TransferOutDto transferOutDto);
+    Task<TransactionsDto>
+    TransferFund(RequestTransferDto requestTransferDto);
 }

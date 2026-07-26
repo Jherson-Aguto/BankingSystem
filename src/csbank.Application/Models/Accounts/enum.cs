@@ -2,6 +2,7 @@ namespace CSBank.Application.Models;
 
 //accounts
 public enum AccountStatus { Active, Frozen, Closed }
+public enum AccountTypes { Savings, Checking }
 public enum ModesOfPayment { Debit, Check, Online }
 
 

@@ -1,17 +1,16 @@
-namespace CSBank.Application.Models;
+namespace CSbank.Application.Models;
 
-public record TransferOutDto //doesn't support other banks hehe
-(
-    //going to replace CustomerId with auth (JWT)
-    Guid CustomerId,
-    Guid AccountId,
+public record RequestTransferDto(
     string AccountNumber,
-    string FirstName,
-    string LastName,
-    decimal TransferAmountValue,
-    string RecipientFirstName,
-    string RecipientLastName,
+    decimal TransferFundValue,
     string RecipientAccountNumber,
-    string? Purpose,
-    bool? IsChecking = false
+    string? Description
+);
+
+public record RequestParameterDto(
+    string AccountNumber,
+    decimal TransferFundValue,
+    string RecipientAccountNumber,
+    string ReferenceNumber,
+    string? Description
 );

@@ -1,5 +1,6 @@
 using CSbank.Application.Mapper;
 using CSbank.Infrastructure.Database.Queries;
+using CSbank.Infrastructure.Utils;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Application.Models;
 using Dapper;
@@ -7,42 +8,25 @@ using Dapper;
 namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class SaveAccountsRepository(
-    HelperFunctions db)
+    HelperFactory db)
     : ISaveAccountsRepository
 {
-    public async Task<Guid> DetailsAsync(AccountDto accountDto)
+    public async Task<AccountDto> DetailsAsync(RequestAccountDto requestAccountDto, AccountTypes accountType)
     {
-        return await db.ExecuteTransactionAsync(
+        return await db.TransactionOperationAsync(
             async (connection, transaction) =>
             {
-                return await connection.QuerySingleAsync<Guid>(
-                    SaveAccount.Details,
-                    MapAccount.ToParameters(accountDto),
-                    transaction
-                );
-            }
-        );
-    }
-
-    public async Task<Guid?> AccountTypeCreationAsync(
-        Guid accountId,
-        string accountNumber,
-        bool? IsChecking = false)
-    {
-        return await db.ExecuteTransactionAsync(
-            async (connection, transaction) =>
-            {
-                string sql = IsChecking switch
+                string sql = accountType switch
                 {
-                    true => SaveAccount.checking,
-                    _ => SaveAccount.savings
+                    AccountTypes.Checking => SaveAccount.CheckingDetails,
+                    AccountTypes.Savings => SaveAccount.SavingsDetails,
+                    _ => throw new ArgumentOutOfRangeException(nameof(accountType))
                 };
 
-                return await connection
-                    .QuerySingleAsync<Guid>(
-                        sql,
-                        new { accountId, accountNumber },
-                        transaction);
+                return await connection.QuerySingleAsync<AccountDto>(
+                    sql,
+                    requestAccountDto,
+                    transaction);
             }
         );
     }

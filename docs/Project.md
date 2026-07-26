@@ -14,7 +14,7 @@ The objective is not simply to build a banking system, but to understand **why e
 
 ## Architecture
 
-**Status:** Phase 1–3 Complete ✅
+**Status:** Phase 1–4B Active 🚧
 
 Completed:
 
@@ -28,15 +28,14 @@ Completed:
 - Dependency Injection architecture
 - Customer Registration
 - Account Creation
-- Mock repository implementation
 - PostgreSQL integration
 - Dapper persistence
+- Repository Executor
+- Higher-Order Transaction Executor
 
-Current focus has shifted from **building architecture** to **designing business operations**.
+The architectural foundation is now considered stable.
 
-The architectural foundation is considered stable.
-
-Current work focuses on implementing transaction-safe banking operations while preserving Clean Architecture.
+Current work focuses on engineering complete banking business operations while preserving Clean Architecture and maximizing PostgreSQL's transactional capabilities.
 
 ---
 
@@ -58,14 +57,20 @@ The following principles guide every feature implemented in CSBank.
 
 Repositories are responsible for persistence orchestration—not business logic.
 
-Repositories should primarily:
+Repositories primarily:
 
 - Choose SQL
 - Supply parameters
+- Execute SQL
 - Map results
-- Return domain/application models
+- Return application models
 
-Repositories should **not** own connection management or transaction lifecycle.
+Repositories no longer own:
+
+- Database connections
+- Transaction creation
+- Commit
+- Rollback
 
 ---
 
@@ -73,21 +78,19 @@ Repositories should **not** own connection management or transaction lifecycle.
 
 Infrastructure owns:
 
-- Connection creation
-- Transaction creation
+- Connection lifecycle
+- Transaction lifecycle
 - Commit
 - Rollback
 - Exception propagation
 
-This responsibility is centralized through reusable transaction helpers built using Higher-Order Functions.
+Reusable Higher-Order Functions centralize transaction execution so repositories remain focused on business persistence.
 
 ---
 
 ## SQL Philosophy
 
-Whenever appropriate:
-
-One business operation should execute as:
+Whenever practical, one business operation should execute as:
 
 ```text
 One Transaction
@@ -105,7 +108,7 @@ Multiple CTEs
 One Database Round Trip
 ```
 
-The objective is to allow PostgreSQL to perform relational work efficiently while minimizing application orchestration.
+The objective is to leverage PostgreSQL as a relational execution engine rather than treating it as simple storage.
 
 ---
 
@@ -115,9 +118,7 @@ Account balance is mutable.
 
 Transaction history is immutable.
 
-The ledger is considered the source of truth.
-
-Current balance is a projection of historical transactions.
+The ledger represents the historical source of truth, while account balances are the current projection.
 
 ---
 
@@ -125,15 +126,23 @@ Current balance is a projection of historical transactions.
 
 Audit logging exists independently from business entities.
 
-Audit records capture:
+Audit logs capture:
 
-- Who performed an action
-- What changed
-- When it changed
+- Entity affected
+- Action performed
+- Who performed the action
+- When it occurred
+- Optional before values
+- Optional after values
 - Request metadata
-- Before/after values
 
-Audit logs describe system events rather than business ownership.
+Business operations decide when before/after snapshots are valuable.
+
+For example:
+
+- Customer registration records the event.
+- Deposit records balance changes.
+- Some operations intentionally leave JSON values null when no meaningful state comparison exists.
 
 ---
 
@@ -148,17 +157,17 @@ CSBank (Solution)
 │   └── Business Rules
 │
 ├── csbank.Application
-│   ├── Use Cases
 │   ├── DTOs
-│   ├── Manual Mappers
+│   ├── Use Cases
 │   ├── Repository Interfaces
+│   ├── Manual Mappers
 │   └── Application Services
 │
 ├── csbank.Infrastructure
 │   ├── Database
-│   ├── RepositoryExecutor
+│   ├── SQL Queries
 │   ├── Repository Implementations
-│   ├── SQL
+│   ├── Repository Executor
 │   ├── Configurations
 │   ├── Dapper
 │   ├── Npgsql
@@ -166,6 +175,7 @@ CSBank (Solution)
 │
 └── csbank.Api
     ├── Controllers
+    ├── Middleware
     ├── Dependency Injection
     └── HTTP Endpoints
 ```
@@ -187,7 +197,7 @@ Domain
 └── nothing
 ```
 
-The API remains the Composition Root and is responsible for registering Infrastructure implementations.
+The API remains the Composition Root.
 
 ---
 
@@ -222,6 +232,10 @@ Repository Executor
 
 ↓
 
+Database Transaction
+
+↓
+
 Dapper
 
 ↓
@@ -233,8 +247,6 @@ PostgreSQL
 
 # Infrastructure Evolution
 
-Infrastructure has evolved through several stages.
-
 ## Stage 1
 
 ```text
@@ -243,7 +255,7 @@ Mock Repository
 
 Purpose:
 
-Architecture validation.
+Validate architecture before persistence.
 
 ---
 
@@ -263,7 +275,7 @@ Dapper
 
 Purpose:
 
-Real persistence.
+Introduce real persistence.
 
 ---
 
@@ -297,7 +309,7 @@ Dapper
 PostgreSQL
 ```
 
-Infrastructure now provides reusable execution helpers that manage:
+Infrastructure now centrally manages:
 
 - Connection lifecycle
 - Transactions
@@ -305,7 +317,7 @@ Infrastructure now provides reusable execution helpers that manage:
 - Rollback
 - Exception propagation
 
-Repositories now focus exclusively on SQL execution.
+Repositories contain almost exclusively business persistence logic.
 
 ---
 
@@ -313,62 +325,57 @@ Repositories now focus exclusively on SQL execution.
 
 Completed.
 
-Concepts mastered:
+Major concepts:
 
 - Clean Architecture
-- Domain Models
 - Domain Services
+- Repository Pattern
 - DTOs
 - Manual Mapping
-- Repository Interfaces
 - Dependency Injection
 - Application Services
-- Customer Registration
 
 Outcome:
 
-A complete architecture independent from persistence.
+A persistence-independent backend architecture.
 
 ---
 
 # Phase 4A — PostgreSQL Fundamentals ✅
 
-Purpose:
+Completed.
 
-Understand relational databases before introducing Infrastructure.
-
-Completed:
+Topics learned:
 
 ## Database Engineering
 
-- Database creation
 - Schemas
 - Tables
 - Constraints
-- Indexes
 - Relationships
+- UUIDs
+- Indexes
 
 ## SQL
 
 - CRUD
+- JOINs
 - CTEs
 - Transactions
-- Aggregation
-- JOINs
 - Referential Integrity
 
 ## ORM Mental Model
 
-Understand:
+Understanding:
 
 - PostgreSQL stores relational data.
 - JOINs reconstruct object graphs.
 - Dapper executes SQL directly.
-- EF Core abstracts persistence.
+- EF Core builds abstractions over SQL.
 
 Outcome:
 
-Transitioned from isolated SQL statements to complete relational workflows.
+Strong relational database fundamentals before persistence engineering.
 
 ---
 
@@ -376,7 +383,7 @@ Transitioned from isolated SQL statements to complete relational workflows.
 
 Current Phase.
 
-Current technologies:
+Current stack:
 
 - PostgreSQL
 - Npgsql
@@ -385,86 +392,78 @@ Current technologies:
 Current engineering focus:
 
 - Repository implementations
-- Connection Factory
 - Repository Executor
 - Higher-Order Functions
 - Transaction management
-- SQL organization
-- Parameterized SQL
 - Business operation modeling
 - Ledger implementation
 - Audit logging
 - Row-level locking
 - Atomic SQL workflows
+- Parameterized SQL
+- CTE-based business operations
 
-Current business operations:
+## Current Business Operations
 
-- Customer Registration ✅
-- Customer Profile ✅
-- Create Account ✅
-- Create Checking Account ✅
-- Create Savings Account ✅
-- Deposit 🚧
+Customer Registration
 
-Major concepts learned:
+- Customer persistence ✅
+- Private information persistence ✅
+- Audit logging ✅
 
-- Higher-Order Functions
-- Delegates
-- Func<>
-- Lambda Expressions
-- Repository abstraction
-- Transaction abstraction
-- Row-level locking (`FOR UPDATE`)
-- Race condition prevention
-- Atomic business operations
-- CTE-based workflows
+Account Creation
 
-Current persistence flow:
+- Account creation ✅
+- Audit logging ✅
 
-```text
-Business Requirement
+Checking Account
 
-↓
+- Creation ✅
+- Audit logging ✅
 
-Business Workflow
+Savings Account
 
-↓
+- Creation ✅
+- Audit logging ✅
 
-Repository
+Deposit
 
-↓
+- Atomic SQL workflow ✅
+- Row locking (`FOR UPDATE`) ✅
+- Transaction history ✅
+- Audit logging ✅
 
-Repository Executor
+Withdraw
 
-↓
+- Planned ⏳
 
-One SQL Statement
+Transfer
 
-↓
+- Planned ⏳
 
-PostgreSQL
-```
+## Unit Testing
 
-Outcome:
+Current coverage:
 
-Infrastructure has transitioned from simple CRUD repositories into reusable persistence infrastructure.
+- Domain account number generator ✅
+- Domain reference number generator ✅
+- Parallel uniqueness validation ✅
+
+Testing is intentionally limited during this phase.
+
+The objective is to continue engineering business operations rather than pursuing exhaustive test coverage.
 
 ---
 
 # Phase 5 — Relational Database Design
 
-Purpose:
-
-Refine the existing CSBank schema using enterprise database engineering principles.
-
-Topics include:
+Topics:
 
 - Normalization
 - Denormalization
 - Composite Keys
 - Candidate Keys
 - Alternate Keys
-- Many-to-Many relationships
 - Index strategy
 - Constraint design
 - ERD refinement
@@ -477,12 +476,12 @@ Topics include:
 Learn EF Core only after understanding:
 
 - SQL
-- Relational modeling
+- PostgreSQL
 - Dapper
 - Repository design
 - Persistence engineering
 
-The objective is to understand EF Core as an abstraction rather than a replacement for SQL.
+The goal is to understand the abstraction instead of depending on it blindly.
 
 ---
 
@@ -492,82 +491,106 @@ The objective is to understand EF Core as an abstraction rather than a replaceme
 
 - Query optimization
 - EXPLAIN ANALYZE
-- Big-O analysis
 - Memory optimization
 
 ---
 
 ## Phase 8 — Algorithms
 
-Apply algorithms where they improve backend processing and data handling.
+Apply algorithms where they improve backend systems.
 
 ---
 
 ## Phase 9 — Trees & Hierarchies
 
-Model recursive business structures.
+Recursive business models.
 
 ---
 
 ## Phase 10 — Networking
 
-REST, HTTP, HTTPS, API design and idempotency.
+- REST
+- HTTP
+- HTTPS
+- API Design
+- Idempotency
 
 ---
 
 ## Phase 11 — Advanced Concurrency
 
-Topics include:
-
-- Transaction isolation
-- Optimistic concurrency
+- Isolation Levels
 - Deadlocks
 - Retry strategies
+- Optimistic concurrency
 - Concurrent updates
 
 ---
 
 ## Phase 12 — Security
 
-Authentication, Authorization, BCrypt, JWT, validation and secure persistence.
+- Authentication
+- Authorization
+- JWT
+- BCrypt
+- Validation
+- Secure persistence
 
 ---
 
 ## Phase 13 — Caching
 
-Memory Cache, Redis, distributed caching and cache invalidation.
+- Memory Cache
+- Redis
+- Distributed caching
+- Cache invalidation
 
 ---
 
-## Phase 14 — Testing
+## Phase 14 — LINQ
 
-xUnit
+Purpose:
 
-NSubstitute
+Learn LINQ as a C# language feature before writing substantial automated tests.
 
-Integration Testing
+Topics:
 
-Repository Testing
-
-Application Testing
-
-API Testing
+- Deferred execution
+- IEnumerable vs IQueryable
+- Projection
+- Filtering
+- Ordering
+- Grouping
+- Aggregation
 
 ---
 
-## Phase 15 — Deployment & DevOps
+## Phase 15 — Testing
 
-Docker
+Purpose:
 
-CI/CD
+Verify business behavior rather than simply learning xUnit syntax.
 
-Cloud Deployment
+Topics:
 
-Logging
+- Testing fundamentals
+- xUnit
+- Domain tests
+- Infrastructure tests
+- Integration tests
+- API tests
+- Concurrency tests
 
-Monitoring
+---
 
-Configuration Management
+## Phase 16 — Deployment & DevOps
+
+- Docker
+- CI/CD
+- Cloud Deployment
+- Logging
+- Monitoring
+- Configuration Management
 
 ---
 
@@ -575,7 +598,7 @@ Configuration Management
 
 Build a production-quality banking backend while understanding every abstraction beneath it.
 
-By the completion of CSBank, the project should demonstrate practical knowledge of:
+By completing CSBank, the project should demonstrate practical knowledge of:
 
 - Clean Architecture
 - Software Engineering
@@ -587,10 +610,12 @@ By the completion of CSBank, the project should demonstrate practical knowledge 
 - Relational Database Design
 - Entity Framework Core
 - Performance Engineering
+- Algorithms
 - Networking
 - Concurrency
 - Security
 - Caching
+- LINQ
 - Testing
 - Deployment
 

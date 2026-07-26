@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace CSbank.Domain.Services.Account;
 
 public class AccountDomainService
@@ -14,7 +16,7 @@ public class AccountDomainService
                 "Currency code must contain at least two characters.",
                 nameof(currency));
 
-        string uniqueId = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+        string uniqueId = Guid.NewGuid().ToString("N") + DateTime.UtcNow.ToString();
         string code = currency[..2];
         string cleanCut = new string(uniqueId.Where(char.IsDigit).ToArray());
 
@@ -23,11 +25,11 @@ public class AccountDomainService
 
     public string GenerateReferenceNumber()
     {
-        string uniqueId = Guid.NewGuid().ToString("N");
-        string cleanId = new string(uniqueId.Where(char.IsDigit).ToArray()!);
+        string uniqueId = Guid.NewGuid().ToString("N") + RandomNumberGenerator.GetInt32(1, 9999).ToString();
+        string cleanNumber = new string(uniqueId.Where(char.IsDigit).ToArray());
         string date = DateTime.UtcNow.ToString();
         string cleanDate = new string(date.Where(char.IsDigit).ToArray());
 
-        return string.Concat(cleanDate, cleanId);
+        return string.Concat(cleanNumber, cleanDate)[..20];
     }
 }
