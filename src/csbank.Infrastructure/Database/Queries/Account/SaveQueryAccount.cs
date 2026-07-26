@@ -58,11 +58,11 @@ public sealed class SaveAccount
         a.id,
         a.customer_id AS CustomerId,
         a.account_number AS AccountNumber,
-        a.account_type AS AccountType,
+        a.account_type::text AS AccountType,
         a.currency,
         a.balance,
         a.created_at AS CreatedAt,
-        a.account_status AS AccountStatus
+        a.account_status::text AS AccountStatus
     FROM account AS a
     """;
 

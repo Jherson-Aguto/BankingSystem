@@ -13,3 +13,8 @@ public record TransactionDto(
     string? Description,
     DateTime CreatedAt
 );
+
+public record TransactionsDto(
+    TransactionDto TransactionDtoOut,
+    TransactionDto TransactionDtoIn
+);

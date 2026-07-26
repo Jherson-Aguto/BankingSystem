@@ -21,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<IReadUserRepository, ReadUserRepository>();
         services.AddScoped<ISaveAccountsRepository, SaveAccountsRepository>();
         services.AddScoped<IDepositRepository, DepositRepository>();
+        services.AddScoped<ITransferFundRepository, TransferFundRepository>();
 
         //helper
         services.AddScoped<HelperFactory>();
@@ -32,8 +33,8 @@ public static class DependencyInjection
         var dataSource = builder.Build();
         services.AddSingleton(dataSource);
         services.AddScoped<IDbConnectionFactory, PostgreSqlConnectionFactory>();
-        
-        
+
+
 
 
         return services;

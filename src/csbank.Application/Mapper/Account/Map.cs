@@ -20,4 +20,12 @@ public static class MapAccount
             ReferenceNumber: referenceNumber
         );
 
+    public static RequestParameterDto ToParameters(RequestTransferDto requestTransferDto, string referenceNumber)
+        => new RequestParameterDto(
+            AccountNumber: requestTransferDto.AccountNumber,
+            TransferFundValue: requestTransferDto.TransferFundValue,
+            RecipientAccountNumber: requestTransferDto.RecipientAccountNumber,
+            ReferenceNumber: referenceNumber,
+            Description: requestTransferDto.Description
+        );
 }

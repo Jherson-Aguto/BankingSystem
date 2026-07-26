@@ -16,6 +16,7 @@ public static class DependencyInjection
         services.AddScoped<IRegisterCustomerService, RegisterCustomerService>();
         services.AddScoped<IRegisterAccountsService, RegisterAccountsService>();
         services.AddScoped<IDepositService, DepositService>();
+        services.AddScoped<ITransferFundService, TransferFundService>();
 
         //Domain Services
         services.AddScoped<UserDomainService>();
