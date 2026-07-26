@@ -1,32 +1,30 @@
 namespace CSBank.Application.Models;
 
-public class AccountDto
-{
-    public Guid? Id { get; set; }
-    public Guid CustomerId { get; set; }
-    public string? AccountNumber { get; set; } = string.Empty;
-    public string Currency { get; set; } = string.Empty;
-    public DateTime? CreatedAt { get; set; }
-    public AccountStatus AccountStatus { get; set; } = AccountStatus.Active;
-};
-
-// public record 
+public record AccountDto
+(
+    Guid? Id,
+    Guid CustomerId,
+    string? AccountNumber,
+    AccountTypes AccountType,
+    string Currency,
+    decimal Balance,
+    DateTime? CreatedAt,
+    AccountStatus AccountStatus
+);
 
 public record CheckingAccount
-{
-    public Guid? Id { get; set; }
-    public decimal Balance { get; set; }
-    public decimal OverdraftLimit { get; set; }
-    public ModesOfPayment ModesOfPayment { get; set; }
-    public decimal? InterestRate { get; set; }
-    public decimal? Fees { get; set; }
-};
+(
+     Guid? Id,
+     decimal OverdraftLimit,
+     ModesOfPayment ModesOfPayment,
+     decimal? InterestRate,
+     decimal? Fees
+);
 
-public class SavingsAccount
-{
-    public Guid? Id { get; set; }
-    public decimal Balance { get; set; }
-    public int WithdrawalUsage { get; set; }
-    public decimal InterestRate { get; set; }
-    public decimal? Fees { get; set; }
-};
+public record SavingsAccount
+(
+    Guid? Id,
+    int WithdrawalUsage,
+    decimal InterestRate,
+    decimal? Fees
+);

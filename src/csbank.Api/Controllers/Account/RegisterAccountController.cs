@@ -13,30 +13,15 @@ public class AccountsController(
     : ControllerBase
 {
     [HttpPost("account")]
-    public async Task<IActionResult> DetailsAsync([FromBody] AccountDto accountDto)
+    public async Task<IActionResult> DetailsAsync(
+        [FromBody] RequestAccountDto requestAccountDto, 
+        [FromQuery] AccountTypes accountType)
     {
-        Guid data = await registerAccounts.DetailsAsync(accountDto);
+        AccountDto data = await registerAccounts.DetailsAsync(requestAccountDto, accountType);
 
         return Ok(
-            ApiResponse<Guid>
+            ApiResponse<AccountDto>
             .Ok(success: true,
                 data));
-    }
-
-    [HttpPost("accountType/{accountId:Guid}")]
-    public async Task<IActionResult> AccountTypeCreationAsync(
-        [FromRoute] Guid accountId,
-        [FromQuery] string accountNumber,
-        [FromQuery] bool? isChecking = false)
-    {
-        Guid? queriedAccountId = await registerAccounts.AccountTypeCreationAsync(accountId, accountNumber, isChecking);
-
-        if (queriedAccountId is null)
-            throw new NotFoundException($"No account matches Account id and number");
-
-        return Ok(
-            ApiResponse<string>
-            .Ok(success: true,
-            data: "Successfully Created!"));
     }
 }

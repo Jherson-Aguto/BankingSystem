@@ -4,9 +4,5 @@ namespace CSBank.Application.Interfaces.IRepositories;
 
 public interface ISaveAccountsRepository
 {
-    Task<Guid> DetailsAsync(AccountDto accountDto);
-    Task<Guid?> AccountTypeCreationAsync(
-        Guid accountId,
-        string accountNumber,
-        bool? IsChecking = false);
+    Task<AccountDto> DetailsAsync(RequestAccountDto requestAccountDto, AccountTypes accountType);
 }

@@ -3,25 +3,41 @@ namespace CSbank.Infrastructure.Database.Queries;
 
 public sealed class SaveAccount
 {
-    public const string Details =
+    public const string SavingsDetails =
     """
     WITH account AS (
         INSERT INTO 
             accounts.account_details(
                 customer_id,
                 account_number,
+                account_type,
                 currency,
                 account_status    
-    )
+            )
         VALUES(
-            @customerId,
-            @accountNumber,
-            @currency,
-            @accountStatus::accounts.account_status)
+            @CustomerId,
+            @AccountNumber,
+            'Savings',
+            @Currency,
+            'Active'
         RETURNING
             id,
-            customer_id
+            customer_id,
+            account_number,
+            account_type,
+            currency,
+            balance,
+            created_at,
+            account_status,
     ),
+    savings AS (
+        INSERT INTO accounts.savings_account(
+            account_id
+        )
+        SELECT
+            a.id
+        FROM account AS a
+    )
     recorded_audit AS (
         INSERT INTO 
             audit.audit_logs (
@@ -38,71 +54,53 @@ public sealed class SaveAccount
         FROM account AS a
     )
     SELECT 
-        id AS Id FROM account;
+        a.id,
+        a.customer_id AS CustomerId,
+        a.account_number AS AccountNumber,
+        a.account_type AS AccountType,
+        a.currency,
+        a.balance,
+        a.created_at AS CreatedAt,
+        a.account_status AS AccountStatus
+    FROM account AS a
     """;
 
-    public const string checking =
-    """
+
+    public const string CheckingDetails =
+   """
     WITH account AS (
-        SELECT
+        INSERT INTO 
+            accounts.account_details(
+                customer_id,
+                account_number,
+                account_type,
+                currency,
+                account_status    
+            )
+        VALUES(
+            @CustomerId,
+            @AccountNumber,
+            'Checking',
+            @Currency,
+            'Active'
+        RETURNING
             id,
             customer_id,
-            account_number
-        FROM accounts.account_details
-        WHERE
-            id = @accountId AND
-            account_number = @accountNumber
+            account_number,
+            account_type,
+            currency,
+            balance,
+            created_at,
+            account_status,
     ),
     checking AS (
         INSERT INTO accounts.checking_account(
             account_id
-    )
-        SELECT
-            account.id FROM account
-    ),
-    recorded_audit AS (
-        INSERT INTO 
-            audit.audit_logs(
-                entity_name,
-                entity_id,
-                action,
-                performed_by
         )
         SELECT
-            'CheckingAccount',
-            a.id,
-            'Created',
-            a.customer_id
-        FROM 
-            account AS a
-    )
-    SELECT 
-        a.id AS AccountId FROM account AS a;
-    """;
-
-    public const string savings =
-    """
-    WITH account AS (
-        SELECT
-            id,
-            customer_id,
-            account_number
-        FROM 
-            accounts.account_details
-        WHERE
-            id = @accountId AND
-            account_number = @accountNumber 
-    ),
-    savings AS (
-        INSERT INTO 
-            accounts.savings_account(
-                account_id
-    )
-        SELECT
             a.id
-        FROM 
-            account AS a
-    ),
+        FROM account AS a
+    )
     recorded_audit AS (
         INSERT INTO 
             audit.audit_logs (
@@ -112,13 +110,21 @@ public sealed class SaveAccount
                 performed_by
     )
         SELECT
-            'SavingsAccount',
+            'Account',
             a.id,
             'Created',
             a.customer_id
         FROM account AS a
     )
     SELECT 
-        a.id As AccountId FROM account AS a;
+        a.id,
+        a.customer_id AS CustomerId,
+        a.account_number AS AccountNumber,
+        a.account_type AS AccountType,
+        a.currency,
+        a.balance,
+        a.created_at AS CreatedAt,
+        a.account_status AS AccountStatus
+    FROM account AS a
     """;
 }

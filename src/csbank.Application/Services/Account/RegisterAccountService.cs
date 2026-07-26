@@ -1,6 +1,8 @@
+using CSbank.Application.Mapper;
 using CSbank.Domain.Services.Account;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Application.Interfaces.Services;
+using CSBank.Application.Mapper;
 using CSBank.Application.Models;
 
 namespace CSBank.Application.Services;
@@ -10,28 +12,14 @@ public class RegisterAccountsService(
     AccountDomainService domainService)
     : IRegisterAccountsService
 {
-    public async Task<Guid> DetailsAsync(AccountDto accountDto)
+    public async Task<AccountDto> DetailsAsync(RequestAccountDto requestAccountDto, AccountTypes accountType)
     {
-        string accountNumber = domainService.GenerateAccountNumber(accountDto.Currency);
+        string accountNumber = domainService.GenerateAccountNumber(requestAccountDto.Currency);
 
-        AccountDto dto = new AccountDto
-        {
-            CustomerId = accountDto.CustomerId,
-            AccountNumber = accountNumber,
-            Currency = accountDto.Currency,
-            CreatedAt = accountDto.CreatedAt,
-            AccountStatus = accountDto.AccountStatus
-        };
+        RequestAccountDto dto = MapAccount.ToParameters(requestAccountDto, accountNumber);
 
-        return await saveAccounts.DetailsAsync(dto);
+        return await saveAccounts.DetailsAsync(dto, accountType);
     }
 
-    public async Task<Guid?> AccountTypeCreationAsync(
-        Guid accountId,
-        string accountNumber,
-        bool? IsChecking = false)
-    {
-        return await saveAccounts.AccountTypeCreationAsync(accountId, accountNumber, IsChecking);
-    }
 
 }
