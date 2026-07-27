@@ -4,6 +4,6 @@ namespace CSBank.Application.Interfaces.Services;
 
 public interface IRegisterCustomerService
 {
-    Task<(CustomerDto customerData, PrivateInfoDto privateInfoData)> CustomerAsync
+    Task<UserDetailsDto?> CustomerAsync
     (CustomerDto customerDto, PrivateInfoDto privateInfo);
 }

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS transactions.transaction_history(
     amount NUMERIC(12, 4) NOT NULL,
     balance_before NUMERIC(12, 4) NOT NULL,
     balance_after NUMERIC(12, 4) NOT NULL,
-    reference_number VARCHAR(254) UNIQUE NOT NULL,
+    reference_number VARCHAR(254) NOT NULL,
     description TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

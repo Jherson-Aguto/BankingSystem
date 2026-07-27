@@ -9,7 +9,7 @@ namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class TransferFundRepository(HelperFactory db) : ITransferFundRepository
 {
-    public async Task<TransactionsDto>
+    public async Task<TransactionsDto?>
     TransferFund(RequestTransferDto requestTransferDto, string ReferenceNumber)
     {
         return await db.TransactionOperationAsync(
@@ -21,7 +21,7 @@ public class TransferFundRepository(HelperFactory db) : ITransferFundRepository
                          new TransactionsDto(transactionDtoOut, transactionDtoIn),
                     MapAccount.ToParameters(requestTransferDto, ReferenceNumber),
                     transaction,
-                    splitOn: "id")).Single();
+                    splitOn: "id")).SingleOrDefault();
 
                 return results;
             }

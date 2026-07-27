@@ -21,6 +21,7 @@ public sealed class SaveAccount
             @Currency,
             'Active'
         )
+        WHERE @CustomerId IN (SELECT id FROM users.customer_details)
         RETURNING
             id,
             customer_id,
@@ -53,6 +54,8 @@ public sealed class SaveAccount
             'Created',
             a.customer_id
         FROM account AS a
+        WHERE
+            a.id IS NOT NULL
     )
     SELECT 
         a.id,
@@ -85,6 +88,7 @@ public sealed class SaveAccount
             @Currency,
             'Active'
         )
+        WHERE @CustomerId IN (SELECT id FROM users.customer_details)
         RETURNING
             id,
             customer_id,
@@ -117,6 +121,7 @@ public sealed class SaveAccount
             'Created',
             a.customer_id
         FROM account AS a
+        WHERE a.id IS NOT NULL
     )
     SELECT 
         a.id,

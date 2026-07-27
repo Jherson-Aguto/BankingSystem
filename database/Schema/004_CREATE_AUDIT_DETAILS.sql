@@ -8,7 +8,7 @@ CREATE TYPE audit.entity_names AS ENUM (
     'Transaction'
 );
 
-CREATE TYPE audit.actions AS ENUM ('Created', 'Updated', 'Deleted', 'Login', 'Logout');
+CREATE TYPE audit.actions AS ENUM ('Created', 'Updated', 'Deleted', 'Login', 'Logout', 'TransferFunds');
 
 CREATE TABLE IF NOT EXISTS audit.audit_logs(
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

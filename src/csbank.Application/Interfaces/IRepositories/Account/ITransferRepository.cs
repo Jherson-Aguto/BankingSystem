@@ -4,6 +4,6 @@ namespace CSBank.Application.Interfaces.IRepositories;
 
 public interface ITransferFundRepository
 {
-    Task<TransactionsDto>
+    Task<TransactionsDto?>
     TransferFund(RequestTransferDto requestTransferDto, string ReferenceNumber);
 }
