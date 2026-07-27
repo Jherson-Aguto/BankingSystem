@@ -9,6 +9,7 @@ flowchart LR
     C --> D[User 2 Receives the Money from user 1]
     C --> E[Ledger records the transaction]
     D --> E
-    E --> F([END])
+    E --> F[logs the user 1 actions]
+    F --> G([END])
 
 ```
