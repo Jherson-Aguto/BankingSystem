@@ -12,12 +12,13 @@ public class AccountsController(
     IRegisterAccountsService registerAccounts)
     : ControllerBase
 {
-    [HttpPost("account")]
+    [HttpPost("account/{customerId::Guid}")]
     public async Task<IActionResult> DetailsAsync(
-        [FromBody] RequestAccountDto requestAccountDto,
+        [FromRoute] Guid customerId,
+        [FromQuery] string currency,
         [FromQuery] AccountTypes accountType)
     {
-        AccountDto? data = await registerAccounts.DetailsAsync(requestAccountDto, accountType);
+        AccountDto? data = await registerAccounts.DetailsAsync(customerId, currency, accountType);
 
         if (data is null)
             throw new NotFoundException("Failed to register account.");

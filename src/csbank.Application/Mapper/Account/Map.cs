@@ -5,11 +5,18 @@ namespace CSbank.Application.Mapper;
 
 public static class MapAccount
 {
-    public static RequestAccountDto ToParameters(RequestAccountDto requestAccountDto, string accountNumber)
+    public static RequestAccountDto ToParameters(RequestAccountDto requestAccountDto, string? accountNumber)
         => new RequestAccountDto(
             CustomerId: requestAccountDto.CustomerId,
             AccountNumber: accountNumber,
             Currency: requestAccountDto.Currency
+        );
+
+    public static RequestAccountDto ToParameters(Guid customerId, string currency, string accountNumber)
+        => new RequestAccountDto(
+            CustomerId: customerId,
+            Currency: currency,
+            AccountNumber: accountNumber
         );
 
     public static RequestDepositDto ToParameters(RequestDepositDto requestDepositDto, string referenceNumber)
