@@ -10,7 +10,7 @@ public class ReadUserRepository(
     HelperFactory db)
     : IReadUserRepository
 {
-    public async Task<UserDetailsDto> ByIdAsync(Guid id)
+    public async Task<UserDetailsDto?> ByIdAsync(Guid id)
     {
         return await db.OperationAsync(
             async (connection) =>
@@ -26,7 +26,7 @@ public class ReadUserRepository(
                             splitOn: "CustomerId"))
                         .SingleOrDefault();
 
-                return data!;
+                return data;
             }
         );
     }

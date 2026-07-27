@@ -14,9 +14,10 @@ public class RegisterUserController(IRegisterCustomerService _register) : Contro
     {
         var result = await _register.CustomerAsync(r.CustomerDto, r.PrivateInfoDto);
 
-        return Ok(ApiResponse<(
-            CustomerDto,
-            PrivateInfoDto)>
+        if (result is null)
+            throw new NotFoundException("Cannot register information.");
+
+        return Ok(ApiResponse<UserDetailsDto?>
             .Ok(
                 success: true,
                 data: result));

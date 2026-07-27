@@ -12,7 +12,7 @@ public class DepositService(
     AccountDomainService domainService
 ) : IDepositService
 {
-    public async Task<TransactionDto> DepositAmountAsync(RequestDepositDto requestDepositDto, AccountTypes accountType)
+    public async Task<TransactionDto?> DepositAmountAsync(RequestDepositDto requestDepositDto, AccountTypes accountType)
     {
         string referenceNumber = domainService.GenerateReferenceNumber();
 

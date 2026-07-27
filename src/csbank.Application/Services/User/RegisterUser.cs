@@ -11,7 +11,7 @@ public class RegisterCustomerService
 ISaveUserRepository _save) : IRegisterCustomerService
 {
 
-    public async Task<(CustomerDto customerData, PrivateInfoDto privateInfoData)>
+    public async Task<UserDetailsDto?>
     CustomerAsync(CustomerDto customerDto, PrivateInfoDto privateInfo)
     {
         var customerData = await register.RegisterCustomerDetails(Map.ToDomain(customerDto));
@@ -20,8 +20,6 @@ ISaveUserRepository _save) : IRegisterCustomerService
         var customerResults = Map.ToDto(customerData);
         var privateInfoResults = Map.ToDto(privateInfoData);
 
-        await _save.DetailsAsync(customerResults, privateInfoResults);
-
-        return (customerData: customerResults, privateInfoData: privateInfoResults);
+        return await _save.DetailsAsync(customerResults, privateInfoResults);
     }
 }

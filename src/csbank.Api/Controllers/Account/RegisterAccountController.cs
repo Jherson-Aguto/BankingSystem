@@ -14,10 +14,13 @@ public class AccountsController(
 {
     [HttpPost("account")]
     public async Task<IActionResult> DetailsAsync(
-        [FromBody] RequestAccountDto requestAccountDto, 
+        [FromBody] RequestAccountDto requestAccountDto,
         [FromQuery] AccountTypes accountType)
     {
-        AccountDto data = await registerAccounts.DetailsAsync(requestAccountDto, accountType);
+        AccountDto? data = await registerAccounts.DetailsAsync(requestAccountDto, accountType);
+
+        if (data is null)
+            throw new NotFoundException("Failed to register account.");
 
         return Ok(
             ApiResponse<AccountDto>

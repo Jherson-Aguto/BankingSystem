@@ -12,7 +12,7 @@ public class RegisterAccountsService(
     AccountDomainService domainService)
     : IRegisterAccountsService
 {
-    public async Task<AccountDto> DetailsAsync(RequestAccountDto requestAccountDto, AccountTypes accountType)
+    public async Task<AccountDto?> DetailsAsync(RequestAccountDto requestAccountDto, AccountTypes accountType)
     {
         string accountNumber = domainService.GenerateAccountNumber(requestAccountDto.Currency);
 

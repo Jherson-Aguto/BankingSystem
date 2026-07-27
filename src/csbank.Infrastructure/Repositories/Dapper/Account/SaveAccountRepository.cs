@@ -11,7 +11,7 @@ public class SaveAccountsRepository(
     HelperFactory db)
     : ISaveAccountsRepository
 {
-    public async Task<AccountDto> DetailsAsync(RequestAccountDto requestAccountDto, AccountTypes accountType)
+    public async Task<AccountDto?> DetailsAsync(RequestAccountDto requestAccountDto, AccountTypes accountType)
     {
         return await db.TransactionOperationAsync(
             async (connection, transaction) =>
@@ -23,7 +23,7 @@ public class SaveAccountsRepository(
                     _ => throw new ArgumentOutOfRangeException(nameof(accountType))
                 };
 
-                return await connection.QuerySingleAsync<AccountDto>(
+                return await connection.QuerySingleOrDefaultAsync<AccountDto>(
                     sql,
                     requestAccountDto,
                     transaction);

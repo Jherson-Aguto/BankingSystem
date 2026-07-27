@@ -9,14 +9,14 @@ namespace CSbank.Infrastructure.Repositories.Dapper;
 
 public class DepositRepository(HelperFactory db) : IDepositRepository
 {
-    public async Task<TransactionDto> DepositAmount(
+    public async Task<TransactionDto?> DepositAmount(
         RequestDepositDto requestDepositDto,
         AccountTypes accountType)
     {
         return await db.TransactionOperationAsync(
            async (connection, transaction) =>
            {
-               return await connection.QuerySingleAsync<TransactionDto>(
+               return await connection.QuerySingleOrDefaultAsync<TransactionDto>(
                    DepositQuery.Deposit,
                    requestDepositDto,
                    transaction

@@ -9,7 +9,7 @@ public class TransferFundService(
     ITransferFundRepository fundRepository,
     AccountDomainService domainService) : ITransferFundService
 {
-    public async Task<TransactionsDto>
+    public async Task<TransactionsDto?>
     TransferFund(RequestTransferDto requestTransferDto)
     {
         string referenceNumber = domainService.GenerateReferenceNumber();
