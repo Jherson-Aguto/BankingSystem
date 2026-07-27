@@ -5,5 +5,5 @@ namespace CSbank.Application.Interfaces.Services;
 
 public interface IDepositService
 {
-    Task<TransactionDto?> DepositAmountAsync(RequestDepositDto requestDepositDto, AccountTypes accountType);
+    Task<TransactionDto?> DepositAmountAsync(RequestDepositUpperDto requestDepositDto, AccountTypes accountType);
 }

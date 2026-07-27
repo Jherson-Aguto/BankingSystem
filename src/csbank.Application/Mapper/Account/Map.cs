@@ -19,7 +19,7 @@ public static class MapAccount
             AccountNumber: accountNumber
         );
 
-    public static RequestDepositDto ToParameters(RequestDepositDto requestDepositDto, string referenceNumber)
+    public static RequestDepositDto ToParameters(RequestDepositUpperDto requestDepositDto, string referenceNumber)
         => new RequestDepositDto(
             AccountNumber: requestDepositDto.AccountNumber,
             DepositValue: requestDepositDto.DepositValue,

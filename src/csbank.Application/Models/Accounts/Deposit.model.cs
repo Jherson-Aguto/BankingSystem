@@ -6,3 +6,9 @@ public record RequestDepositDto(
     string? Description,
     string? ReferenceNumber
 );
+
+public record RequestDepositUpperDto(
+    string AccountNumber,
+    decimal DepositValue,
+    string? Description
+);
