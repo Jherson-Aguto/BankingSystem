@@ -4,5 +4,5 @@ namespace CSBank.Application.Interfaces.IRepositories;
 
 public interface ISaveUserRepository
 {
-    Task<UserDetailsDto?> DetailsAsync(CustomerDto customerDetails, PrivateInfoDto privateInformation);
+    Task<UserDetailsDto?> DetailsAsync(RequestUserDetailsDto requestUserDetailsDto);
 }

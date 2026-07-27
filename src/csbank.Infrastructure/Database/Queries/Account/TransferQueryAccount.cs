@@ -10,7 +10,7 @@ public sealed class TransferQuery
             ad.customer_id,
             ad.balance
         FROM users.customer_details cd
-        LEFT JOIN
+        JOIN
             accounts.account_details ad
         ON cd.id = ad.customer_id
         WHERE

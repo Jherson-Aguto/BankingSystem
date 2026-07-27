@@ -11,12 +11,12 @@ namespace CSBank.Api.Controllers;
 public class DepositController(IDepositService deposit) : ControllerBase
 {
     [HttpPost("amount")]
-    public async Task<IActionResult> DepositAmount(RequestDepositUpperDto requestDepositDto, AccountTypes accountType)
+    public async Task<IActionResult> DepositAmount(RequestDepositUpperDto requestDepositDto)
     {
         if (requestDepositDto.DepositValue <= 0)
             throw new ValidationException("Deposit amount must be greater than 0");
 
-        TransactionDto? result = await deposit.DepositAmountAsync(requestDepositDto, accountType);
+        TransactionDto? result = await deposit.DepositAmountAsync(requestDepositDto);
 
         if (result is null)
             throw new NotFoundException("Deposit is not successful.");
