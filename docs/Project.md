@@ -14,7 +14,7 @@ The objective is not simply to build a banking system, but to understand **why e
 
 ## Architecture
 
-**Status:** Phase 1–4B Active 🚧
+**Status:** Phase 1–6 Active 🚧
 
 Completed:
 
@@ -32,10 +32,16 @@ Completed:
 - Dapper persistence
 - Repository Executor
 - Higher-Order Transaction Executor
+- Repository engineering
+- Transaction-safe business operations
+- Relational database design
+- Schema evolution
+- Constraint design
+- ERD refinement
 
 The architectural foundation is now considered stable.
 
-Current work focuses on engineering complete banking business operations while preserving Clean Architecture and maximizing PostgreSQL's transactional capabilities.
+Current work focuses on understanding **Entity Framework Core as an abstraction over concepts that have already been implemented manually**.
 
 ---
 
@@ -72,6 +78,8 @@ Repositories no longer own:
 - Commit
 - Rollback
 
+The persistence implementation may be handwritten SQL (Dapper) or EF Core depending on the engineering trade-offs.
+
 ---
 
 ## Transaction Philosophy
@@ -85,6 +93,8 @@ Infrastructure owns:
 - Exception propagation
 
 Reusable Higher-Order Functions centralize transaction execution so repositories remain focused on business persistence.
+
+These architectural principles remain unchanged regardless of whether persistence is implemented using Dapper or EF Core.
 
 ---
 
@@ -109,6 +119,30 @@ One Database Round Trip
 ```
 
 The objective is to leverage PostgreSQL as a relational execution engine rather than treating it as simple storage.
+
+Even while learning EF Core, SQL remains a first-class engineering skill.
+
+---
+
+## Abstraction Philosophy
+
+Every abstraction introduced throughout CSBank should be understood before being depended upon.
+
+Current understanding progression:
+
+```text
+Raw SQL
+
+↓
+
+Dapper
+
+↓
+
+Entity Framework Core
+```
+
+Each layer increases developer productivity without replacing the underlying relational concepts.
 
 ---
 
@@ -170,6 +204,7 @@ CSBank (Solution)
 │   ├── Repository Executor
 │   ├── Configurations
 │   ├── Dapper
+│   ├── Entity Framework Core
 │   ├── Npgsql
 │   └── Database Connectivity
 │
@@ -228,15 +263,8 @@ Infrastructure Repository
 
 ↓
 
-Repository Executor
-
-↓
-
-Database Transaction
-
-↓
-
-Dapper
+Persistence Implementation
+(Dapper / EF Core)
 
 ↓
 
@@ -279,7 +307,7 @@ Introduce real persistence.
 
 ---
 
-## Stage 3 (Current)
+## Stage 3
 
 ```text
 Repository
@@ -309,15 +337,37 @@ Dapper
 PostgreSQL
 ```
 
-Infrastructure now centrally manages:
+Purpose:
 
-- Connection lifecycle
-- Transactions
-- Commit
-- Rollback
-- Exception propagation
+Centralize infrastructure responsibilities while maximizing SQL control.
 
-Repositories contain almost exclusively business persistence logic.
+---
+
+## Stage 4 (Current)
+
+```text
+Repository
+
+↓
+
+Persistence Abstraction
+
+↓
+
+Entity Framework Core
+
+↓
+
+Generated SQL
+
+↓
+
+PostgreSQL
+```
+
+Purpose:
+
+Understand what EF Core abstracts while preserving the relational knowledge acquired through handwritten SQL.
 
 ---
 
@@ -379,119 +429,111 @@ Strong relational database fundamentals before persistence engineering.
 
 ---
 
-# Phase 4B — Persistence & Business Operations Engineering 🚧
+# Phase 4B — Persistence & Business Operations Engineering ✅
 
-Current Phase.
+Completed.
 
-Current stack:
+Technologies:
 
 - PostgreSQL
 - Npgsql
 - Dapper
 
-Current engineering focus:
+Major concepts:
 
 - Repository implementations
 - Repository Executor
 - Higher-Order Functions
 - Transaction management
-- Business operation modeling
+- Business workflow modeling
 - Ledger implementation
 - Audit logging
 - Row-level locking
 - Atomic SQL workflows
 - Parameterized SQL
-- CTE-based business operations
+- Concurrency validation
+- Ledger validation
 
-## Current Business Operations
+Completed business operations:
 
-Customer Registration
+- Customer Registration ✅
+- Customer Profile ✅
+- Create Account ✅
+- Create Checking Account ✅
+- Create Savings Account ✅
+- Deposit ✅
+- Transfer ✅
 
-- Customer persistence ✅
-- Private information persistence ✅
-- Audit logging ✅
+Major outcome:
 
-Account Creation
-
-- Account creation ✅
-- Audit logging ✅
-
-Checking Account
-
-- Creation ✅
-- Audit logging ✅
-
-Savings Account
-
-- Creation ✅
-- Audit logging ✅
-
-Deposit
-
-- Atomic SQL workflow ✅
-- Row locking (`FOR UPDATE`) ✅
-- Transaction history ✅
-- Audit logging ✅
-
-Withdraw
-
-- Planned ⏳
-
-Transfer
-
-- Planned ⏳
-
-## Unit Testing
-
-Current coverage:
-
-- Domain account number generator ✅
-- Domain reference number generator ✅
-- Parallel uniqueness validation ✅
-
-Testing is intentionally limited during this phase.
-
-The objective is to continue engineering business operations rather than pursuing exhaustive test coverage.
+Built a reusable persistence infrastructure capable of executing complete banking workflows safely and atomically.
 
 ---
 
-# Phase 5 — Relational Database Design
+# Phase 5 — Relational Database Design ✅
 
-Topics:
+Completed.
 
-- Normalization
-- Denormalization
+Topics learned:
+
+- One-to-One relationships
+- One-to-Many relationships
+- Many-to-Many relationships
 - Composite Keys
 - Candidate Keys
 - Alternate Keys
-- Index strategy
-- Constraint design
-- ERD refinement
-- Schema evolution
+- Normalization
+- Denormalization
+- Constraint Design
+- Index Strategy
+- Schema Evolution
+- ERD Refinement
+
+Major outcome:
+
+Developed the ability to evolve relational schemas based on changing business requirements rather than simply writing SQL.
 
 ---
 
-# Phase 6 — Entity Framework Core
+# Phase 6 — Entity Framework Core 🚧
 
-Learn EF Core only after understanding:
+Current Phase.
 
-- SQL
-- PostgreSQL
-- Dapper
-- Repository design
-- Persistence engineering
+Purpose:
 
-The goal is to understand the abstraction instead of depending on it blindly.
+Learn EF Core as a productivity layer built upon concepts already understood.
+
+Current topics:
+
+- DbContext
+- DbSet
+- Fluent API
+- Entity Configuration
+- Relationship Mapping
+- Change Tracking
+- Loading Strategies
+- Value Conversions
+- Generated SQL
+- Migrations
+- EF Core vs Dapper
+- Persistence trade-offs
+
+Current objective:
+
+Understand exactly what EF Core abstracts and when it should—or should not—be used.
 
 ---
 
 # Remaining Roadmap
 
-## Phase 7 — Performance
+## Phase 7 — Performance Engineering
 
 - Query optimization
+- Query plans
 - EXPLAIN ANALYZE
+- Index strategy
 - Memory optimization
+- Collection performance
 
 ---
 
@@ -551,7 +593,7 @@ Recursive business models.
 
 Purpose:
 
-Learn LINQ as a C# language feature before writing substantial automated tests.
+Master LINQ as a C# language feature before relying on it throughout EF Core and testing.
 
 Topics:
 
@@ -562,6 +604,7 @@ Topics:
 - Ordering
 - Grouping
 - Aggregation
+- Set operations
 
 ---
 

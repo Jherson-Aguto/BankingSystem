@@ -70,17 +70,17 @@ Frameworks should increase productivity—not replace understanding.
 |--------|--------|
 | Phase 1–3 — Clean Architecture & Software Engineering | ✅ Complete |
 | Phase 4A — PostgreSQL & Database Engineering | ✅ Complete |
-| Phase 4B — Persistence & Business Operations Engineering | 🚧 Current |
-| Phase 5 — Relational Database Design | ⏳ Planned |
-| Phase 6 — Entity Framework Core | ⏳ Planned |
+| Phase 4B — Persistence & Business Operations Engineering | ✅ Complete |
+| Phase 5 — Relational Database Design | ✅ Complete |
+| Phase 6 — Entity Framework Core | 🚧 Current |
 
 Current milestone:
 
-The architectural foundation is complete.
+The architectural foundation, persistence infrastructure, and relational database design are complete.
 
-Current work focuses on engineering transaction-safe banking operations using PostgreSQL, Dapper and reusable persistence infrastructure.
+Current work focuses on understanding **Entity Framework Core as an abstraction over concepts already mastered through PostgreSQL and Dapper**.
 
-The emphasis has shifted from building architecture to designing complete business workflows.
+The emphasis has shifted from building persistence infrastructure to understanding higher-level persistence abstractions.
 
 ---
 
@@ -209,7 +209,7 @@ Understand:
 - PostgreSQL stores relational data.
 - SQL reconstructs relationships.
 - Dapper executes SQL directly.
-- EF Core abstracts persistence.
+- EF Core builds abstractions over SQL.
 
 Major outcome:
 
@@ -217,11 +217,11 @@ Transitioned from isolated SQL statements to complete relational workflows.
 
 ---
 
-# Phase 4B — Persistence & Business Operations Engineering 🚧
+# Phase 4B — Persistence & Business Operations Engineering ✅
 
 Purpose:
 
-Understand how enterprise applications execute business operations safely, atomically and efficiently.
+Understand how enterprise applications execute business operations safely, atomically, and efficiently.
 
 Technologies:
 
@@ -269,34 +269,29 @@ Business concepts:
 - Balance consistency
 - Business workflow modeling
 
-Current completed operations:
+Completed operations:
 
 - Customer Registration ✅
 - Customer Profile ✅
 - Create Account ✅
 - Create Checking Account ✅
 - Create Savings Account ✅
-- Deposit (with transaction history and audit logging) ✅
-
-Current work:
-
-- Withdraw
-- Transfer
-- Additional business operations
+- Deposit ✅
+- Transfer ✅
 
 Major outcome:
 
-Transitioned from CRUD repositories to reusable persistence infrastructure capable of executing complete banking workflows.
+Built reusable persistence infrastructure capable of executing complete banking workflows while validating concurrency, ledger consistency, and transactional correctness.
 
 ---
 
-# Phase 5 — Relational Database Design
+# Phase 5 — Relational Database Design ✅
 
 Purpose:
 
-Learn how enterprise databases evolve beyond CRUD.
+Understand how enterprise databases evolve beyond CRUD.
 
-Topics:
+Topics learned:
 
 - One-to-One
 - One-to-Many
@@ -313,31 +308,65 @@ Topics:
 
 Major outcome:
 
-Understand how database design supports long-term maintainability before introducing ORM mapping.
+Developed the ability to model and evolve relational databases according to business requirements, justify relationships and constraints, and confidently modify schemas as the domain evolves.
 
 ---
 
-# Phase 6 — Entity Framework Core
+# Phase 6 — Entity Framework Core 🚧
 
 Purpose:
 
-Learn EF Core as an abstraction built upon concepts already understood.
+Understand Entity Framework Core as an abstraction built upon concepts already mastered manually.
+
+Current technologies:
+
+- Entity Framework Core
+- PostgreSQL
+- Npgsql
 
 Topics:
 
+## Core Components
+
 - DbContext
 - DbSet
+- Entity States
+- Change Tracker
+
+## Mapping
+
 - Fluent API
 - Entity Configuration
-- Change Tracking
 - Relationship Mapping
 - Value Conversions
+- Owned Types
+
+## Querying
+
+- LINQ
+- Generated SQL
 - Loading Strategies
+- Projection
+- Tracking vs No Tracking
+
+## Database Evolution
+
 - Migrations
+- Schema Updates
+- Data Seeding
 
-Major outcome:
+## Engineering
 
-Understand exactly what EF Core is abstracting rather than treating it as a black box.
+- EF Core vs Dapper
+- Repository implementation
+- Performance trade-offs
+- SQL inspection
+- When to use EF Core
+- When handwritten SQL is preferable
+
+Major objective:
+
+Understand exactly what EF Core abstracts while preserving a strong understanding of the SQL, relational modeling, and persistence engineering occurring underneath.
 
 ---
 
@@ -467,19 +496,19 @@ Improve application performance while maintaining consistency.
 
 Purpose:
 
-Master LINQ as a C# language feature before relying on it in testing and EF Core.
+Master LINQ as a C# language feature before relying on it extensively throughout EF Core and testing.
 
 Topics:
 
 - IEnumerable
 - IQueryable
-- Deferred execution
+- Deferred Execution
 - Projection
 - Filtering
 - Ordering
 - Grouping
 - Aggregation
-- Set operations
+- Set Operations
 
 Major outcome:
 
@@ -560,4 +589,4 @@ By completing CSBank, you should understand:
 
 Every phase intentionally builds upon the previous one so that each new abstraction reinforces concepts already understood instead of replacing them.
 
-The objective is not simply to complete CSBank, but to develop the engineering mindset required to design, build and maintain production-quality backend systems.
+The objective is not simply to complete CSBank, but to develop the engineering mindset required to design, build, and maintain production-quality backend systems.

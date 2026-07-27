@@ -1,435 +1,197 @@
-# TaskNow.md
-
 # Current Status
 
 **Project:** CSBank
 
-**Current Phase:** Phase 4B — Persistence & Business Operations Engineering 🚧
+**Current Phase:** Phase 6 — Entity Framework Core 🚧
 
 **Architecture Status:** ✅ Stable
 
-**Current Feature:** Business Operation Validation & Concurrency Testing
+**Current Focus:** Understanding EF Core as a Persistence Abstraction
 
-**Next Phase:** Phase 5 — Relational Database Design
+**Previous Phase:** Phase 5 — Relational Database Design ✅
 
----
-
-# Current Feature Progress
-
-```text
-Customer Profile
-        ✅
-
-Register Customer
-    ├── Customer Registration
-    │       ✅
-    ├── Private Information
-    │       ✅
-    └── Audit Logging
-            ✅
-
-Create Account
-        ✅
-    ├── Account Number Generation
-    │       ✅ Domain Service
-    ├── Account Persistence
-    │       ✅
-    └── Audit Logging
-            ✅
-
-Create Checking Account
-        ✅
-    └── Audit Logging
-            ✅
-
-Create Savings Account
-        ✅
-    └── Audit Logging
-            ✅
-
-Deposit
-    ├── Business Workflow
-    │       ✅
-    ├── SQL Workflow
-    │       ✅
-    ├── Row Locking (FOR UPDATE)
-    │       ✅
-    ├── Balance Update CTE
-    │       ✅
-    ├── Transaction History CTE
-    │       ✅
-    ├── Audit Log CTE
-    │       ✅
-    ├── Repository
-    │       ✅
-    ├── Application Service
-    │       ✅
-    ├── Controller
-    │       ✅
-    ├── Higher-Order Transaction Executor
-    │       ✅
-    ├── DTO Mapping
-    │       ✅
-    └── Business Response
-            ✅
-
-Transfer
-    ├── Multi-Account Transaction
-    │       ✅
-    ├── Dual Row Locking
-    │       ✅
-    ├── Atomic Debit/Credit
-    │       ✅
-    ├── Dual Transaction History
-    │       ✅
-    ├── Audit Logging
-    │       ✅
-    ├── Repository
-    │       ✅
-    ├── Application Service
-    │       ✅
-    ├── Controller
-    │       ✅
-    ├── Dapper Multi-Mapping
-    │       ✅
-    └── Business Response
-            ✅
-
-Transaction History
-        ✅ Infrastructure Implemented
-
-Audit Logging
-        ✅ Infrastructure Implemented
-
-Domain Testing
-    ├── Account Number Generator
-    │       ✅
-    ├── Reference Number Generator
-    │       ✅
-    └── Concurrent Uniqueness
-            ✅
-```
+**Next Phase:** Phase 7 — Performance Engineering
 
 ---
 
-# Immediate Objective
+# Current Task
 
-Validate and harden the completed banking operations.
+Phase 5 is considered complete.
 
-Current priorities:
+The database has evolved through real engineering decisions driven by business requirements rather than theoretical exercises.
 
-- Verify Deposit rollback behavior.
-- Verify Transfer rollback behavior.
-- Stress-test concurrent Deposits.
-- Stress-test concurrent Transfers.
-- Improve API responses where appropriate.
-- Refactor SQL if simplification opportunities are discovered.
+The objective now is to understand Entity Framework Core as an abstraction built upon concepts that have already been implemented manually.
 
-The architectural foundation and core banking operations are now considered complete for Phase 4B.
+Current objectives:
 
-Development has shifted from implementation toward validation, robustness, and engineering refinement.
+- Learn what EF Core abstracts.
+- Compare EF Core with Dapper.
+- Understand DbContext.
+- Understand DbSet.
+- Configure entity mappings using Fluent API.
+- Learn relationship mapping.
+- Understand Change Tracking.
+- Learn EF Core migrations.
+- Compare generated SQL with handwritten SQL.
+- Identify when EF Core is appropriate and when handwritten SQL remains preferable.
+
+The goal is not to replace SQL knowledge, but to understand how EF Core builds upon it.
 
 ---
 
 # Current Engineering Focus
 
-## Business Operation Engineering
+## Entity Framework Core
 
-Every feature follows the same engineering pipeline.
+Current work should focus on understanding the abstraction rather than memorizing APIs.
 
-```text
-Business Requirement
+When learning a new EF Core feature, continue asking:
 
-↓
+### Database
 
-Business Workflow
+- What SQL is EF Core generating?
+- What database objects are being affected?
+- Would I be able to write this SQL manually?
 
-↓
+### Architecture
 
-Business Rules
+- Does this abstraction simplify the code?
+- Does it hide important behavior?
+- Does it belong in Infrastructure?
 
-↓
+### Performance
 
-Domain Decision
-
-↓
-
-Application Orchestration
-
-↓
-
-Repository Contract
-
-↓
-
-SQL Design
-
-↓
-
-Infrastructure Implementation
-
-↓
-
-HTTP API
-```
-
-Implementation follows the business process—not the other way around.
+- Is EF Core generating efficient SQL?
+- Would Dapper or handwritten SQL be more appropriate?
+- Is change tracking necessary for this scenario?
 
 ---
 
-# Current Persistence Philosophy
-
-Repositories are persistence orchestrators.
-
-Repository responsibilities:
-
-- Select SQL
-- Prepare parameters
-- Execute SQL
-- Materialize business results
-
-Repositories no longer manage:
-
-- Connection creation
-- Transaction creation
-- Commit
-- Rollback
-
-Those responsibilities belong to reusable Infrastructure components.
-
----
-
-# Repository Execution Architecture
+# Current Architecture
 
 ```text
-Repository
+HTTP Request
 
 ↓
 
-ExecuteTransactionAsync()
+Controller
 
 ↓
 
-Higher-Order Function
+Application Service
 
 ↓
 
-Connection Factory
+Domain
 
 ↓
 
-Database Connection
+Repository Interface
 
 ↓
 
-Database Transaction
+Infrastructure Repository
 
 ↓
 
-Dapper
+Entity Framework Core
 
 ↓
 
 PostgreSQL
 ```
 
-Infrastructure owns:
+Repositories continue to orchestrate persistence.
 
-- Connection lifecycle
-- Transaction lifecycle
-- Commit
-- Rollback
-- Exception propagation
-
-Repositories contain almost exclusively business-specific persistence logic.
+EF Core becomes the persistence implementation instead of Dapper for scenarios where it provides value.
 
 ---
 
-# Current SQL Philosophy
+# Current Persistence Philosophy
 
-Whenever practical, one banking business operation executes as:
+Understand the abstraction before depending on it.
+
+EF Core should be viewed as:
 
 ```text
-One Transaction
+Domain Objects
 
 ↓
 
-One SQL Statement
+Change Tracker
 
 ↓
 
-Multiple Writable CTEs
+Entity Configuration
 
 ↓
 
-One Database Round Trip
+Generated SQL
+
+↓
+
+PostgreSQL
 ```
 
-Current business operations leverage PostgreSQL to perform:
+The database remains the source of truth.
 
-- Row locking
-- Business validation
-- Balance updates
-- Transaction history
-- Audit logging
-- Business result projection
-
-The database acts as an execution engine rather than passive storage.
+EF Core is responsible for generating SQL—not replacing relational concepts.
 
 ---
 
 # Current Learning Focus
 
-## Persistence Engineering
-
 Current concepts:
 
-- Repository Pattern
-- Repository Executor
-- Higher-Order Functions
-- Delegates
-- Func<>
-- Lambda Expressions
-- Transaction abstraction
-- Parameterized SQL
-- Dapper materialization
-- Record mapping
-- Dapper multi-mapping
-- splitOn
-- SQL result projection
+- DbContext
+- DbSet
+- Fluent API
+- Entity Configuration
+- Relationship Mapping
+- Change Tracking
+- Loading Strategies
+- Migrations
+- Value Conversions
+- Generated SQL
+- EF Core vs Dapper
+- Persistence trade-offs
+
+Every feature should be understood in terms of the SQL and database behavior it abstracts.
 
 ---
 
-## Business Operations Engineering
+# Current Philosophy
 
-Current concepts:
+Continue applying the project's core principle:
 
-- Business workflow modeling
-- Atomic operations
-- Ledger architecture
-- Audit logging
-- Multi-account transactions
-- Separation of Domain and Persistence
-- Business-oriented SQL design
+> Understand the abstraction before using the abstraction.
 
----
+Whenever EF Core introduces a feature, identify:
 
-## PostgreSQL
+- What manual code it replaces.
+- What SQL it generates.
+- What database concepts it depends on.
+- What trade-offs it introduces.
+- When it should or should not be used.
 
-Current concepts:
-
-- Common Table Expressions (CTEs)
-- Writable CTE workflows
-- FOR UPDATE
-- Row-level locking
-- UPDATE ... RETURNING
-- INSERT ... RETURNING
-- Atomic SQL execution
-- Transaction boundaries
-- Race condition prevention
-- JSONB audit snapshots
-- PostgreSQL ENUM integration
-
-Major realization:
-
-A transaction boundary is created by the application, while PostgreSQL guarantees atomic execution within that boundary.
+The objective is to become capable of choosing between EF Core, Dapper, and handwritten SQL based on engineering requirements rather than familiarity.
 
 ---
 
-## C# Language Concepts
+# Next Phase
 
-Recently learned and applied:
+After understanding Entity Framework Core:
 
-- Higher-Order Functions
-- Delegates
-- Func<>
-- Lambda Expressions
-- Reusable transaction execution
-- Dapper multi-mapping
-- Generic overload resolution
-- Immutable DTO projection
-- Basic xUnit fundamentals
-- Parallel execution testing
+**Phase 7 — Performance Engineering**
 
-Major realizations:
+Topics include:
 
-- LINQ did not introduce lambda expressions or Higher-Order Functions.
-- xUnit verifies software behavior rather than serving as the learning objective.
-- Dapper maps SQL result sets based entirely on column order and aliases.
+- Query optimization
+- Query plans
+- EXPLAIN ANALYZE
+- Index strategy
+- Collection performance
+- Memory optimization
+- Performance profiling
 
----
-
-# Current Engineering Checklist
-
-Continue asking for every feature:
-
-## Business
-
-- What business problem is being solved?
-- What is the business workflow?
-- Which rules belong in the Domain?
-
----
-
-## Persistence
-
-- Which invariants belong in PostgreSQL?
-- Does this operation require a transaction?
-- Can PostgreSQL execute more of the workflow?
-- Can the operation execute as one SQL statement?
-- Can database round trips be reduced?
-
----
-
-## Architecture
-
-- Which layer owns this responsibility?
-- Is Infrastructure reusable?
-- Is the repository orchestrating persistence only?
-- Is the implementation simple, maintainable, and scalable?
-
----
-
-# Next Milestones
-
-## Validation
-
-- Verify rollback scenarios.
-- Verify concurrent operations.
-- Validate transaction consistency.
-- Validate audit integrity.
-- Validate ledger consistency.
-
----
-
-## Phase 5 Preparation
-
-After validation is complete:
-
-- Begin Relational Database Design.
-- Review normalization.
-- Improve indexing strategy.
-- Refine ERD.
-- Evaluate schema evolution opportunities.
-
----
-
-# Current Learning Outcome
-
-Recent milestones achieved:
-
-- ✅ Transitioned from CRUD repositories to complete business operation modeling.
-- ✅ Implemented Deposit as a complete PostgreSQL workflow.
-- ✅ Implemented Transfer as a multi-account atomic transaction.
-- ✅ Built reusable transaction execution using Higher-Order Functions.
-- ✅ Connected Delegates, Func<>, Lambda Expressions, and Higher-Order Functions conceptually.
-- ✅ Understood row-level locking using FOR UPDATE.
-- ✅ Implemented Transaction History using writable CTEs.
-- ✅ Implemented Audit Logging directly inside SQL workflows.
-- ✅ Implemented Dapper multi-mapping for composite business responses.
-- ✅ Learned to diagnose SQL, Dapper, Npgsql, and framework-level issues independently.
-- ✅ Began treating PostgreSQL as an execution engine rather than only a persistence store.
-- ✅ Built and validated Domain Services for account/reference number generation.
-- ✅ Created initial xUnit tests covering uniqueness, concurrency, and validation.
-
-The implementation phase of the core banking operations is now complete. The remaining work for Phase 4B focuses on validation, concurrency testing, rollback verification, and engineering refinement before progressing to Relational Database Design.
+The objective is to understand how engineering decisions affect scalability and how to diagnose performance bottlenecks across the application and database.
