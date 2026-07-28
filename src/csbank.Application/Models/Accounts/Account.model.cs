@@ -16,7 +16,7 @@ public record CheckingAccount
 (
      Guid? Id,
      decimal OverdraftLimit,
-     ModesOfPayment ModesOfPayment,
+     string ModesOfPayment,
      decimal? InterestRate,
      decimal? Fees
 );

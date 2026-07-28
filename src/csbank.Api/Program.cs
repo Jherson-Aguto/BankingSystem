@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
