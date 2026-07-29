@@ -4,9 +4,9 @@ namespace CSbank.Domain.Entities;
 public class AccountDetails
 {
     public Guid Id { get; private set; }
-    public Guid CustomerId { get; private set; }
+    public Guid? CustomerId { get; private set; }
     public string AccountNumber { get; private set; } = string.Empty;
-    public AccountTypes AccountType { get; private set; }
+    public AccountTypes? AccountType { get; private set; }
     public string Currency { get; private set; } = string.Empty;
     public decimal Balance { get; private set; }
     public DateTime CreatedAt { get; private set; }
@@ -14,13 +14,14 @@ public class AccountDetails
     public Customer Customer { get; private set; } = null!;
     public CheckingAccount CheckingAccount { get; private set; } = null!;
     public SavingsAccount SavingsAccount { get; private set; } = null!;
+    public TransactionHistory TransactionHistory { get; private set; } = null!;
 
     private AccountDetails() { }
 
     public AccountDetails(
-        Guid customerId,
+        Guid? customerId,
         string accountNumber,
-        AccountTypes accountTypes,
+        AccountTypes? accountTypes,
         string currency
     )
     {

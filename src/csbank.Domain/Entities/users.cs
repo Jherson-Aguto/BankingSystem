@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace CSbank.Domain.Entities;
 
 public class Customer
@@ -8,6 +10,8 @@ public class Customer
     public string? Suffix { get; private set; } = string.Empty;
     public DateTime RegistrationDate { get; private set; }
     public char? MiddleInitial { get; private set; }
+    public PrivateInformation PrivateInformation { get; private set; } = null!;
+    public List<AccountDetails> AccountDetails { get; private set; } = null!;
 
     private Customer() { }
     public Customer(
@@ -23,9 +27,60 @@ public class Customer
         MiddleInitial = middleInitial;
     }
 
-    public PrivateInformation PrivateInformation { get; private set; } = null!;
-    public List<AccountDetails> AccountDetails { get; private set; } = null!;
 
+    public bool RemoveSuffix()
+    {
+        if (string.IsNullOrWhiteSpace(Suffix))
+            return false;
+
+        Suffix = null;
+        return true;
+    }
+
+    public bool RemoveMiddleInitial()
+    {
+        if (MiddleInitial is null)
+            return false;
+
+        MiddleInitial = null;
+        return true;
+    }
+
+    public bool UpdateFirstName(string firstName)
+    {
+        if (string.IsNullOrWhiteSpace(firstName))
+            return false;
+
+        FirstName = firstName;
+        return true;
+    }
+
+    public bool UpdateLastName(string lastName)
+    {
+        if (string.IsNullOrWhiteSpace(lastName))
+            return false;
+
+        LastName = lastName;
+        return true;
+    }
+
+    public bool UpdateSuffix(string suffix)
+    {
+        if (string.IsNullOrWhiteSpace(suffix))
+            return false;
+
+        Suffix = suffix;
+        return true;
+    }
+
+    public bool UpdateMiddleInitial(char middleInitial)
+    {
+        if (Char.IsWhiteSpace(middleInitial))
+            return false;
+
+        MiddleInitial = middleInitial;
+        return true;
+    }
 }
 
 public class PrivateInformation
