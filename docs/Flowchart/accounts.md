@@ -4,22 +4,18 @@ title: Create User Account
 ---
 flowchart LR
     A([START]) --> B[/Customer Request/]
-    B --> C{Use existing account?}
-    C -- Yes --> D[Choose account number]
-    D --> E{Create checking/savings account?}
-    E -- Yes --> F[Create checking/savings account]
-    E -- No --> G([END])
-    F --> G
-    C -- No --> H{Create new account?}
-    H -- Yes --> E
-    H -- No --> G
+    B -->  C[/Enter Currency/]
+    C --> D{Account Type}
+    D --Savings--> E[Creates Account]
+    D --Checking--> E
+    E --> G([END])
 ```
 ```mermaid
 ---
 title: Generate Account Number
 ---
 flowchart LR
-    A([START]) --> B[Customer Creates Account]
+    A([START]) --> B[Creates Account]
     B --> C[Generate Account Number]
     C --> D([END])
 ```

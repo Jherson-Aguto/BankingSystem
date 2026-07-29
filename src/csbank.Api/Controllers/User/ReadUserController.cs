@@ -20,6 +20,5 @@ public class ReadUserController(IReadUserService readUser) : ControllerBase
         return Ok(ApiResponse<UserDetailsDto>.Ok(
             success: true,
             data: user));
-
     }
 }

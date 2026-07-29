@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS Users.Customer_Details(
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     suffix VARCHAR(100),
-    registration_date TIMESTAMPTZ,
+    registration_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     middle_initial CHAR(1)
 );
 

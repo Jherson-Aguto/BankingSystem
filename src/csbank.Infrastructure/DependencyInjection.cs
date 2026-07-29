@@ -5,6 +5,7 @@ using CSbank.Infrastructure.Database.Connections;
 using CSbank.Infrastructure.Repositories.Dapper;
 using CSbank.Infrastructure.Utils;
 using CSBank.Application.Interfaces.IRepositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -34,7 +35,10 @@ public static class DependencyInjection
         services.AddSingleton(dataSource);
         services.AddScoped<IDbConnectionFactory, PostgreSqlConnectionFactory>();
 
-
+        //EF Core
+        services.AddDbContext<AppDbContext>(
+            option => option.UseNpgsql(connectionString)
+        );
 
 
         return services;

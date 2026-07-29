@@ -20,7 +20,46 @@ public class CustomerDto
     public char? MiddleInitial { get; set; } = null;
 };
 
+public class PrivateInfoDto
+{
+    public Guid CustomerId { get; set; }
+
+    [Required]
+    public string Email { get; set; } = string.Empty;
+
+    [Required]
+    public string PhoneNumber { get; set; } = string.Empty;
+
+    [Required]
+    public string City { get; set; } = string.Empty;
+
+    [Required]
+    public string Province { get; set; } = string.Empty;
+
+    [Required]
+    public string Country { get; set; } = string.Empty;
+
+    [Required]
+    public string Nationality { get; set; } = string.Empty;
+
+    public DateTime BirthDate { get; set; }
+};
+
 public record UserDetailsDto(
     CustomerDto CustomerDto,
     PrivateInfoDto PrivateInfoDto
+);
+
+public record RequestUserDetailsDto(
+    string FirstName,
+    string LastName,
+    string? Suffix,
+    char? MiddleInitial,
+    string Email,
+    string PhoneNumber,
+    string City,
+    string Province,
+    string Country,
+    string Nationality,
+    DateTime BirthDate
 );

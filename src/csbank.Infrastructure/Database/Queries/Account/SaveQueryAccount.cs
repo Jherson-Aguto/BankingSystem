@@ -14,14 +14,15 @@ public sealed class SaveAccount
                 currency,
                 account_status    
             )
-        VALUES(
+        SELECT
             @CustomerId,
             @AccountNumber,
             'Savings',
             @Currency,
             'Active'
+        WHERE EXISTS(
+            SELECT 1 FROM users.customer_details WHERE id = @CustomerId
         )
-        WHERE @CustomerId IN (SELECT id FROM users.customer_details)
         RETURNING
             id,
             customer_id,
@@ -81,14 +82,15 @@ public sealed class SaveAccount
                 currency,
                 account_status    
             )
-        VALUES(
+        SELECT
             @CustomerId,
             @AccountNumber,
             'Checking',
             @Currency,
             'Active'
+        WHERE EXISTS (
+            SELECT 1 FROM users.customer_details WHERE id = @CustomerId
         )
-        WHERE @CustomerId IN (SELECT id FROM users.customer_details)
         RETURNING
             id,
             customer_id,

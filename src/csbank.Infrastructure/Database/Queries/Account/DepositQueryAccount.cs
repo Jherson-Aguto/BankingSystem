@@ -32,7 +32,7 @@ public sealed class DepositQuery
     ),
     created_transaction AS (
         INSERT INTO
-            transactions.transaction_history (
+            transactions.transaction_history AS th(
                 account_id,
                 transaction_type,
                 amount,
@@ -56,15 +56,15 @@ public sealed class DepositQuery
         WHERE
             ub.id = la.id
         RETURNING
-            id,
-            account_id,
-            transaction_type,
-            amount,
-            balance_before,
-            balance_after,
-            reference_number,
-            description,
-            created_at
+            th.id,
+            th.account_id,
+            th.transaction_type,
+            th.amount,
+            th.balance_before,
+            th.balance_after,
+            th.reference_number,
+            th.description,
+            th.created_at
     ),
     recorded_audit AS (
         INSERT INTO
@@ -77,8 +77,8 @@ public sealed class DepositQuery
                 new_values
             )
         SELECT
-            'Account',
-            ub.id,
+            'Transaction',
+            ct.id,
             'Updated',
             ub.customer_id,
             jsonb_build_object(
@@ -91,6 +91,8 @@ public sealed class DepositQuery
             updated_balance AS ub
         CROSS JOIN
             locked_account AS la
+        CROSS JOIN
+            created_transaction AS ct
         WHERE
             la.id = ub.id
     )

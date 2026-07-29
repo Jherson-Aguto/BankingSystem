@@ -2,7 +2,6 @@ using CSbank.Application.Mapper;
 using CSbank.Domain.Services.Account;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Application.Interfaces.Services;
-using CSBank.Application.Mapper;
 using CSBank.Application.Models;
 
 namespace CSBank.Application.Services;

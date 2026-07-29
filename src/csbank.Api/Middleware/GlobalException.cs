@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Npgsql;
 namespace CSBank.Api.Middleware;
 
 public class ExceptionHandler(
@@ -15,7 +17,6 @@ public class ExceptionHandler(
             NotFoundException => (StatusCodes.Status404NotFound, exception.Message),
             ValidationException => (StatusCodes.Status400BadRequest, exception.Message),
             ConflictException => (StatusCodes.Status409Conflict, exception.Message),
-            
 
             _ => (StatusCodes.Status500InternalServerError, "An unexpected server error occured")
         };

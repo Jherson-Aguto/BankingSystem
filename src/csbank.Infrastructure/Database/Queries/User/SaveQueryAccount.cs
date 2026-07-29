@@ -13,11 +13,11 @@ public sealed class SaveUser
             middle_initial
         )
         VALUES (
-            @firstName,
-            @lastName,
-            @suffix,
-            @registrationDate,
-            @middleInitial
+            @FirstName,
+            @LastName,
+            @Suffix,
+            CURRENT_TIMESTAMP,
+            @MiddleInitial
         )
         RETURNING *
     ),
@@ -34,13 +34,13 @@ public sealed class SaveUser
         )
         SELECT
             c.id,
-            @email,
-            @phoneNumber,
-            @city,
-            @province,
-            @country,
-            @nationality,
-            @birthDate
+            @Email,
+            @PhoneNumber,
+            @City,
+            @Province,
+            @Country,
+            @Nationality,
+            @BirthDate
         FROM customer AS c
         WHERE c.id IS NOT NULL
         RETURNING *
@@ -73,7 +73,7 @@ public sealed class SaveUser
         pi.province,
         pi.country,
         pi.nationality,
-        pi.birth_date AS BirthDate
+        pi.birth_date::timestamp AS BirthDate
     FROM customer AS cd
     CROSS JOIN private_info AS pi
     """;

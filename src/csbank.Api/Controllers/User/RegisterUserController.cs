@@ -10,9 +10,9 @@ namespace CSBank.Api.Controllers;
 public class RegisterUserController(IRegisterCustomerService _register) : ControllerBase
 {
     [HttpPost("Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest r)
+    public async Task<IActionResult> Register([FromBody] RequestUserDetailsDto requestUserDetailsDto)
     {
-        var result = await _register.CustomerAsync(r.CustomerDto, r.PrivateInfoDto);
+        var result = await _register.CustomerAsync(requestUserDetailsDto);
 
         if (result is null)
             throw new NotFoundException("Cannot register information.");
@@ -22,5 +22,4 @@ public class RegisterUserController(IRegisterCustomerService _register) : Contro
                 success: true,
                 data: result));
     }
-    public record RegisterRequest(CustomerDto CustomerDto, PrivateInfoDto PrivateInfoDto);
 }
