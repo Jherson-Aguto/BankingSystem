@@ -2,7 +2,6 @@ BEGIN;
 
 CREATE TYPE transactions.transaction_types AS ENUM (
     'Deposit', 
-    'Withdraw', 
     'TransferIn', 
     'TransferOut', 
     'Interest', 

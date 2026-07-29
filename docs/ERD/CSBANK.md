@@ -77,7 +77,7 @@ erDiagram
     TRANSACTIONS.TRANSACTION_HISTORY{
         UUID id PK
         UUID account_id FK
-        enum transaction_type "enum: (Deposit, Withdraw, TransferIn, TransferOut, Interest, Fee)"
+        enum transaction_type "enum: (Deposit, TransferIn, TransferOut, Interest, Fee)"
         NUMERIC amount
         NUMERIC balance_before
         NUMERIC balance_after
