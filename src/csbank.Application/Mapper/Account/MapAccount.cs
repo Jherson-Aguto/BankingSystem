@@ -1,7 +1,6 @@
-using CSbank.Application.Models;
 using CSBank.Application.Models;
 
-namespace CSbank.Application.Mapper;
+namespace CSBank.Application.Mapper;
 
 public static class MapAccount
 {

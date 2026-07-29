@@ -1,4 +1,4 @@
-using CSbank.Application.Models;
+using CSBank.Application.Models;
 using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;

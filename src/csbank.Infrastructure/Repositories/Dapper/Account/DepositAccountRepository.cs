@@ -1,5 +1,5 @@
 using CSbank.Application.Interfaces.IRepositories;
-using CSbank.Application.Models;
+using CSBank.Application.Models;
 using CSbank.Infrastructure.Database.Queries;
 using CSbank.Infrastructure.Utils;
 using Dapper;

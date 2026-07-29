@@ -1,4 +1,3 @@
-using CSbank.Application.Mapper;
 using CSbank.Infrastructure.Database.Queries;
 using CSbank.Infrastructure.Utils;
 using CSBank.Application.Interfaces.IRepositories;

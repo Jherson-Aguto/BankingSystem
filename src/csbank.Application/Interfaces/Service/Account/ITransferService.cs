@@ -1,4 +1,4 @@
-using CSbank.Application.Models;
+using CSBank.Application.Models;
 
 namespace CSBank.Application.Interfaces.Services;
 

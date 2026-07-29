@@ -1,4 +1,4 @@
-using CSbank.Domain.Services;
+using CSBank.Domain.Services;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;

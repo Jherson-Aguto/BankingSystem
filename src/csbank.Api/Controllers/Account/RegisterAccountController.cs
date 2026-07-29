@@ -1,3 +1,4 @@
+using CSbank.Domain.Entities;
 using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;
