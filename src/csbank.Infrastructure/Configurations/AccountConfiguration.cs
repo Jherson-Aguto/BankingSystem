@@ -13,7 +13,7 @@ public sealed class AccountDetailsConfiguration
 
         builder.ToTable("account_details", "accounts");
 
-        builder.Property(x => x.CustomerId).HasColumnName("customer_id").HasDefaultValueSql("gen_random_uuid()").IsRequired();
+        builder.Property(x => x.CustomerId).HasColumnName("customer_id");
         builder.Property(x => x.AccountNumber).HasColumnName("account_number").HasMaxLength(100).IsRequired();
         builder.Property(x => x.AccountType).HasColumnType("accounts.account_types").HasColumnName("account_type");
         builder.Property(x => x.Currency).HasColumnName("currency").HasMaxLength(100).IsRequired();
@@ -35,6 +35,10 @@ public sealed class AccountDetailsConfiguration
 
         builder
             .HasOne(x => x.SavingsAccount)
+            .WithOne(x => x.AccountDetails);
+
+        builder
+            .HasOne(x => x.TransactionHistory)
             .WithOne(x => x.AccountDetails);
     }
 }
