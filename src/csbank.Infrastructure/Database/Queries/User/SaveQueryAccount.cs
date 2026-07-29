@@ -9,14 +9,12 @@ public sealed class SaveUser
             first_name,
             last_name,
             suffix,
-            registration_date,
             middle_initial
         )
         VALUES (
             @FirstName,
             @LastName,
             @Suffix,
-            CURRENT_TIMESTAMP,
             @MiddleInitial
         )
         RETURNING *
