@@ -23,5 +23,11 @@ public class TransactionHistoryConfiguration
         builder.Property(x => x.Description).HasColumnName("description").HasColumnType("text");
         builder.Property(x => x.CreatedAt).HasColumnName("created_at")
             .HasColumnType("timestamp with time zone").HasDefaultValueSql("CURRENT_TIMESTAMP").IsRequired();
+
+        builder
+            .HasOne(x => x.AccountDetails)
+            .WithMany(x => x.TransactionHistory)
+            .HasForeignKey(x => x.AccountId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

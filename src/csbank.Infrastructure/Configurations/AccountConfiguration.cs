@@ -38,7 +38,7 @@ public sealed class AccountDetailsConfiguration
             .WithOne(x => x.AccountDetails);
 
         builder
-            .HasOne(x => x.TransactionHistory)
+            .HasMany(x => x.TransactionHistory)
             .WithOne(x => x.AccountDetails);
     }
 }
