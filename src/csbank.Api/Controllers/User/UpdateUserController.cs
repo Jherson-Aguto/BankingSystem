@@ -6,15 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 namespace CSBank.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/users")]
 public class UpdateUserController(
     IUpdateUserService updateUser) : ControllerBase
 {
-    [HttpPost("data")]
-    public async Task<IActionResult> UpdateUserAsync([FromBody] UpdateUserRequest? dto)
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> UpdateUserAsync([FromRoute] Guid id, [FromBody] UpdateUserRequest? dto)
     {
         if (dto is null)
             throw new NotFoundException("No update needed");
+
+        dto = dto with
+        {
+            Id = id
+        };
 
         UpdateUserRequest? data = await updateUser.UpdateUserDetails(dto);
 
