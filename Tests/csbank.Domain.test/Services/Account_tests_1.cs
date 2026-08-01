@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using CSbank.Domain.Services.Account;
+using CSBank.Domain.Services.Account;
 
-namespace CSbank.Domain.Test.Services;
+namespace CSBank.Domain.Test.Services;
 
 public class AccountTest1(AccountDomainService accountService) : IClassFixture<AccountDomainService>
 {

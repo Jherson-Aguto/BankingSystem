@@ -12,18 +12,18 @@ The goal is not simply to build a banking application, but to understand **why e
 
 **Current Phase**
 
-🚧 Phase 4B — Persistence & Business Operations Engineering
+🚧 Phase 6 — Entity Framework Core
 
 Current feature:
 
 ```text
+Customer Registration        ✅
 Customer Profile             ✅
-Create Account               ✅
-Checking Account             ✅
-Savings Account              ✅
-Deposit                      🚧
-Withdraw                     ⏳
-Transfer                     ⏳
+Create Account (Checking/Savings) ✅
+Deposit                      ✅
+Transfer                     ✅
+Relational DB Design (3NF)   ✅
+EF Core Mappings & Entities  🚧
 ```
 
 Architecture status:
@@ -64,6 +64,10 @@ Persistence Engineering
 ↓
 
 Business Operations Engineering
+
+↓
+
+Relational Database Design
 
 ↓
 
@@ -138,7 +142,7 @@ CSBank follows these design principles throughout the project.
 
 Repositories should:
 
-- Execute SQL
+- Execute SQL / Query via persistence abstraction
 - Supply parameters
 - Return results
 
@@ -197,11 +201,11 @@ Current stack:
 - ASP.NET Core Web API
 - PostgreSQL
 - Dapper
+- Entity Framework Core
 - Npgsql
 
 Planned:
 
-- Entity Framework Core
 - Redis
 - Docker
 - xUnit
@@ -257,15 +261,23 @@ Planned:
 
 ---
 
+## Relational Database Design & EF Core
+
+- Normalization (1NF–3NF) & ERD refinement
+- Entity Framework Core DbContext & DbSet setup
+- Fluent API Entity Configurations & Navigation Properties
+- Abstracting persistence while inspecting generated SQL
+
+---
+
 # Current Learning
 
 Currently exploring:
 
-- Atomic business operations
-- Deposit implementation
-- Transaction safety
-- Reusable persistence infrastructure
-- Concurrency fundamentals
+- Entity Framework Core as a persistence abstraction over Dapper / PostgreSQL
+- DbContext & DbSet configuration using Fluent API
+- Entity state management & navigation properties
+- Evaluating when to use EF Core vs. Dapper vs. Handwritten SQL
 
 ---
 

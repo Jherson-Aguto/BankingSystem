@@ -6,19 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace CSBank.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/users")]
 
 public class AccountsController(
     IRegisterAccountsService registerAccounts)
     : ControllerBase
 {
-    [HttpPost("account/{customerId::Guid}")]
+    [HttpPost("{id:guid}/accounts")]
     public async Task<IActionResult> DetailsAsync(
-        [FromRoute] Guid customerId,
+        [FromRoute] Guid id,
         [FromQuery] string currency,
         [FromQuery] AccountTypes accountType)
     {
-        AccountDto? data = await registerAccounts.DetailsAsync(customerId, currency, accountType);
+        AccountDto? data = await registerAccounts.DetailsAsync(id, currency, accountType);
 
         if (data is null)
             throw new NotFoundException("Failed to register account.");

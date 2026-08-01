@@ -1,4 +1,4 @@
-namespace CSbank.Infrastructure.Database.Queries;
+namespace CSBank.Infrastructure.Database.Queries;
 
 public sealed class ReadUser
 {
@@ -19,7 +19,7 @@ public sealed class ReadUser
         p.province,
         p.country,
         p.nationality,
-        p.birth_date AS BirthDate    
+        p.birth_date::timestamp AS BirthDate    
     FROM users.customer_details c
     LEFT JOIN users.private_information p
     ON c.id = p.customer_id

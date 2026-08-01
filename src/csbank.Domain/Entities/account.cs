@@ -1,5 +1,5 @@
 
-namespace CSbank.Domain.Entities;
+namespace CSBank.Domain.Entities;
 
 public class AccountDetails
 {
@@ -14,7 +14,7 @@ public class AccountDetails
     public Customer Customer { get; private set; } = null!;
     public CheckingAccount CheckingAccount { get; private set; } = null!;
     public SavingsAccount SavingsAccount { get; private set; } = null!;
-    public TransactionHistory TransactionHistory { get; private set; } = null!;
+    public List<TransactionHistory> TransactionHistory { get; private set; } = null!;
 
     private AccountDetails() { }
 

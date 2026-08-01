@@ -1,6 +1,4 @@
-using CSBank.Application.Models;
-
-namespace CSbank.Application.Models;
+namespace CSBank.Application.Models;
 
 public record TransactionDto(
     Guid Id,

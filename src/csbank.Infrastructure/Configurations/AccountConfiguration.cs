@@ -1,8 +1,8 @@
-using CSbank.Domain.Entities;
+using CSBank.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CSbank.Infrastructure.Configurations;
+namespace CSBank.Infrastructure.Configurations;
 
 public sealed class AccountDetailsConfiguration
     : IEntityTypeConfiguration<AccountDetails>
@@ -13,6 +13,7 @@ public sealed class AccountDetailsConfiguration
 
         builder.ToTable("account_details", "accounts");
 
+        builder.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()");
         builder.Property(x => x.CustomerId).HasColumnName("customer_id");
         builder.Property(x => x.AccountNumber).HasColumnName("account_number").HasMaxLength(100).IsRequired();
         builder.Property(x => x.AccountType).HasColumnType("accounts.account_types").HasColumnName("account_type");
@@ -38,7 +39,7 @@ public sealed class AccountDetailsConfiguration
             .WithOne(x => x.AccountDetails);
 
         builder
-            .HasOne(x => x.TransactionHistory)
+            .HasMany(x => x.TransactionHistory)
             .WithOne(x => x.AccountDetails);
     }
 }

@@ -1,4 +1,4 @@
-namespace CSbank.Domain.Entities;
+namespace CSBank.Domain.Entities;
 
 public class TransactionHistory
 {

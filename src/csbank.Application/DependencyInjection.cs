@@ -1,8 +1,7 @@
-using CSbank.Application.Interfaces.Services;
-using CSbank.Domain.Services;
-using CSbank.Domain.Services.Account;
 using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Services;
+using CSBank.Domain.Services;
+using CSBank.Domain.Services.Account;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CSBank.Application;
@@ -17,6 +16,7 @@ public static class DependencyInjection
         services.AddScoped<IRegisterAccountsService, RegisterAccountsService>();
         services.AddScoped<IDepositService, DepositService>();
         services.AddScoped<ITransferFundService, TransferFundService>();
+        services.AddScoped<IUpdateUserService, UpdateUserService>();
 
         //Domain Services
         services.AddScoped<UserDomainService>();

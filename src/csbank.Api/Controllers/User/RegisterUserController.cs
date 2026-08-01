@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace CSBank.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/users")]
 public class RegisterUserController(IRegisterCustomerService _register) : ControllerBase
 {
-    [HttpPost("Register")]
+    [HttpPost("")]
     public async Task<IActionResult> Register([FromBody] RequestUserDetailsDto requestUserDetailsDto)
     {
         var result = await _register.CustomerAsync(requestUserDetailsDto);

@@ -1,5 +1,5 @@
 
-using CSbank.Infrastructure.DI;
+using CSBank.Infrastructure.DI;
 using CSBank.Api.Middleware;
 using CSBank.Application;
 

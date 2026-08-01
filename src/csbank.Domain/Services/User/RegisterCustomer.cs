@@ -1,4 +1,4 @@
-namespace CSbank.Domain.Services;
+namespace CSBank.Domain.Services;
 
 public class UserDomainService
 {

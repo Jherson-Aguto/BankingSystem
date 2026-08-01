@@ -1,7 +1,6 @@
-using CSbank.Application.Models;
 using CSBank.Application.Models;
 
-namespace CSbank.Application.Interfaces.IRepositories;
+namespace CSBank.Application.Interfaces.IRepositories;
 
 public interface IDepositRepository
 {

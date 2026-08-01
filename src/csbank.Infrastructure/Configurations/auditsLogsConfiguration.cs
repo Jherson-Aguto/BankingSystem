@@ -1,8 +1,8 @@
-using CSbank.Domain.Entities;
+using CSBank.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CSbank.Infrastructure.Configurations;
+namespace CSBank.Infrastructure.Configurations;
 
 public class AuditLogsConfiguration
     : IEntityTypeConfiguration<AuditLogs>
@@ -13,6 +13,7 @@ public class AuditLogsConfiguration
 
         builder.ToTable("audit_logs", "audit");
 
+        builder.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()");
         builder.Property(x => x.EntityName).HasColumnName("entity_name").HasColumnType("audit.entity_name").IsRequired();
         builder.Property(x => x.EntityId).HasColumnName("entity_id");
         builder.Property(x => x.Action).HasColumnName("action").IsRequired();

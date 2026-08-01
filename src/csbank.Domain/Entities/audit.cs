@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace CSbank.Domain.Entities;
+namespace CSBank.Domain.Entities;
 
 public class AuditLogs
 {

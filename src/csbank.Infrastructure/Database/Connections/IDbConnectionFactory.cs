@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace CSbank.Infrastructure.Database.Connections;
+namespace CSBank.Infrastructure.Database.Connections;
 
 public interface IDbConnectionFactory
 {

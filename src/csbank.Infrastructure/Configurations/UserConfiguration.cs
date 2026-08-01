@@ -1,9 +1,9 @@
 
-using CSbank.Domain.Entities;
+using CSBank.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CSbank.Infrastructure.Configurations;
+namespace CSBank.Infrastructure.Configurations;
 
 
 public sealed class CustomerConfiguration :
@@ -15,6 +15,7 @@ public sealed class CustomerConfiguration :
 
         builder.ToTable("customer_details", "users");
 
+        builder.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()");
         builder.Property(x => x.FirstName).HasColumnName("first_name").HasMaxLength(100).IsRequired();
         builder.Property(x => x.LastName).HasColumnName("last_name").HasMaxLength(100).IsRequired();
         builder.Property(x => x.Suffix).HasColumnName("suffix").HasMaxLength(100);

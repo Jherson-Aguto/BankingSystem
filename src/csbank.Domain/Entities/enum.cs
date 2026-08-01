@@ -1,4 +1,4 @@
-namespace CSbank.Domain.Entities;
+namespace CSBank.Domain.Entities;
 
 //Account
 public enum AccountTypes { Savings, Checking }
@@ -12,4 +12,4 @@ public enum EntityNames { Customer, Account, CheckingAccount, SavingsAccount, Tr
 public enum Actions { Created, Updated, Deleted, Login, Logout, TransferFunds }
 
 //transaction history
-public enum TransactionTypes { Deposit, Withdraw, TransferIn, TransferOut, Fee }
+public enum TransactionTypes { Deposit, TransferIn, TransferOut, Interest, Fee }

@@ -2,11 +2,11 @@
 
 **Project:** CSBank
 
-**Current Phase:** Phase 6 — Entity Framework Core 🚧
+**Current Phase:** Phase 6 — Entity Framework Core ✅
 
 **Architecture Status:** ✅ Stable
 
-**Current Focus:** Understanding EF Core as a Persistence Abstraction
+**Current Focus:** Preparing for Phase 7 — Performance Engineering
 
 **Previous Phase:** Phase 5 — Relational Database Design ✅
 
@@ -16,58 +16,56 @@
 
 # Current Task
 
-Phase 5 is considered complete.
+Phase 6 is considered complete.
 
-The database has evolved through real engineering decisions driven by business requirements rather than theoretical exercises.
+The objective of this phase was to understand Entity Framework Core as a persistence abstraction rather than treating it as a replacement for SQL.
 
-The objective now is to understand Entity Framework Core as an abstraction built upon concepts that have already been implemented manually.
+The project intentionally follows a hybrid persistence architecture:
 
-Current objectives:
+- Writes → Entity Framework Core
+- Reads → Dapper
 
-- Learn what EF Core abstracts.
-- Compare EF Core with Dapper.
-- Understand DbContext.
-- Understand DbSet.
-- Configure entity mappings using Fluent API.
-- Learn relationship mapping.
-- Understand Change Tracking.
-- Learn EF Core migrations.
-- Compare generated SQL with handwritten SQL.
-- Identify when EF Core is appropriate and when handwritten SQL remains preferable.
+Repositories remain responsible for persistence while the Domain remains persistence-agnostic.
 
-The goal is not to replace SQL knowledge, but to understand how EF Core builds upon it.
+EF Core is used where its Unit of Work and Change Tracking provide value.
+
+Dapper continues to be used for handcrafted read queries requiring precise SQL control and performance.
 
 ---
 
-# Current Engineering Focus
+# Phase 6 Learning Outcomes
 
-## Entity Framework Core
+The following concepts have been completed:
 
-Current work should focus on understanding the abstraction rather than memorizing APIs.
+- DbContext
+- DbSet
+- Dependency Injection
+- Fluent API
+- Entity Configurations
+- Relationship Mapping
+- Navigation Properties
+- PostgreSQL Enum Mapping
+- Change Tracker
+- Entity States
+- SaveChanges Pipeline
+- Tracking vs AsNoTracking
+- Generated SQL
+- Repository Integration
+- Update Aggregate using EF Core
+- EF Core vs Dapper trade-offs
 
-When learning a new EF Core feature, continue asking:
+Additional concepts were reviewed conceptually:
 
-### Database
+- Loading Strategies
+- Migrations
+- Value Converters
+- Owned Types
 
-- What SQL is EF Core generating?
-- What database objects are being affected?
-- Would I be able to write this SQL manually?
-
-### Architecture
-
-- Does this abstraction simplify the code?
-- Does it hide important behavior?
-- Does it belong in Infrastructure?
-
-### Performance
-
-- Is EF Core generating efficient SQL?
-- Would Dapper or handwritten SQL be more appropriate?
-- Is change tracking necessary for this scenario?
+These concepts were intentionally not adopted because they do not currently provide value to the chosen architecture.
 
 ---
 
-# Current Architecture
+# Persistence Architecture
 
 ```text
 HTTP Request
@@ -92,41 +90,9 @@ Repository Interface
 
 Infrastructure Repository
 
-↓
+       ├── EF Core (Writes)
 
-Entity Framework Core
-
-↓
-
-PostgreSQL
-```
-
-Repositories continue to orchestrate persistence.
-
-EF Core becomes the persistence implementation instead of Dapper for scenarios where it provides value.
-
----
-
-# Current Persistence Philosophy
-
-Understand the abstraction before depending on it.
-
-EF Core should be viewed as:
-
-```text
-Domain Objects
-
-↓
-
-Change Tracker
-
-↓
-
-Entity Configuration
-
-↓
-
-Generated SQL
+       └── Dapper (Reads)
 
 ↓
 
@@ -135,63 +101,95 @@ PostgreSQL
 
 The database remains the source of truth.
 
-EF Core is responsible for generating SQL—not replacing relational concepts.
+Repositories decide which persistence technology is appropriate.
 
 ---
 
-# Current Learning Focus
+# Engineering Philosophy
 
-Current concepts:
+Continue following the project's primary principle:
 
-- DbContext
-- DbSet
-- Fluent API
-- Entity Configuration
-- Relationship Mapping
-- Change Tracking
-- Loading Strategies
-- Migrations
-- Value Conversions
-- Generated SQL
-- EF Core vs Dapper
-- Persistence trade-offs
+> Understand the abstraction before depending on the abstraction.
 
-Every feature should be understood in terms of the SQL and database behavior it abstracts.
+Every abstraction should answer:
 
----
-
-# Current Philosophy
-
-Continue applying the project's core principle:
-
-> Understand the abstraction before using the abstraction.
-
-Whenever EF Core introduces a feature, identify:
-
-- What manual code it replaces.
-- What SQL it generates.
-- What database concepts it depends on.
-- What trade-offs it introduces.
-- When it should or should not be used.
-
-The objective is to become capable of choosing between EF Core, Dapper, and handwritten SQL based on engineering requirements rather than familiarity.
+- What manual implementation does it replace?
+- What SQL is ultimately executed?
+- What database concepts does it depend on?
+- What engineering trade-offs does it introduce?
+- When is it the correct tool?
+- When should handwritten SQL remain the preferred solution?
 
 ---
 
 # Next Phase
 
-After understanding Entity Framework Core:
+## Phase 7 — Performance Engineering
 
-**Phase 7 — Performance Engineering**
+Focus on understanding how software engineering decisions affect scalability, latency, memory usage, and database performance.
 
-Topics include:
+Topics:
 
-- Query optimization
-- Query plans
+### PostgreSQL
+
+- EXPLAIN
 - EXPLAIN ANALYZE
-- Index strategy
-- Collection performance
-- Memory optimization
-- Performance profiling
+- Execution Plans
+- Sequential Scan vs Index Scan
+- Composite Indexes
+- Covering Indexes
+- Query Optimization
+- EXISTS vs JOIN
+- LIMIT / OFFSET Pagination
+- Keyset Pagination
+- Window Functions
+- Locking Performance
 
-The objective is to understand how engineering decisions affect scalability and how to diagnose performance bottlenecks across the application and database.
+### Dapper
+
+- Buffered vs Unbuffered Queries
+- QueryMultiple
+- Multi-Mapping
+- Streaming Results
+- Allocation Reduction
+- Efficient DTO Projections
+
+### Entity Framework Core
+
+- Generated SQL Inspection
+- Detecting N+1 Queries
+- Split Queries
+- Compiled Queries
+- Change Tracker Cost
+- AsNoTracking Performance
+- Bulk Operations Trade-offs
+
+### .NET Performance
+
+- Collections
+- LINQ Performance
+- Span<T>
+- Memory Allocation
+- async/await Costs
+- ValueTask
+- BenchmarkDotNet
+
+### Profiling
+
+- Logging SQL
+- Measuring Query Time
+- Benchmarking
+- Memory Profiling
+- CPU Profiling
+
+---
+
+# Current Goal
+
+Become capable of evaluating both handwritten SQL and ORM-generated SQL from an engineering perspective.
+
+Every optimization should be measurable.
+
+Performance decisions should be driven by evidence rather than assumptions.
+
+The objective is to build a backend capable of scaling while maintaining clean architecture and a clear separation of responsibilities.

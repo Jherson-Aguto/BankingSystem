@@ -1,8 +1,8 @@
-using CSbank.Domain.Entities;
+using CSBank.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CSbank.Infrastructure.Configurations;
+namespace CSBank.Infrastructure.Configurations;
 
 public sealed class CheckingAccountConfiguration
     : IEntityTypeConfiguration<CheckingAccount>

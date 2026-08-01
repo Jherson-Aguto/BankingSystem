@@ -1,4 +1,4 @@
-namespace CSbank.Infrastructure.Database.Queries;
+namespace CSBank.Infrastructure.Database.Queries;
 
 public sealed class SaveUser
 {
@@ -9,14 +9,12 @@ public sealed class SaveUser
             first_name,
             last_name,
             suffix,
-            registration_date,
             middle_initial
         )
         VALUES (
             @FirstName,
             @LastName,
             @Suffix,
-            CURRENT_TIMESTAMP,
             @MiddleInitial
         )
         RETURNING *

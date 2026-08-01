@@ -1,6 +1,5 @@
-using System.Reflection.Metadata;
 
-namespace CSbank.Domain.Entities;
+namespace CSBank.Domain.Entities;
 
 public class Customer
 {
@@ -46,7 +45,7 @@ public class Customer
         return true;
     }
 
-    public bool UpdateFirstName(string firstName)
+    public bool UpdateFirstName(string? firstName)
     {
         if (string.IsNullOrWhiteSpace(firstName))
             return false;
@@ -55,7 +54,7 @@ public class Customer
         return true;
     }
 
-    public bool UpdateLastName(string lastName)
+    public bool UpdateLastName(string? lastName)
     {
         if (string.IsNullOrWhiteSpace(lastName))
             return false;
@@ -64,7 +63,7 @@ public class Customer
         return true;
     }
 
-    public bool UpdateSuffix(string suffix)
+    public bool UpdateSuffix(string? suffix)
     {
         if (string.IsNullOrWhiteSpace(suffix))
             return false;
@@ -73,9 +72,9 @@ public class Customer
         return true;
     }
 
-    public bool UpdateMiddleInitial(char middleInitial)
+    public bool UpdateMiddleInitial(char? middleInitial)
     {
-        if (Char.IsWhiteSpace(middleInitial))
+        if (middleInitial is null)
             return false;
 
         MiddleInitial = middleInitial;
@@ -93,6 +92,7 @@ public class PrivateInformation
     public string Country { get; private set; } = string.Empty;
     public string Nationality { get; private set; } = string.Empty;
     public DateTime BirthDate { get; private set; }
+    public Customer Customer { get; private set; } = null!;
 
     private PrivateInformation() { }
     public PrivateInformation(
@@ -116,5 +116,66 @@ public class PrivateInformation
         BirthDate = birthDate;
     }
 
-    public Customer Customer { get; private set; } = null!;
+    public bool UpdateEmail(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return false;
+
+        Email = email;
+        return true;
+    }
+
+    public bool UpdatePhoneNumber(string? phoneNumber)
+    {
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+            return false;
+
+        PhoneNumber = phoneNumber;
+        return true;
+    }
+
+    public bool UpdateCity(string? city)
+    {
+        if (string.IsNullOrWhiteSpace(city))
+            return false;
+
+        City = city;
+        return true;
+    }
+
+    public bool UpdateProvince(string? province)
+    {
+        if (string.IsNullOrWhiteSpace(province))
+            return false;
+
+        Province = province;
+        return true;
+    }
+
+    public bool UpdateCountry(string? country)
+    {
+        if (string.IsNullOrWhiteSpace(country))
+            return false;
+
+        Country = country;
+        return true;
+    }
+
+    public bool UpdateNationality(string? nationality)
+    {
+        if (string.IsNullOrWhiteSpace(nationality))
+            return false;
+
+        Nationality = nationality;
+        return true;
+    }
+
+    public bool UpdateBirthDate(DateTime? birthDate)
+    {
+        if (!birthDate.HasValue)
+            return false;
+
+        BirthDate = birthDate.Value;
+        return true;
+    }
 }

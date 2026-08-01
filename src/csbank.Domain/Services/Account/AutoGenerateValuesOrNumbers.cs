@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace CSbank.Domain.Services.Account;
+namespace CSBank.Domain.Services.Account;
 
 public class AccountDomainService
 {

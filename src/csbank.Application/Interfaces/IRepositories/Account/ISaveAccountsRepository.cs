@@ -1,3 +1,4 @@
+
 using CSBank.Application.Models;
 
 namespace CSBank.Application.Interfaces.IRepositories;

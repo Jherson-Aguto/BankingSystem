@@ -1,7 +1,7 @@
 using System.Data;
-using CSbank.Infrastructure.Database.Connections;
+using CSBank.Infrastructure.Database.Connections;
 
-namespace CSbank.Infrastructure.Utils;
+namespace CSBank.Infrastructure.Utils;
 
 public class HelperFactory(IDbConnectionFactory db)
 {

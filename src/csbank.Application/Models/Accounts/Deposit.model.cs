@@ -1,4 +1,4 @@
-namespace CSbank.Application.Models;
+namespace CSBank.Application.Models;
 
 public record RequestDepositDto(
     string AccountNumber,
