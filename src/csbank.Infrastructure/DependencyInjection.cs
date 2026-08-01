@@ -1,16 +1,14 @@
-using System.Data;
-using CSbank.Application.Interfaces.IRepositories;
-using CSbank.Infrastructure.Configurations;
-using CSbank.Infrastructure.Database.Connections;
-using CSbank.Infrastructure.Repositories.Dapper;
-using CSbank.Infrastructure.Utils;
+using CSBank.Infrastructure.Configurations;
 using CSBank.Application.Interfaces.IRepositories;
+using CSBank.Infrastructure.Database.Connections;
+using CSBank.Infrastructure.Repositories.Dapper;
+using CSBank.Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
-namespace CSbank.Infrastructure.DI;
+namespace CSBank.Infrastructure.DI;
 
 public static class DependencyInjection
 {

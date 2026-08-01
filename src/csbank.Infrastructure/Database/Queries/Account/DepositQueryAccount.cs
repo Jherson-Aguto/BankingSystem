@@ -1,4 +1,4 @@
-namespace CSbank.Infrastructure.Database.Queries;
+namespace CSBank.Infrastructure.Database.Queries;
 
 public sealed class DepositQuery
 {

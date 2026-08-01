@@ -1,6 +1,5 @@
-using System.Reflection.Metadata;
 
-namespace CSbank.Domain.Entities;
+namespace CSBank.Domain.Entities;
 
 public class Customer
 {

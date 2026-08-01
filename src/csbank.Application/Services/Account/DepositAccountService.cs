@@ -1,5 +1,5 @@
-using CSbank.Application.Interfaces.IRepositories;
-using CSbank.Application.Interfaces.Services;
+using CSBank.Application.Interfaces.IRepositories;
+using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Mapper;
 using CSBank.Application.Models;
 using CSBank.Domain.Services.Account;

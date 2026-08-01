@@ -1,7 +1,7 @@
-using CSbank.Domain.Entities;
+using CSBank.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace CSbank.Infrastructure.Database.Connections;
+namespace CSBank.Infrastructure.Database.Connections;
 
 public class AppDbContext : DbContext
 {

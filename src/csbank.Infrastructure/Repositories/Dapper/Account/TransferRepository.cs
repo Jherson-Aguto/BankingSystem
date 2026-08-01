@@ -1,11 +1,11 @@
 using CSBank.Application.Mapper;
 using CSBank.Application.Models;
-using CSbank.Infrastructure.Database.Queries;
-using CSbank.Infrastructure.Utils;
+using CSBank.Infrastructure.Database.Queries;
+using CSBank.Infrastructure.Utils;
 using CSBank.Application.Interfaces.IRepositories;
 using Dapper;
 
-namespace CSbank.Infrastructure.Repositories.Dapper;
+namespace CSBank.Infrastructure.Repositories.Dapper;
 
 public class TransferFundRepository(HelperFactory db) : ITransferFundRepository
 {

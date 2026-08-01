@@ -1,7 +1,7 @@
 using System.Data;
-using CSbank.Infrastructure.Database.Connections;
 using Npgsql;
 
+namespace CSBank.Infrastructure.Database.Connections;
 
 public class PostgreSqlConnectionFactory(NpgsqlDataSource dataSource) : IDbConnectionFactory
 {

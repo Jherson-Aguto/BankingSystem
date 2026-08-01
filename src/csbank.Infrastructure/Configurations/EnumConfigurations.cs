@@ -1,9 +1,9 @@
 
 
-using CSbank.Domain.Entities;
+using CSBank.Domain.Entities;
 using Npgsql;
 
-namespace CSbank.Infrastructure.Configurations;
+namespace CSBank.Infrastructure.Configurations;
 
 public static class EnumConfiguration
 {
