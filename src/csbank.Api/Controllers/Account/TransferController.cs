@@ -3,7 +3,7 @@ using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSbank.Api.Controllers;
+namespace CSBank.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
