@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using CSBank.Infrastructure.Repositories.EntityFrameworkCore;
 
 namespace CSBank.Infrastructure.DI;
 
@@ -21,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped<ISaveAccountsRepository, SaveAccountsRepository>();
         services.AddScoped<IDepositRepository, DepositRepository>();
         services.AddScoped<ITransferFundRepository, TransferFundRepository>();
+        services.AddScoped<IUpdateUserRepository, UpdateUserRepository>();
 
         //helper
         services.AddScoped<HelperFactory>();
