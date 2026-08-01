@@ -13,6 +13,7 @@ public sealed class AccountDetailsConfiguration
 
         builder.ToTable("account_details", "accounts");
 
+        builder.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()");
         builder.Property(x => x.CustomerId).HasColumnName("customer_id");
         builder.Property(x => x.AccountNumber).HasColumnName("account_number").HasMaxLength(100).IsRequired();
         builder.Property(x => x.AccountType).HasColumnType("accounts.account_types").HasColumnName("account_type");

@@ -13,6 +13,7 @@ public class TransactionHistoryConfiguration
 
         builder.ToTable("transaction_history", "transactions");
 
+        builder.Property(x => x.Id).HasColumnName("id").HasDefaultValueSql("gen_random_uuid()");
         builder.Property(x => x.AccountId).HasColumnName("account_id").IsRequired();
         builder.Property(x => x.TransactionType).HasColumnName("transaction_type")
             .HasColumnType("transactions.transaction_types").IsRequired();

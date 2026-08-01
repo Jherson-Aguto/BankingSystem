@@ -11,6 +11,9 @@ public class UpdateUserService(IUpdateUserRepository userRepository) : IUpdateUs
     {
         var updatedData = await userRepository.UpdateUserDetails(userRequest);
 
+        if (updatedData is null)
+            return null;
+
         return MapUser.ToDto(updatedData);
     }
 }

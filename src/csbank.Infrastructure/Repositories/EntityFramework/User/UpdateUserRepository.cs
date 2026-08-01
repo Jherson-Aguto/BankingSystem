@@ -23,10 +23,10 @@ public class UpdateUserRepository(AppDbContext context) : IUpdateUserRepository
 
     private async Task<Customer?> UpdateUserAggregate(UpdateUserRequest? dto)
     {
-        var customer = await context.Customers
+        Customer? customer = await context.Customers
         .Include(p => p.PrivateInformation)
         .SingleOrDefaultAsync(x => x.Id == dto!.Id);
-
+        
         if (customer is null)
             return null;
 

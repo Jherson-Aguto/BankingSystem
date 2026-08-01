@@ -15,7 +15,7 @@ public class ReadUserController(IReadUserService readUser) : ControllerBase
         UserDetailsDto? user = await readUser.ByIdAsync(id);
 
         if (user is null)
-            throw new NotFoundException($"Account with ID: {id} was not found");
+            throw new NotFoundException($"User with ID: {id} was not found");
 
         return Ok(ApiResponse<UserDetailsDto>.Ok(
             success: true,
