@@ -23,6 +23,7 @@ public static class DependencyInjection
         services.AddScoped<IDepositRepository, DepositRepository>();
         services.AddScoped<ITransferFundRepository, TransferFundRepository>();
         services.AddScoped<IUpdateUserRepository, UpdateUserRepository>();
+        services.AddScoped<IGetTransactionHistoryRepository, GetTransactionHistoryRepository>();
 
         //helper
         services.AddScoped<HelperFactory>();
