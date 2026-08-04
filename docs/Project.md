@@ -2,11 +2,15 @@
 
 # Project Blueprint: CSBank System Evolution
 
-This blueprint describes the long-term evolution of **CSBank**, beginning with **Customer Registration** and gradually expanding into a production-quality banking backend while following **Clean Architecture**.
+This blueprint describes the long-term evolution of **CSBank**, beginning with customer registration and evolving into a production-quality banking backend while following **Clean Architecture**.
 
-The project is intentionally designed so that every abstraction is learned only after understanding the concepts beneath it.
+The project is intentionally designed around one principle:
 
-The objective is not simply to build a banking system, but to understand **why every architectural decision exists** before relying on higher-level frameworks or abstractions.
+> Understand every abstraction before depending on it.
+
+Rather than learning frameworks first, CSBank builds every major concept from first principles and only then introduces higher-level abstractions.
+
+The objective is not simply to build banking software, but to understand why every architectural decision exists.
 
 ---
 
@@ -14,34 +18,34 @@ The objective is not simply to build a banking system, but to understand **why e
 
 ## Architecture
 
-**Status:** Phase 1–6 Active 🚧
+**Status:** Phase 1–7 Active 🚧
 
 Completed:
 
-- Clean Architecture solution structure
-- Domain layer
-- Application layer
-- API layer
-- Manual object mapping
-- Repository abstractions
-- Domain services
-- Dependency Injection architecture
-- Customer Registration
-- Account Creation
-- PostgreSQL integration
-- Dapper persistence
+- Clean Architecture
+- Domain Layer
+- Application Layer
+- API Layer
+- Manual Mapping
+- Repository Abstractions
+- Domain Services
+- Dependency Injection
+- PostgreSQL Integration
+- Dapper Persistence
 - Repository Executor
 - Higher-Order Transaction Executor
-- Repository engineering
-- Transaction-safe business operations
-- Relational database design
-- Schema evolution
-- Constraint design
-- ERD refinement
+- Relational Database Design
+- Schema Evolution
+- Constraint Design
+- Entity Framework Core
+- Hybrid Persistence (EF Core Writes / Dapper Reads)
+- SQL Execution Plan Analysis
+- Offset Pagination
+- REST API Refinement
 
-The architectural foundation is now considered stable.
+Current work focuses on preparing the backend for production through security engineering.
 
-Current work focuses on understanding **Entity Framework Core as an abstraction over concepts that have already been implemented manually**.
+The architectural foundation is considered stable.
 
 ---
 
@@ -61,24 +65,61 @@ The following principles guide every feature implemented in CSBank.
 
 ## Repository Philosophy
 
-Repositories are responsible for persistence orchestration—not business logic.
+Repositories orchestrate persistence—not business logic.
 
-Repositories primarily:
+Repositories are responsible for:
 
-- Choose SQL
-- Supply parameters
-- Execute SQL
-- Map results
-- Return application models
+- Selecting the persistence technology
+- Executing persistence operations
+- Mapping persistence models
+- Returning application models
 
-Repositories no longer own:
+Repositories are **not** responsible for:
 
-- Database connections
-- Transaction creation
-- Commit
-- Rollback
+- Business rules
+- Connection management
+- Transaction lifecycle
 
-The persistence implementation may be handwritten SQL (Dapper) or EF Core depending on the engineering trade-offs.
+The persistence implementation may use:
+
+- Dapper
+- Entity Framework Core
+
+depending on the engineering requirements.
+
+---
+
+## Persistence Philosophy
+
+The project intentionally uses hybrid persistence.
+
+```text
+Writes
+
+↓
+
+Entity Framework Core
+
+↓
+
+PostgreSQL
+```
+
+```text
+Reads
+
+↓
+
+Dapper
+
+↓
+
+PostgreSQL
+```
+
+Entity Framework Core provides productivity for aggregate updates.
+
+Dapper provides explicit SQL control for optimized read operations.
 
 ---
 
@@ -86,21 +127,19 @@ The persistence implementation may be handwritten SQL (Dapper) or EF Core depend
 
 Infrastructure owns:
 
-- Connection lifecycle
-- Transaction lifecycle
+- Connections
+- Transactions
 - Commit
 - Rollback
 - Exception propagation
 
-Reusable Higher-Order Functions centralize transaction execution so repositories remain focused on business persistence.
-
-These architectural principles remain unchanged regardless of whether persistence is implemented using Dapper or EF Core.
+Repositories remain focused on persistence workflows while reusable higher-order functions centralize infrastructure concerns.
 
 ---
 
 ## SQL Philosophy
 
-Whenever practical, one business operation should execute as:
+Whenever appropriate:
 
 ```text
 One Transaction
@@ -111,24 +150,22 @@ One SQL Statement
 
 ↓
 
-Multiple CTEs
+Multiple Writable CTEs
 
 ↓
 
 One Database Round Trip
 ```
 
-The objective is to leverage PostgreSQL as a relational execution engine rather than treating it as simple storage.
-
-Even while learning EF Core, SQL remains a first-class engineering skill.
+The database should be treated as an execution engine—not merely a storage engine.
 
 ---
 
 ## Abstraction Philosophy
 
-Every abstraction introduced throughout CSBank should be understood before being depended upon.
+Every abstraction introduced should be understood before it is adopted.
 
-Current understanding progression:
+Current progression:
 
 ```text
 Raw SQL
@@ -142,51 +179,46 @@ Dapper
 Entity Framework Core
 ```
 
-Each layer increases developer productivity without replacing the underlying relational concepts.
+Higher-level abstractions increase productivity without replacing relational knowledge.
 
 ---
 
 ## Ledger Philosophy
 
-Account balance is mutable.
+Account balances are mutable.
 
 Transaction history is immutable.
 
-The ledger represents the historical source of truth, while account balances are the current projection.
+Balances represent the current projection.
+
+The ledger represents historical truth.
 
 ---
 
 ## Audit Philosophy
 
-Audit logging exists independently from business entities.
+Audit logging remains independent from business entities.
 
-Audit logs capture:
+Audit records capture:
 
-- Entity affected
-- Action performed
-- Who performed the action
-- When it occurred
-- Optional before values
-- Optional after values
-- Request metadata
+- Entity
+- Action
+- Actor
+- Timestamp
+- Previous values (optional)
+- New values (optional)
 
-Business operations decide when before/after snapshots are valuable.
-
-For example:
-
-- Customer registration records the event.
-- Deposit records balance changes.
-- Some operations intentionally leave JSON values null when no meaningful state comparison exists.
+Business operations determine whether snapshots provide meaningful information.
 
 ---
 
-# Architecture Design
+# Architecture
 
 ```text
-CSBank (Solution)
+CSBank
 
 ├── csbank.Domain
-│   ├── Domain Models
+│   ├── Entities
 │   ├── Domain Services
 │   └── Business Rules
 │
@@ -194,28 +226,25 @@ CSBank (Solution)
 │   ├── DTOs
 │   ├── Use Cases
 │   ├── Repository Interfaces
-│   ├── Manual Mappers
-│   └── Application Services
+│   ├── Services
+│   └── Manual Mapping
 │
 ├── csbank.Infrastructure
 │   ├── Database
-│   ├── SQL Queries
-│   ├── Repository Implementations
-│   ├── Repository Executor
-│   ├── Configurations
+│   ├── SQL
 │   ├── Dapper
 │   ├── Entity Framework Core
-│   ├── Npgsql
-│   └── Database Connectivity
+│   ├── Configurations
+│   ├── Repository Implementations
+│   └── Infrastructure Utilities
 │
 └── csbank.Api
     ├── Controllers
     ├── Middleware
-    ├── Dependency Injection
-    └── HTTP Endpoints
+    └── Dependency Injection
 ```
 
-Current dependency graph:
+Dependency graph:
 
 ```text
 API
@@ -236,7 +265,7 @@ The API remains the Composition Root.
 
 ---
 
-# Current Request Flow
+# Request Flow
 
 ```text
 HTTP Request
@@ -261,10 +290,9 @@ Repository Interface
 
 Infrastructure Repository
 
-↓
+      ├── EF Core (Writes)
 
-Persistence Implementation
-(Dapper / EF Core)
+      └── Dapper (Reads)
 
 ↓
 
@@ -277,9 +305,7 @@ PostgreSQL
 
 ## Stage 1
 
-```text
 Mock Repository
-```
 
 Purpose:
 
@@ -289,27 +315,24 @@ Validate architecture before persistence.
 
 ## Stage 2
 
-```text
 Repository
 
 ↓
 
-Connection
+Dapper
 
 ↓
 
-Dapper
-```
+PostgreSQL
 
 Purpose:
 
-Introduce real persistence.
+Introduce production persistence.
 
 ---
 
 ## Stage 3
 
-```text
 Repository
 
 ↓
@@ -318,15 +341,11 @@ Repository Executor
 
 ↓
 
-Higher-Order Function
+Higher-Order Functions
 
 ↓
 
-Connection
-
-↓
-
-Transaction
+Transactions
 
 ↓
 
@@ -335,26 +354,20 @@ Dapper
 ↓
 
 PostgreSQL
-```
 
 Purpose:
 
-Centralize infrastructure responsibilities while maximizing SQL control.
+Centralize infrastructure concerns.
 
 ---
 
-## Stage 4 (Current)
+## Stage 4
 
-```text
 Repository
 
 ↓
 
-Persistence Abstraction
-
-↓
-
-Entity Framework Core
+EF Core
 
 ↓
 
@@ -363,266 +376,208 @@ Generated SQL
 ↓
 
 PostgreSQL
-```
 
 Purpose:
 
-Understand what EF Core abstracts while preserving the relational knowledge acquired through handwritten SQL.
+Understand ORM abstractions while preserving SQL knowledge.
 
 ---
 
-# Phase 1–3 — Architecture Foundation ✅
+# Completed Phases
 
-Completed.
-
-Major concepts:
+## Phase 1 — Architecture Foundation ✅
 
 - Clean Architecture
-- Domain Services
+- Dependency Injection
 - Repository Pattern
 - DTOs
 - Manual Mapping
-- Dependency Injection
-- Application Services
-
-Outcome:
-
-A persistence-independent backend architecture.
+- Domain Services
 
 ---
 
-# Phase 4A — PostgreSQL Fundamentals ✅
-
-Completed.
-
-Topics learned:
-
-## Database Engineering
+## Phase 2 — PostgreSQL Fundamentals ✅
 
 - Schemas
 - Tables
 - Constraints
 - Relationships
 - UUIDs
-- Indexes
-
-## SQL
-
 - CRUD
+- Transactions
 - JOINs
 - CTEs
-- Transactions
 - Referential Integrity
 
-## ORM Mental Model
-
-Understanding:
-
-- PostgreSQL stores relational data.
-- JOINs reconstruct object graphs.
-- Dapper executes SQL directly.
-- EF Core builds abstractions over SQL.
-
-Outcome:
-
-Strong relational database fundamentals before persistence engineering.
-
 ---
 
-# Phase 4B — Persistence & Business Operations Engineering ✅
+## Phase 3 — Persistence Engineering ✅
 
-Completed.
-
-Technologies:
-
-- PostgreSQL
-- Npgsql
 - Dapper
-
-Major concepts:
-
-- Repository implementations
+- Npgsql
 - Repository Executor
-- Higher-Order Functions
-- Transaction management
-- Business workflow modeling
-- Ledger implementation
-- Audit logging
-- Row-level locking
-- Atomic SQL workflows
-- Parameterized SQL
-- Concurrency validation
-- Ledger validation
+- Higher-Order Transactions
+- Atomic SQL Workflows
+- Audit Logging
+- Ledger Design
+- Transaction-safe Business Operations
 
-Completed business operations:
+Completed business features:
 
-- Customer Registration ✅
-- Customer Profile ✅
-- Create Account ✅
-- Create Checking Account ✅
-- Create Savings Account ✅
-- Deposit ✅
-- Transfer ✅
-
-Major outcome:
-
-Built a reusable persistence infrastructure capable of executing complete banking workflows safely and atomically.
+- Customer Registration
+- Read User
+- Update User
+- Create Account
+- Deposit
+- Transfer
+- Transaction History
 
 ---
 
-# Phase 5 — Relational Database Design ✅
+## Phase 4 — Relational Database Design ✅
 
-Completed.
-
-Topics learned:
-
-- One-to-One relationships
-- One-to-Many relationships
-- Many-to-Many relationships
-- Composite Keys
-- Candidate Keys
-- Alternate Keys
-- Normalization
-- Denormalization
+- Relationship Design
 - Constraint Design
 - Index Strategy
+- Normalization
 - Schema Evolution
 - ERD Refinement
 
-Major outcome:
-
-Developed the ability to evolve relational schemas based on changing business requirements rather than simply writing SQL.
-
 ---
 
-# Phase 6 — Entity Framework Core 🚧
-
-Current Phase.
-
-Purpose:
-
-Learn EF Core as a productivity layer built upon concepts already understood.
-
-Current topics:
+## Phase 5 — Entity Framework Core ✅
 
 - DbContext
 - DbSet
 - Fluent API
-- Entity Configuration
+- Entity Configurations
 - Relationship Mapping
-- Change Tracking
-- Loading Strategies
-- Value Conversions
+- Change Tracker
+- SaveChanges Pipeline
 - Generated SQL
-- Migrations
 - EF Core vs Dapper
-- Persistence trade-offs
+- Hybrid Persistence
 
-Current objective:
+---
 
-Understand exactly what EF Core abstracts and when it should—or should not—be used.
+## Phase 6 — SQL Performance Foundations ✅
+
+Topics completed:
+
+- EXPLAIN
+- EXPLAIN ANALYZE
+- Execution Plans
+- Generated SQL Comparison
+- Index Scan vs Sequential Scan
+- Offset Pagination
+- Query Inspection
+
+---
+
+# Current Phase
+
+## Phase 7 — Security Engineering 🚧
+
+Topics:
+
+- Authentication
+- Authorization
+- JWT
+- Refresh Tokens
+- BCrypt / Argon2
+- Validation
+- Secure Error Handling
+- HTTPS
+- CORS
+- Rate Limiting
+- Authorization Policies
+- Account Ownership
+- Idempotency
+- Secrets Management
+
+Goal:
+
+Prepare CSBank for production deployment by ensuring every business operation is secure before further optimization.
 
 ---
 
 # Remaining Roadmap
 
-## Phase 7 — Performance Engineering
+## Phase 8 — Performance Engineering
 
-- Query optimization
-- Query plans
-- EXPLAIN ANALYZE
-- Index strategy
-- Memory optimization
-- Collection performance
+- Query Optimization
+- Index Strategy
+- Keyset Pagination
+- Window Functions
+- Dapper Optimization
+- EF Core Optimization
+- Memory Optimization
+- BenchmarkDotNet
+- Profiling
 
 ---
 
-## Phase 8 — Algorithms
+## Phase 9 — LINQ
+
+- Deferred Execution
+- IEnumerable vs IQueryable
+- Projection
+- Aggregation
+- Grouping
+- Set Operations
+- Performance Characteristics
+
+---
+
+## Phase 10 — Algorithms
 
 Apply algorithms where they improve backend systems.
 
 ---
 
-## Phase 9 — Trees & Hierarchies
+## Phase 11 — Trees & Hierarchies
 
 Recursive business models.
 
 ---
 
-## Phase 10 — Networking
+## Phase 12 — Networking
 
 - REST
 - HTTP
 - HTTPS
 - API Design
 - Idempotency
+- Versioning
 
 ---
 
-## Phase 11 — Advanced Concurrency
+## Phase 13 — Advanced Concurrency
 
 - Isolation Levels
 - Deadlocks
-- Retry strategies
-- Optimistic concurrency
-- Concurrent updates
+- Retry Strategies
+- Optimistic Concurrency
+- Distributed Transactions
 
 ---
 
-## Phase 12 — Security
-
-- Authentication
-- Authorization
-- JWT
-- BCrypt
-- Validation
-- Secure persistence
-
----
-
-## Phase 13 — Caching
+## Phase 14 — Caching
 
 - Memory Cache
 - Redis
-- Distributed caching
-- Cache invalidation
-
----
-
-## Phase 14 — LINQ
-
-Purpose:
-
-Master LINQ as a C# language feature before relying on it throughout EF Core and testing.
-
-Topics:
-
-- Deferred execution
-- IEnumerable vs IQueryable
-- Projection
-- Filtering
-- Ordering
-- Grouping
-- Aggregation
-- Set operations
+- Cache Invalidation
+- Distributed Caching
 
 ---
 
 ## Phase 15 — Testing
 
-Purpose:
-
-Verify business behavior rather than simply learning xUnit syntax.
-
-Topics:
-
-- Testing fundamentals
-- xUnit
-- Domain tests
-- Infrastructure tests
-- Integration tests
-- API tests
-- Concurrency tests
+- Unit Testing
+- Integration Testing
+- API Testing
+- Concurrency Testing
+- Load Testing
 
 ---
 
@@ -630,10 +585,10 @@ Topics:
 
 - Docker
 - CI/CD
-- Cloud Deployment
 - Logging
 - Monitoring
-- Configuration Management
+- Configuration
+- Cloud Deployment
 
 ---
 
@@ -641,27 +596,25 @@ Topics:
 
 Build a production-quality banking backend while understanding every abstraction beneath it.
 
-By completing CSBank, the project should demonstrate practical knowledge of:
+By completing CSBank, the project demonstrates practical engineering knowledge in:
 
 - Clean Architecture
 - Software Engineering
 - PostgreSQL
 - Database Engineering
 - Dapper
-- Persistence Engineering
-- Business Operations Engineering
-- Relational Database Design
 - Entity Framework Core
+- Hybrid Persistence
+- Security Engineering
 - Performance Engineering
 - Algorithms
 - Networking
 - Concurrency
-- Security
-- Caching
 - LINQ
+- Caching
 - Testing
 - Deployment
 
-CSBank is intended to be more than a portfolio project.
+CSBank is more than a portfolio project.
 
-It is a long-term engineering project designed to demonstrate not only how backend systems are built, but why each architectural decision exists and how each abstraction is constructed from first principles.
+It is a long-term engineering project designed to demonstrate not only how backend systems are built, but why every architectural decision exists and how each abstraction is constructed from first principles.

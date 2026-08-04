@@ -2,15 +2,15 @@
 
 **Project:** CSBank
 
-**Current Phase:** Phase 6 — Entity Framework Core ✅
+**Current Phase:** Phase 8 — Security Engineering 🚧
 
 **Architecture Status:** ✅ Stable
 
-**Current Focus:** Preparing for Phase 7 — Performance Engineering
+**Current Focus:** Building a Secure Production Backend
 
-**Previous Phase:** Phase 5 — Relational Database Design ✅
+**Previous Phase:** Phase 6 — Entity Framework Core ✅
 
-**Next Phase:** Phase 7 — Performance Engineering
+**Performance Status:** Continuous Engineering
 
 ---
 
@@ -27,15 +27,37 @@ The project intentionally follows a hybrid persistence architecture:
 
 Repositories remain responsible for persistence while the Domain remains persistence-agnostic.
 
-EF Core is used where its Unit of Work and Change Tracking provide value.
+Entity Framework Core is used where Unit of Work and Change Tracking provide value.
 
-Dapper continues to be used for handcrafted read queries requiring precise SQL control and performance.
+Dapper continues to be used for handcrafted read queries requiring precise SQL control and predictable performance.
+
+---
+
+# Completed Features
+
+## User Management
+
+- Register User
+- Read User
+- Update User
+
+## Banking
+
+- Register Account
+- Deposit
+- Transfer
+
+## Transaction History
+
+- Read Transaction History
+- Offset Pagination
+- Ordered by Creation Date (Newest First)
 
 ---
 
 # Phase 6 Learning Outcomes
 
-The following concepts have been completed:
+Completed concepts:
 
 - DbContext
 - DbSet
@@ -54,14 +76,14 @@ The following concepts have been completed:
 - Update Aggregate using EF Core
 - EF Core vs Dapper trade-offs
 
-Additional concepts were reviewed conceptually:
+Reviewed conceptually:
 
 - Loading Strategies
 - Migrations
 - Value Converters
 - Owned Types
 
-These concepts were intentionally not adopted because they do not currently provide value to the chosen architecture.
+These concepts are understood and can be adopted when future requirements justify their use.
 
 ---
 
@@ -90,7 +112,7 @@ Repository Interface
 
 Infrastructure Repository
 
-       ├── EF Core (Writes)
+       ├── Entity Framework Core (Writes)
 
        └── Dapper (Reads)
 
@@ -101,7 +123,7 @@ PostgreSQL
 
 The database remains the source of truth.
 
-Repositories decide which persistence technology is appropriate.
+Repositories determine the appropriate persistence implementation.
 
 ---
 
@@ -111,85 +133,92 @@ Continue following the project's primary principle:
 
 > Understand the abstraction before depending on the abstraction.
 
-Every abstraction should answer:
+Every engineering decision should answer:
 
-- What manual implementation does it replace?
+- What problem does this solve?
 - What SQL is ultimately executed?
 - What database concepts does it depend on?
-- What engineering trade-offs does it introduce?
-- When is it the correct tool?
-- When should handwritten SQL remain the preferred solution?
+- What trade-offs are introduced?
+- Is there measurable evidence that this approach is better?
+
+Performance and maintainability should always be measurable rather than assumed.
 
 ---
 
-# Next Phase
+# Performance Status
 
-## Phase 7 — Performance Engineering
+Performance engineering is now considered an ongoing responsibility rather than a standalone phase.
 
-Focus on understanding how software engineering decisions affect scalability, latency, memory usage, and database performance.
+Completed work:
 
-Topics:
-
-### PostgreSQL
-
+- SQL execution plan analysis
 - EXPLAIN
 - EXPLAIN ANALYZE
-- Execution Plans
-- Sequential Scan vs Index Scan
-- Composite Indexes
-- Covering Indexes
-- Query Optimization
-- EXISTS vs JOIN
-- LIMIT / OFFSET Pagination
-- Keyset Pagination
-- Window Functions
-- Locking Performance
+- Generated SQL inspection
+- EF Core vs Dapper comparisons
+- Offset pagination
+- Query plan interpretation
 
-### Dapper
+Future performance improvements will be introduced whenever new features require them.
 
-- Buffered vs Unbuffered Queries
-- QueryMultiple
-- Multi-Mapping
-- Streaming Results
-- Allocation Reduction
-- Efficient DTO Projections
+---
 
-### Entity Framework Core
+# Current Phase
 
-- Generated SQL Inspection
-- Detecting N+1 Queries
-- Split Queries
-- Compiled Queries
-- Change Tracker Cost
-- AsNoTracking Performance
-- Bulk Operations Trade-offs
+## Phase 8 — Security Engineering
 
-### .NET Performance
+Focus on building a backend suitable for production use.
 
-- Collections
-- LINQ Performance
-- Span<T>
-- Memory Allocation
-- async/await Costs
-- ValueTask
-- BenchmarkDotNet
+Topics include:
 
-### Profiling
+### Authentication
 
-- Logging SQL
-- Measuring Query Time
-- Benchmarking
-- Memory Profiling
-- CPU Profiling
+- JWT Access Tokens
+- Refresh Tokens
+- Token Rotation
+- Secure Password Hashing
+- Login
+- Logout
+
+### Authorization
+
+- Roles
+- Policies
+- Claims
+- Ownership Validation
+
+### API Security
+
+- HTTPS
+- CORS
+- Rate Limiting
+- Request Validation
+- Input Sanitization
+
+### Database Security
+
+- Least Privilege
+- SQL Injection Prevention
+- Secrets Management
+- Secure Connection Strings
+
+### Application Security
+
+- Authentication Middleware
+- Authorization Middleware
+- Secure Exception Handling
+- Security Headers
+
+### Auditing
+
+- Login Audit
+- Sensitive Action Audit
+- Security Events
 
 ---
 
 # Current Goal
 
-Become capable of evaluating both handwritten SQL and ORM-generated SQL from an engineering perspective.
+Transform CSBank from a functional backend into a secure production-ready banking backend.
 
-Every optimization should be measurable.
-
-Performance decisions should be driven by evidence rather than assumptions.
-
-The objective is to build a backend capable of scaling while maintaining clean architecture and a clear separation of responsibilities.
+Future phases will continue expanding features while treating performance, security, maintainability, and scalability as continuous engineering concerns rather than isolated milestones.
