@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Npgsql;
 namespace CSBank.Api.Middleware;
 
 public class ExceptionHandler(
@@ -28,15 +26,13 @@ public class ExceptionHandler(
 
         httpContext.Response.StatusCode = statusCode;
 
-        Error errorResponse = new Error(statusCode.ToString(), clientMessage);
+        var errorResponse = ApiResponse<string>.Fail(success: false, data: null, errorMessage: clientMessage, errorCode: statusCode.ToString());
 
         await httpContext.Response.WriteAsJsonAsync(errorResponse, cancellationToken);
 
         return true;
     }
 }
-
-public record Error(string? StatusCode, string? Message);
 
 public class NotFoundException(string message) : Exception(message);
 public class ValidationException(string message) : Exception(message);
