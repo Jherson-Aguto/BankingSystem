@@ -30,4 +30,23 @@ public class ReadUserRepository(
             }
         );
     }
+
+    public async Task<UserCredentials?> ByEmailAsync(string email)
+    {
+        return await db.OperationAsync(
+            async (connection) =>
+            {
+                return await connection.QuerySingleOrDefaultAsync<UserCredentials>(
+                    ReadUser.ByEmail,
+                    new
+                    {
+                        email
+                    }
+                );
+            }
+        );
+    }
 }
+
+
+
