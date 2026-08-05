@@ -43,6 +43,16 @@ public sealed class SaveUser
         WHERE c.id IS NOT NULL
         RETURNING *
     ),
+    credentials AS (
+        INSERT INTO users.user_credentials(
+            user_id,
+            password_hash
+        )
+        SELECT
+            c.id,
+            @Password
+        FROM customer AS C
+    ),
     recorded_logs AS (
         INSERT INTO 
             audit.audit_logs(
