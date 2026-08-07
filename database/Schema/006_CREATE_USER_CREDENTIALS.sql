@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS users.user_credentials(
     user_id UUID NOT NULL,
     password_hash VARCHAR(254) NOT NULL,
     refresh_token_hash VARCHAR(254),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    role VARCHAR(100) NOT NULL DEFAULT 'Customer'
 );
 
 ROLLBACK;
