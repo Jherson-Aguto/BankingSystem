@@ -55,6 +55,7 @@ public record RequestUserDetailsDto(
     string LastName,
     string? Suffix,
     char? MiddleInitial,
+    string Password,
     string Email,
     string PhoneNumber,
     string City,

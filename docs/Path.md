@@ -53,6 +53,10 @@ Entity Framework Core
 
 ↓
 
+Security Engineering
+
+↓
+
 Performance Engineering
 
 ↓
@@ -72,15 +76,29 @@ Frameworks should increase productivity—not replace understanding.
 | Phase 4A — PostgreSQL & Database Engineering | ✅ Complete |
 | Phase 4B — Persistence & Business Operations Engineering | ✅ Complete |
 | Phase 5 — Relational Database Design | ✅ Complete |
-| Phase 6 — Entity Framework Core | 🚧 Current |
+| Phase 6 — Entity Framework Core | ✅ Complete |
+| Phase 7 — Security Engineering | 🚧 Current |
 
 Current milestone:
 
-The architectural foundation, persistence infrastructure, and relational database design are complete.
+The architectural foundation is now complete.
 
-Current work focuses on understanding **Entity Framework Core as an abstraction over concepts already mastered through PostgreSQL and Dapper**.
+CSBank now follows a hybrid persistence architecture:
 
-The emphasis has shifted from building persistence infrastructure to understanding higher-level persistence abstractions.
+- Writes → Entity Framework Core
+- Reads → Dapper
+
+Major business functionality has been completed, including:
+
+- Customer Registration
+- Customer Profile
+- Customer Update
+- Account Creation
+- Deposit
+- Transfer
+- Transaction History with OFFSET pagination
+
+Current work focuses on preparing the application for production by implementing authentication, authorization, endpoint protection, and secure persistence.
 
 ---
 
@@ -99,17 +117,17 @@ A[Phase 1–3<br/>Architecture & Software Engineering]
 
 --> E[Phase 6<br/>Entity Framework Core]
 
---> F[Phase 7<br/>Performance Engineering]
+--> F[Phase 7<br/>Security Engineering]
 
---> G[Phase 8<br/>Algorithms & Data Structures]
+--> G[Phase 8<br/>Performance Engineering]
 
---> H[Phase 9<br/>Trees & Hierarchies]
+--> H[Phase 9<br/>Algorithms & Data Structures]
 
---> I[Phase 10<br/>Networking & REST]
+--> I[Phase 10<br/>Trees & Hierarchies]
 
---> J[Phase 11<br/>Advanced Concurrency]
+--> J[Phase 11<br/>Networking & REST]
 
---> K[Phase 12<br/>Security]
+--> K[Phase 12<br/>Advanced Concurrency]
 
 --> L[Phase 13<br/>Caching]
 
@@ -200,6 +218,9 @@ Concepts learned:
 - Aggregation
 - GROUP BY
 - COUNT
+- EXISTS
+- LIMIT
+- OFFSET
 - Explicit column selection
 
 ## ORM Mental Model
@@ -259,25 +280,25 @@ Persistence concepts:
 
 Business concepts:
 
-- Customer registration
-- Account creation
-- Checking accounts
-- Savings accounts
-- Ledger architecture
-- Transaction history
-- Audit logging
-- Balance consistency
-- Business workflow modeling
+- Customer Registration
+- Account Creation
+- Deposit
+- Transfer
+- Ledger Architecture
+- Transaction History
+- Audit Logging
+- Balance Consistency
+- Business Workflow Modeling
 
 Completed operations:
 
 - Customer Registration ✅
 - Customer Profile ✅
+- Update Customer ✅
 - Create Account ✅
-- Create Checking Account ✅
-- Create Savings Account ✅
 - Deposit ✅
 - Transfer ✅
+- Transaction History (OFFSET Pagination) ✅
 
 Major outcome:
 
@@ -312,19 +333,19 @@ Developed the ability to model and evolve relational databases according to busi
 
 ---
 
-# Phase 6 — Entity Framework Core 🚧
+# Phase 6 — Entity Framework Core ✅
 
 Purpose:
 
 Understand Entity Framework Core as an abstraction built upon concepts already mastered manually.
 
-Current technologies:
+Technologies:
 
 - Entity Framework Core
 - PostgreSQL
 - Npgsql
 
-Topics:
+Topics completed:
 
 ## Core Components
 
@@ -337,71 +358,171 @@ Topics:
 
 - Fluent API
 - Entity Configuration
+- Navigation Properties
 - Relationship Mapping
-- Value Conversions
-- Owned Types
+- PostgreSQL Enum Mapping
 
 ## Querying
 
-- LINQ
-- Generated SQL
+- Generated SQL Inspection
+- Tracking vs AsNoTracking
 - Loading Strategies
-- Projection
-- Tracking vs No Tracking
+- SQL Comparison with Dapper
 
-## Database Evolution
+## Persistence
 
-- Migrations
-- Schema Updates
-- Data Seeding
+- Repository Integration
+- Update Aggregate
+- SaveChanges Pipeline
 
 ## Engineering
 
 - EF Core vs Dapper
-- Repository implementation
-- Performance trade-offs
-- SQL inspection
-- When to use EF Core
-- When handwritten SQL is preferable
+- Unit of Work
+- Change Tracking
+- Performance Trade-offs
+
+Conceptually understood:
+
+- Migrations
+- Value Converters
+- Owned Types
+
+Major outcome:
+
+Successfully integrated EF Core into the project while preserving the project's persistence philosophy.
+
+The application now intentionally uses:
+
+- Writes → Entity Framework Core
+- Reads → Dapper
+
+---
+
+# Phase 7 — Security Engineering 🚧
+
+Purpose:
+
+Prepare CSBank for production by protecting user identities, financial operations, and sensitive information.
+
+Topics:
+
+## Authentication
+
+- Identity
+- Login
+- Stateless Authentication
+- Sessions vs JWT
+
+## Password Security
+
+- BCrypt
+- Salt
+- Work Factor
+- Password Verification
+
+## JWT
+
+- Claims
+- Signature
+- Expiration
+- Token Validation
+
+## Authorization
+
+- Roles
+- Policies
+- Claims
+- Resource Ownership
+
+## API Security
+
+- Protected Endpoints
+- Ownership Validation
+- Input Validation
+- SQL Injection Prevention
+
+## Secret Management
+
+- Environment Variables
+- Secret Storage
+- Configuration
+
+## HTTPS
+
+- TLS
+- Certificates
+- Secure Communication
 
 Major objective:
 
-Understand exactly what EF Core abstracts while preserving a strong understanding of the SQL, relational modeling, and persistence engineering occurring underneath.
+Build secure authentication and authorization while maintaining Clean Architecture and hybrid persistence.
 
 ---
 
-# Phase 7 — Performance Engineering
+# Phase 8 — Performance Engineering
+
+Purpose:
+
+Understand how engineering decisions affect scalability and responsiveness.
 
 Topics:
 
-Database
+## PostgreSQL
 
-- Query Optimization
-- Query Plans
+- EXPLAIN
 - EXPLAIN ANALYZE
-- Index Strategy
+- Execution Plans
+- Sequential Scan vs Index Scan
+- Composite Indexes
+- Covering Indexes
+- Query Optimization
+- EXISTS vs JOIN
+- LIMIT / OFFSET
+- Cursor Pagination
+- Window Functions
 
-Application
+## Dapper
 
-- Big-O Analysis
-- Collection Performance
-- Memory Usage
+- QueryMultiple
+- Multi Mapping
+- Buffered vs Streaming
+- Allocation Reduction
 
-Goal:
+## EF Core
 
-Understand how engineering decisions affect scalability.
+- Generated SQL
+- Compiled Queries
+- Split Queries
+- N+1 Detection
+- Change Tracker Cost
+- AsNoTracking Performance
+
+## .NET
+
+- Collections
+- LINQ Performance
+- Span<T>
+- Memory Allocation
+- ValueTask
+- BenchmarkDotNet
+
+Major objective:
+
+Optimize only after measuring.
 
 ---
 
-# Phase 8 — Algorithms & Data Structures
+# Phase 9 — Algorithms & Data Structures
 
 Topics:
 
-- Binary Search
-- Merge Sort
-- Quick Sort
-- Hash-based Lookups
-- Efficient Collection Processing
+- Searching
+- Sorting
+- Hash Tables
+- Queues
+- Stacks
+- Graph Basics
 
 Purpose:
 
@@ -409,12 +530,12 @@ Apply algorithms where they improve backend systems.
 
 ---
 
-# Phase 9 — Trees & Hierarchies
+# Phase 10 — Trees & Hierarchies
 
 Topics:
 
 - Recursive Traversal
-- Tree Structures
+- Trees
 - Parent-child Relationships
 - Recursive SQL
 
@@ -424,7 +545,7 @@ Model hierarchical business data.
 
 ---
 
-# Phase 10 — Networking & REST
+# Phase 11 — Networking & REST
 
 Topics:
 
@@ -432,8 +553,8 @@ Topics:
 - HTTPS
 - REST
 - Status Codes
-- CORS
 - API Design
+- CORS
 - Idempotency
 
 Purpose:
@@ -442,11 +563,11 @@ Understand communication between distributed systems.
 
 ---
 
-# Phase 11 — Advanced Concurrency
+# Phase 12 — Advanced Concurrency
 
 Topics:
 
-- Transaction Isolation
+- Isolation Levels
 - Optimistic Concurrency
 - Pessimistic Locking
 - Deadlocks
@@ -455,24 +576,7 @@ Topics:
 
 Purpose:
 
-Design systems that remain correct under concurrent requests.
-
----
-
-# Phase 12 — Security
-
-Topics:
-
-- BCrypt
-- JWT Authentication
-- Authorization
-- Input Validation
-- SQL Injection Prevention
-- Secure DTO Projection
-
-Purpose:
-
-Protect business operations and sensitive data.
+Design systems that remain correct under concurrent workloads.
 
 ---
 
@@ -483,12 +587,12 @@ Topics:
 - IMemoryCache
 - Redis
 - Distributed Cache
-- Cache-aside Pattern
+- Cache Aside
 - Cache Invalidation
 
 Purpose:
 
-Improve application performance while maintaining consistency.
+Improve performance while maintaining consistency.
 
 ---
 
@@ -496,7 +600,7 @@ Improve application performance while maintaining consistency.
 
 Purpose:
 
-Master LINQ as a C# language feature before relying on it extensively throughout EF Core and testing.
+Master LINQ as a language feature before relying on it throughout enterprise applications.
 
 Topics:
 
@@ -512,7 +616,7 @@ Topics:
 
 Major outcome:
 
-Understand LINQ as language-integrated querying rather than simply memorizing extension methods.
+Understand LINQ rather than memorizing extension methods.
 
 ---
 
@@ -520,7 +624,7 @@ Understand LINQ as language-integrated querying rather than simply memorizing ex
 
 Purpose:
 
-Learn software testing rather than merely learning xUnit.
+Verify business correctness and prevent regressions.
 
 Technologies:
 
@@ -529,17 +633,11 @@ Technologies:
 
 Topics:
 
-- Testing fundamentals
-- Arrange → Act → Assert
-- Domain testing
-- Infrastructure testing
-- Integration testing
-- API testing
-- Concurrency testing
-
-Major outcome:
-
-Verify business correctness and prevent regressions while strengthening backend engineering knowledge.
+- Unit Testing
+- Integration Testing
+- API Testing
+- Repository Testing
+- Concurrency Testing
 
 ---
 
@@ -554,7 +652,6 @@ Topics:
 - Cloud Deployment
 - Logging
 - Monitoring
-- Configuration Management
 
 Purpose:
 
@@ -573,20 +670,18 @@ By completing CSBank, you should understand:
 - PostgreSQL
 - Database Engineering
 - Dapper
-- Persistence Engineering
-- Business Operations Engineering
-- Relational Database Design
 - Entity Framework Core
+- Hybrid Persistence Architecture
+- Security Engineering
 - Performance Engineering
 - Algorithms & Data Structures
 - Networking
-- Concurrency
-- Security
+- Advanced Concurrency
 - Caching
 - LINQ
 - Testing
 - Deployment
 
-Every phase intentionally builds upon the previous one so that each new abstraction reinforces concepts already understood instead of replacing them.
+Every phase intentionally builds upon the previous one so that each abstraction reinforces concepts already understood instead of replacing them.
 
 The objective is not simply to complete CSBank, but to develop the engineering mindset required to design, build, and maintain production-quality backend systems.

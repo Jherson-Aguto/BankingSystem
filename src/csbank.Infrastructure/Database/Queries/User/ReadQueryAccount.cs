@@ -25,4 +25,32 @@ public sealed class ReadUser
     ON c.id = p.customer_id
     WHERE c.id = @id;
     """;
+
+    public const string ByEmail =
+    """
+    WITH customer AS (
+        SELECT 
+            customer_id
+        FROM users.private_information
+        WHERE email = @email    
+    ),
+    password AS (
+        SELECT
+            id,
+            user_id,
+            password_hash,
+            refresh_token_hash,
+            created_at
+        FROM users.user_credentials
+        CROSS JOIN customer c
+        WHERE c.customer_id = user_id
+    )
+    SELECT 
+        p.id AS Id,
+        p.user_id AS UserId,
+        p.password_hash AS PasswordHash,
+        p.refresh_token_hash AS RefreshTokenHash,
+        p.created_at AS CreatedAt
+     FROM password AS p
+    """;
 }

@@ -10,6 +10,10 @@ public class UpdateUserRepository(AppDbContext context) : IUpdateUserRepository
 {
     public async Task<Customer?> UpdateUserDetails(UpdateUserRequest? dto)
     {
+        bool exists = await context.Customers.AnyAsync(x => x.Id == dto!.Id);
+
+        if (!exists)
+            return null;
 
         Customer? result = await UpdateUserAggregate(dto);
 
@@ -26,7 +30,7 @@ public class UpdateUserRepository(AppDbContext context) : IUpdateUserRepository
         Customer? customer = await context.Customers
         .Include(p => p.PrivateInformation)
         .SingleOrDefaultAsync(x => x.Id == dto!.Id);
-        
+
         if (customer is null)
             return null;
 
