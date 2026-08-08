@@ -5,5 +5,15 @@ public record UserCredentials(
     Guid UserId,
     string PasswordHash,
     string? RefreshTokenHash,
-    DateTime CreatedAt
+    DateTime CreatedAt,
+    string Role,
+    DateTime ExpiresAt,
+    DateTime RevokedAt
+);
+
+public sealed record UserClaimsDto
+(
+    string Email,
+    Guid UserId,
+    string Role
 );

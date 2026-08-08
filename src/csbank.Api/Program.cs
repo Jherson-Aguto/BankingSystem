@@ -2,6 +2,9 @@
 using CSBank.Infrastructure.DI;
 using CSBank.Api.Middleware;
 using CSBank.Application;
+using CSBank.Api.Authentication;
+using CSBank.Application.Models.Auth;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+builder.Services.Configure<JwtOptions>(
+    builder.Configuration.GetSection("Jwt")
+);
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices();
@@ -26,6 +34,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

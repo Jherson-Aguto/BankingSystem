@@ -35,6 +35,17 @@ erDiagram
         DATE birth_date
     }
 
+    USERS.USER_CREDENTIALS{
+        UUID id PK
+        UUID user_id
+        VARCHAR password_hash
+        VARCHAR refresh_token_hash
+        TIMESTAMPTZ created_at
+        VARCHAR role
+        TIMESTAMPTZ expires_at
+        TIMESTAMPTZ revoked_at
+    }
+
     ACCOUNTS.ACCOUNT_DETAILS{
         UUID id PK
         UUID customer_id FK

@@ -39,8 +39,15 @@ public sealed class ReadUser
             id,
             user_id,
             password_hash,
-            refresh_token_hash,
-            created_at
+            CASE
+                WHEN expires_at < CURRENT_TIMESTAMP THEN NULL
+                WHEN revoked_at IS NOT NULL THEN NULL
+                ELSE refresh_token_hash
+            END AS refresh_token_hash,
+            created_at,
+            role,
+            expires_at,
+            revoked_at
         FROM users.user_credentials
         CROSS JOIN customer c
         WHERE c.customer_id = user_id
@@ -50,7 +57,10 @@ public sealed class ReadUser
         p.user_id AS UserId,
         p.password_hash AS PasswordHash,
         p.refresh_token_hash AS RefreshTokenHash,
-        p.created_at AS CreatedAt
+        p.created_at AS CreatedAt,
+        p.role::text AS Role,
+        p.expires_at AS ExpiresAt,
+        p.revoked_at AS RevokedAt
      FROM password AS p
     """;
 }

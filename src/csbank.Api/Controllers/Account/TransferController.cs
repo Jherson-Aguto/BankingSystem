@@ -2,6 +2,7 @@ using CSBank.Application.Models;
 using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CSBank.Api.Controllers;
 
@@ -9,6 +10,7 @@ namespace CSBank.Api.Controllers;
 [Route("api/transfers")]
 public class TransferController(ITransferFundService fundService) : ControllerBase
 {
+    [Authorize]
     [HttpPost("")]
     public async Task<IActionResult> TransferFundAsync([FromBody] RequestTransferDto requestTransferDto)
     {

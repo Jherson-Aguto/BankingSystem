@@ -1,6 +1,7 @@
 using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSBank.Api.Controllers;
@@ -11,6 +12,7 @@ public class TransactionHistory(
     IReadTransactionHistory readTransaction
     ) : ControllerBase
 {
+    [Authorize]
     [HttpGet("{accountId:guid}")]
     public async Task<IActionResult> ReadTransactionHistoryAsync(
         [FromRoute] Guid accountId,

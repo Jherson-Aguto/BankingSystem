@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSBank.Api.Controllers;
@@ -12,12 +14,16 @@ public class AccountsController(
     IRegisterAccountsService registerAccounts)
     : ControllerBase
 {
-    [HttpPost("{id:guid}/accounts")]
+    [Authorize]
+    [HttpPost("accounts")]
     public async Task<IActionResult> DetailsAsync(
-        [FromRoute] Guid id,
         [FromQuery] string currency,
         [FromQuery] AccountTypes accountType)
     {
+        Guid id = Guid.Parse(
+          User.FindFirstValue(ClaimTypes.NameIdentifier)!
+        );
+
         AccountDto? data = await registerAccounts.DetailsAsync(id, currency, accountType);
 
         if (data is null)
