@@ -31,6 +31,25 @@ public class AuthController(IAuthService authService) : ControllerBase
             ));
     }
 
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> LogoutAsync()
+    {
+        string email = User.FindFirstValue(ClaimTypes.Email)!;
+
+        bool verdict = await authService.LogoutAsync(email);
+
+        if (!verdict)
+            throw new UnauthorizedException("You must be logged in to do that.");
+
+        return Ok(
+            ApiResponse<bool>.Ok(
+                success: true,
+                data: true
+            )
+        );
+    }
+
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshTokenAsync([FromBody] string refreshToken, [FromQuery] string email)
     {

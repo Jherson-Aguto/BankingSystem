@@ -1,4 +1,30 @@
 @Api_HostAddress = http://localhost:5140
 
-GET {{Api_HostAddress}}/api/users/me HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NTMyMGMwLTlkMWYtNDRlMy1hZWEzLWUwNjZmMmNjZWUwZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpoZXJzb24uZGV2QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkN1c3RvbWVyIiwiZXhwIjoxNzg2MTc2NDY5LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUxNDAvZGV2ZWxvcG1lbnQiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUxNDAvYXBpIn0.mRR0KFEr0J4KwDy_bUF7hw3r_arbMrxHw1c5l4ZeFtY
+### LOGIN
+POST {{Api_HostAddress}}/api/auth/login
+Content-Type: application/x-www-form-urlencoded
+
+email=jherson.dev@gmail.com&password=@Miki1cns21
+
+### ============================================================
+### 2. GET CURRENT USER
+### ============================================================
+
+GET {{Api_HostAddress}}/api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NTMyMGMwLTlkMWYtNDRlMy1hZWEzLWUwNjZmMmNjZWUwZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpoZXJzb24uZGV2QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkN1c3RvbWVyIiwiZXhwIjoxNzg2MjEyNTc2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUxNDAvZGV2ZWxvcG1lbnQiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUxNDAvYXBpIn0.T_2I_NcSosHn5ZE9isdLirYDBelOGA4lNHOFmKKzxdQ
+
+### ============================================================
+### 5. REFRESH TOKEN
+### ============================================================
+
+POST {{Api_HostAddress}}/api/auth/refresh?email=jherson.dev@gmail.com
+Content-Type: application/json
+
+"Hz+DOuh97IMvwM1qV17ZBmGFSvv6fhbuQWEfq4MMnwbsqTbU+fjeURKMoGROaut353WM1eg0kP7C4ccv1nkbaQ=="
+
+### ============================================================
+### 6. LOGOUT
+### ============================================================
+
+POST {{Api_HostAddress}}/api/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjM2NTMyMGMwLTlkMWYtNDRlMy1hZWEzLWUwNjZmMmNjZWUwZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImpoZXJzb24uZGV2QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkN1c3RvbWVyIiwiZXhwIjoxNzg2MjEyNTc2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUxNDAvZGV2ZWxvcG1lbnQiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUxNDAvYXBpIn0.T_2I_NcSosHn5ZE9isdLirYDBelOGA4lNHOFmKKzxdQ

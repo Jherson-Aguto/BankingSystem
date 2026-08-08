@@ -11,7 +11,8 @@ public class AuthService(
     IPasswordService passwordService,
     IReadUserRepository readUser,
     IToken createToken,
-    ISaveRefreshTokenRepository saveRefreshToken)
+    ISaveRefreshTokenRepository saveRefreshToken,
+    IRevokeRefreshTokenRepository revoke)
     : IAuthService
 {
     public async Task<(string? accessToken, string? refreshToken)> LoginAsync(string email, string password)
@@ -40,6 +41,18 @@ public class AuthService(
         await saveRefreshToken.SaveRefreshTokenAsync(refreshTokenHash, result.UserId);
 
         return (accessToken: accessToken, refreshToken: refreshToken);
+    }
+
+    public async Task<bool> LogoutAsync(string email)
+    {
+        UserCredentials? user = await readUser.ByEmailAsync(email);
+
+        if (user is null)
+            return false;
+
+        await revoke.RevokeRefreshTokenAsync(user.UserId);
+
+        return true;
     }
 
     public async Task<string?> RefreshTokenAsync(string email, string refreshToken)
