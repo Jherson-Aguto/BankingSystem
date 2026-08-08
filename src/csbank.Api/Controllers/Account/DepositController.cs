@@ -2,6 +2,7 @@ using CSBank.Application.Interfaces.Services;
 using CSBank.Api.Middleware;
 using CSBank.Application.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CSBank.Api.Controllers;
 
@@ -9,6 +10,7 @@ namespace CSBank.Api.Controllers;
 [Route("api/deposits")]
 public class DepositController(IDepositService deposit) : ControllerBase
 {
+    [Authorize]
     [HttpPost("")]
     public async Task<IActionResult>
         DepositAmount([FromBody] RequestDepositUpperDto requestDepositDto)
