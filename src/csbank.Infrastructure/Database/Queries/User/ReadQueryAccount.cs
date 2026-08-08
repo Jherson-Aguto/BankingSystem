@@ -40,7 +40,8 @@ public sealed class ReadUser
             user_id,
             password_hash,
             refresh_token_hash,
-            created_at
+            created_at,
+            role
         FROM users.user_credentials
         CROSS JOIN customer c
         WHERE c.customer_id = user_id
@@ -50,7 +51,8 @@ public sealed class ReadUser
         p.user_id AS UserId,
         p.password_hash AS PasswordHash,
         p.refresh_token_hash AS RefreshTokenHash,
-        p.created_at AS CreatedAt
+        p.created_at AS CreatedAt,
+        p.role::text AS Role
      FROM password AS p
     """;
 }

@@ -14,15 +14,18 @@ public class LoginController(IAuthService authService) : ControllerBase
         if (email is null || password is null)
             throw new NotFoundException("Email and Password is required");
 
-        bool result = await authService.LoginAsync(email, password);
+        (string? a, string? b) = await authService.LoginAsync(email, password);
 
-        if (result == false)
+        if (a is null || b is null)
             throw new ValidationException("Invalid email or password!");
 
+        string accessToken = a;
+        string refreshToken = b;
+
         return Ok(
-            ApiResponse<bool>.Ok(
+            ApiResponse<string[]>.Ok(
                 success: true,
-                data: result
+                data: [accessToken, refreshToken]
             ));
     }
 }

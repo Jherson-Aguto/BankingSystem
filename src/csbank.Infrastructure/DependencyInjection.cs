@@ -26,6 +26,8 @@ public static class DependencyInjection
         services.AddScoped<IUpdateUserRepository, UpdateUserRepository>();
         services.AddScoped<IGetTransactionHistoryRepository, GetTransactionHistoryRepository>();
         services.AddScoped<IPasswordService, PasswordService>();
+        services.AddScoped<ICreateTokenService, CreateToken>();
+        services.AddScoped<ISaveRefreshTokenRepository, SaveRefreshTokenRepository>();
 
         //helper
         services.AddScoped<HelperFactory>();
