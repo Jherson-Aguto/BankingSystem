@@ -6,7 +6,9 @@ public record UserCredentials(
     string PasswordHash,
     string? RefreshTokenHash,
     DateTime CreatedAt,
-    string Role
+    string Role,
+    DateTime ExpiresAt,
+    DateTime RevokedAt
 );
 
 public sealed record UserClaimsDto

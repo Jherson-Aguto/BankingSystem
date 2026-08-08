@@ -12,7 +12,9 @@ public sealed class SaveRefreshTokenQuery
     ),
     updated_refresh_token AS (
         UPDATE users.user_credentials AS uc
-        SET refresh_token_hash = @refreshTokenHash
+        SET refresh_token_hash = @refreshTokenHash,
+            expires_at = CURRENT_TIMESTAMP + INTERVAL '7 days',
+            revoked_at = NULL
         FROM locked_account AS la
         WHERE uc.user_id = la.user_id
         RETURNING
