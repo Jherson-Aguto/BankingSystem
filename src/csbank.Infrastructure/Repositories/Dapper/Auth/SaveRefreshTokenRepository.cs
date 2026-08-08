@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Infrastructure.Database.Queries;
 using CSBank.Infrastructure.Utils;
@@ -12,19 +11,20 @@ public class SaveRefreshTokenRepository(
 {
     public async Task SaveRefreshTokenAsync(string refreshTokenHash, Guid userId)
     {
+        await db.TransactionOperationAsync(
+            async (connection, transaction) =>
+            {
 
-        await db.OperationAsync(
-           async (connection) =>
-           {
-               return await connection.ExecuteAsync(
-                   SaveRefreshTokenQuery.save,
-                   new
-                   {
-                       refreshTokenHash,
-                       userId
-                   }
+                return await connection.QueryAsync<int>(
+                    SaveRefreshTokenQuery.save,
+                    new
+                    {
+                        refreshTokenHash,
+                        userId
+                    },
+                    transaction
                 );
-           }
-       );
+            }
+        );
     }
 }

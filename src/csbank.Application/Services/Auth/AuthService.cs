@@ -10,7 +10,7 @@ namespace CSBank.Application.Services;
 public class AuthService(
     IPasswordService passwordService,
     IReadUserRepository readUser,
-    ICreateTokenService createToken,
+    IToken createToken,
     ISaveRefreshTokenRepository saveRefreshToken)
     : IAuthService
 {
@@ -36,18 +36,9 @@ public class AuthService(
         string refreshToken = createToken.CreateRefreshTokenAsync();
 
         //save refresh token hash
-        string refreshTokenHash = ConvertToHash(refreshToken);
+        string refreshTokenHash = createToken.ConvertToHash(refreshToken);
         await saveRefreshToken.SaveRefreshTokenAsync(refreshTokenHash, result.UserId);
 
         return (accessToken: accessToken, refreshToken: refreshToken);
-    }
-
-    private string ConvertToHash(string refreshToken)
-    {
-        byte[] refreshTokenBytes = Encoding.UTF8.GetBytes(refreshToken);
-
-        byte[] hashBytes = SHA256.HashData(refreshTokenBytes);
-
-        return Convert.ToHexString(hashBytes);
     }
 }

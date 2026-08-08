@@ -10,9 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CSBank.Infrastructure.Utils;
 
-public class CreateToken(
+public class Token(
     IOptions<JwtOptions> options)
-    : ICreateTokenService
+    : IToken
 {
     public string CreateAccessTokenAsync(UserClaimsDto userClaims)
     {
@@ -49,5 +49,14 @@ public class CreateToken(
         var bytes = RandomNumberGenerator.GetBytes(64);
 
         return Convert.ToBase64String(bytes);
+    }
+    
+    public string ConvertToHash(string refreshToken)
+    {
+        byte[] refreshTokenBytes = Encoding.UTF8.GetBytes(refreshToken);
+
+        byte[] bytesHash = SHA256.HashData(refreshTokenBytes);
+
+        return Convert.ToHexString(bytesHash);
     }
 }
