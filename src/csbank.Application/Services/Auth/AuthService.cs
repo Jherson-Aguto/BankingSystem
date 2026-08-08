@@ -41,4 +41,25 @@ public class AuthService(
 
         return (accessToken: accessToken, refreshToken: refreshToken);
     }
+
+    public async Task<string?> RefreshTokenAsync(string email, string refreshToken)
+    {
+        UserCredentials? user = await readUser.ByEmailAsync(email);
+
+        if (user is null || user.RefreshTokenHash is null)
+            return null;
+
+        string refreshTokenHash = createToken.ConvertToHash(refreshToken);
+
+        if (user.RefreshTokenHash != refreshTokenHash)
+            return null;
+
+        var userClaims = new UserClaimsDto(
+            Email: email,
+            UserId: user.UserId,
+            Role: user.Role
+        );
+
+        return createToken.CreateAccessTokenAsync(userClaims);
+    }
 }
