@@ -10,6 +10,7 @@ public class DepositRepository(HelperFactory db) : IDepositRepository
 {
     public async Task<TransactionDto?> DepositAmount(
         RequestDepositDto requestDepositDto,
+        Guid customerId,
         CancellationToken cancellationToken)
     {
         return await db.TransactionOperationAsync(
@@ -17,7 +18,7 @@ public class DepositRepository(HelperFactory db) : IDepositRepository
            {
                var command = new CommandDefinition(
                    commandText: DepositQuery.Deposit,
-                   parameters: requestDepositDto,
+                   parameters: (requestDepositDto, customerId),
                    transaction: transaction,
                    cancellationToken: cancellationToken,
                    commandTimeout: 60

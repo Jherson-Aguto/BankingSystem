@@ -13,6 +13,7 @@ public sealed class DepositQuery
             accounts.account_details AS ad
         WHERE
             ad.account_number = @AccountNumber
+        AND ad.customer_id = @customerId
         AND @DepositValue > 0
         AND ad.account_status = 'Active'
         FOR UPDATE

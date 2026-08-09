@@ -6,5 +6,6 @@ public interface IDepositRepository
 {
     Task<TransactionDto?> DepositAmount(
         RequestDepositDto requestDepositDto,
+        Guid customerId,
         CancellationToken cancellationToken);
 }
