@@ -14,6 +14,9 @@ public class TransferController(ITransferFundService fundService) : ControllerBa
     [HttpPost("")]
     public async Task<IActionResult> TransferFundAsync([FromBody] RequestTransferDto requestTransferDto, CancellationToken cancellationToken)
     {
+        if (requestTransferDto.AccountNumber == requestTransferDto.RecipientAccountNumber)
+            throw new ValidationException("You cannot transfer to your own account number.");
+
         if (requestTransferDto.TransferFundValue <= 0)
             throw new ValidationException("Transfer amount must be greater than 0");
 
