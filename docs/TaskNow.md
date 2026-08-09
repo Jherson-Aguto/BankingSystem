@@ -1,656 +1,473 @@
 # TaskNow.md
 
-# Current Status
+# CSBank — Current Task
 
 **Project:** CSBank
-
-**Current Phase:** Phase 8 — Performance Engineering 🚧
-
-**Architecture Status:** ✅ Stable
-
-**Security Engineering:** ✅ Complete
-
-**Previous Phase:** Phase 7 — Security Engineering ✅
-
-**Current Focus:** Performance Engineering and measurable backend optimization
-
-**Performance Status:** 🚧 Current Phase
+**Current Phase:** Phase 8 — Security Engineering 🚧
+**Current Focus:** Complete the remaining security engineering work before moving to client implementation or later phases.
 
 ---
 
-# Current Architecture
+# Objective
 
-CSBank follows a hybrid persistence architecture.
+Finish the **remaining security work that is actually required at the current stage**.
 
-```text
-HTTP Request
+The core authentication system and basic endpoint protection are already understood and implemented. Do not add unnecessary complexity such as role-based authorization (`Customer`, `Admin`) until the system has a concrete requirement for multiple roles.
 
-↓
-
-Controller
-
-↓
-
-Application Service
-
-↓
-
-Domain
-
-↓
-
-Repository Interface
-
-↓
-
-Infrastructure Repository
-
-       ├── Dapper
-       │
-       └── Entity Framework Core
-
-↓
-
-PostgreSQL
-```
-
-The database remains the source of truth.
-
-The project intentionally does not treat Entity Framework Core as a replacement for SQL.
-
-Persistence technology is selected according to the problem being solved.
+The immediate goal is to harden the API and verify that security controls work correctly.
 
 ---
 
-# Persistence Strategy
+# Already Completed
 
-## Dapper
-
-Dapper is currently preferred for:
-
-* Handcrafted SQL
-* Complex read queries
-* Writable CTEs
-* Atomic banking workflows
-* Explicit transaction control
-* Precise PostgreSQL behavior
-* Minimizing unnecessary database round trips
-
-The project uses Dapper heavily because understanding SQL and database behavior remains a core engineering objective.
-
-## Entity Framework Core
-
-EF Core is used where its abstractions provide practical value:
-
-* Change Tracking
-* Entity State Management
-* Aggregate Updates
-* Unit of Work
-* Relationship Mapping
-
-EF Core remains part of the project's engineering knowledge even when Dapper is the better implementation for a specific operation.
-
----
-
-# Completed Features
-
-## User Management
-
-* Register User
-* Read User
-* Update User
+The following are **not current tasks**.
 
 ## Authentication
 
+* JWT access tokens
+* Password hashing
 * Login
-* JWT Access Tokens
-* Refresh Tokens
-* Refresh Token Hashing
-* Refresh Token Rotation
-* Refresh Token Expiration
-* Refresh Token Revocation
+* Refresh tokens
+* Refresh-token hashing
+* Refresh-token rotation
+* Refresh-token expiration
+* Refresh-token revocation
 * Logout
+* Authentication middleware
+
+## Basic Authorization
+
+* `[Authorize]`
+* Claims
+* Authentication identity
+* Protected endpoints
+* Basic authorization middleware
+
+## Persistence / Security Infrastructure
+
+* Parameterized SQL
+* SQL injection prevention through parameterized queries
+* Secure exception handling
+* `CancellationToken` propagation
+* Dapper `CommandDefinition` cancellation
+* Database command timeouts
+* Audit logging
+* Transactional audit logging
+
+---
+
+# Current Security Tasks
+
+## Task 1 — Resource Ownership Authorization
+
+### Goal
+
+Ensure an authenticated customer can only access and operate on resources that belong to them.
+
+Example:
+
+```text
+Customer A
+    ↓
+Can access Customer A's resources
+
+Customer A
+    X
+Cannot access Customer B's resources
+```
+
+Verify this for:
+
+* Customer profile
+* Accounts
+* Account operations
+* Transaction history
+* Other customer-owned resources
+
+### Important
+
+Do **not** solve this by hardcoding a specific email address.
+
+The authorization decision should be based on the authenticated identity/claims and the ownership relationship in the database.
+
+---
+
+# Task 2 — Authorization Policies
+
+### Goal
+
+Understand ASP.NET Core authorization policies beyond simply using `[Authorize]`.
+
+Learn:
+
+* Policy-based authorization
+* Authorization requirements
+* Authorization handlers
+* Claims-based requirements
+* When a policy is preferable to controller-level checks
+
+### Scope
+
+Implement only policies that have a real requirement in CSBank.
+
+Do **not** introduce:
+
+```csharp
+Roles = "Customer"
+Roles = "Admin"
+```
+
+unless the application actually requires multiple roles.
+
+---
+
+# Task 3 — HTTPS Verification
+
+### Goal
+
+Verify that the API is configured to require secure communication in a production-oriented environment.
+
+Understand:
+
+* HTTP vs HTTPS
+* TLS
+* HTTPS redirection
+* Development certificates
+* Reverse-proxy / production considerations
+* Why JWT-bearing requests should not be sent over plaintext HTTP
+
+### Verification
+
+Confirm that HTTP requests are redirected or rejected according to the application's intended deployment configuration.
+
+---
+
+# Task 4 — CORS
+
+### Goal
+
+Understand and configure Cross-Origin Resource Sharing for a future client application.
+
+Learn:
+
+* Same-origin policy
+* Origin
+* CORS
+* Preflight requests
+* `OPTIONS`
+* Allowed origins
+* Allowed methods
+* Allowed headers
+* Credentials and cookies
+* Why `AllowAnyOrigin()` is not an appropriate production default
+
+### Implementation
+
+Create an explicit CORS policy for the expected client origin rather than opening the API to every origin.
+
+The client does not need to be implemented yet.
+
+The API should simply be prepared to communicate securely with one.
+
+---
+
+# Task 5 — Rate Limiting
+
+### Goal
+
+Protect publicly accessible endpoints from excessive requests and basic abuse.
+
+Learn:
+
+* Rate limiting
+* Fixed window
+* Sliding window
+* Token bucket / concurrency concepts
+* Per-IP vs per-user limits
+* Endpoint-specific limits
+* HTTP `429 Too Many Requests`
+
+### Initial Scope
+
+Prioritize sensitive endpoints such as:
+
+* Login
+* Refresh token
+* Other publicly accessible authentication endpoints
+
+Do not prematurely optimize every endpoint.
+
+The purpose is to understand the security mechanism and apply it where abuse is most relevant.
+
+---
+
+# Task 6 — Request Validation
+
+### Goal
+
+Ensure API input is validated before it reaches business operations.
+
+Verify:
+
+* Required fields
+* String length limits
+* Valid formats
+* Numeric ranges
+* Enum validity
+* Invalid request behavior
+* Appropriate HTTP status codes
+
+Distinguish:
+
+```text
+Request validation
+        ↓
+Protect API input boundaries
+```
+
+from:
+
+```text
+Domain validation
+        ↓
+Protect business rules
+```
+
+Both may exist, but they serve different responsibilities.
+
+---
+
+# Task 7 — Input Sanitization Review
+
+### Goal
+
+Determine where sanitization is actually necessary rather than blindly transforming user input.
+
+Review:
+
+* SQL injection
+* HTML/script injection
+* Logging injection
+* Dangerous input rendering
+* Output encoding
+* Parameterized SQL
+
+Important principle:
+
+> Validation, parameterization, encoding, and sanitization solve different problems.
+
+Do not introduce a generic "sanitize everything" mechanism without understanding the attack being prevented.
+
+---
+
+# Task 8 — Security Headers
+
+### Goal
+
+Add appropriate HTTP response security headers.
+
+Study and evaluate:
+
+* `X-Content-Type-Options`
+* `Content-Security-Policy`
+* `Referrer-Policy`
+* `Permissions-Policy`
+* `Strict-Transport-Security` (HSTS)
+
+Understand which headers belong in an API and which are primarily browser-application concerns.
+
+Avoid blindly copying a browser security-header configuration into a backend API.
+
+---
+
+# Task 9 — Secrets Management
+
+### Goal
+
+Ensure secrets are not stored as source-controlled application configuration.
+
+Review:
+
+* JWT signing keys
+* Database credentials
+* Connection strings containing credentials
+* Environment variables
+* Development secrets
+* Production secret stores
+
+Principle:
+
+```text
+Source Code
+    X
+Secrets
+
+Configuration
+    ↓
+Secret Provider
+    ↓
+Application
+```
+
+Do not commit production secrets to the repository.
+
+---
+
+# Task 10 — Database Least Privilege
+
+### Goal
+
+Understand and apply the principle of least privilege to PostgreSQL access.
+
+Review:
+
+* Database roles
+* Login roles
+* `GRANT`
+* `REVOKE`
+* Schema permissions
+* Table permissions
+* Sequence permissions
+* Application database user permissions
+
+The application should not automatically receive more database privileges than its operations require.
+
+---
+
+# Task 11 — Production Database Configuration
+
+### Goal
+
+Separate development database configuration from production-oriented configuration.
+
+Review:
+
+* Connection strings
+* Environment-specific configuration
+* Database credentials
+* SSL/TLS database connections
+* Minimum required privileges
+* Secret injection
+* Configuration validation
+* Safe failure when required configuration is missing
+
+Do not perform production deployment yet.
+
+The objective at this stage is to understand how the application should be configured securely before deployment.
+
+---
+
+# Task 12 — Security Integration Testing
+
+### Goal
+
+Verify security behavior through actual HTTP/API behavior rather than source-code inspection alone.
+
+## Authentication
+
+* Missing JWT → rejected
+* Invalid JWT → rejected
+* Expired JWT → rejected
+
+## Refresh Tokens
+
+* Expired refresh token → rejected
+* Revoked refresh token → rejected
+* Reused rotated refresh token → rejected where applicable
+* Logout → refresh token becomes unusable
 
 ## Authorization
 
-* Authentication Middleware
-* Authorization Middleware
-* Claims
-* Roles
-* Ownership Validation
-
-## Banking
-
-* Register Account
-* Deposit
-* Transfer
-
-## Transaction History
-
-* Read Transaction History
-* OFFSET Pagination
-* Ordered by Creation Date (Newest First)
-
-## Auditing
-
-* Login Audit
-* Sensitive Action Audit
-* Entity Identification
-* Actor Identification
-* Timestamp
-* Previous Values
-* New Values
+* Authenticated user can access permitted resources
+* User cannot access another customer's resources
+* Unauthorized resource operations are rejected
 
 ## API Security
 
-* Secure Exception Handling
-* Input Validation
-* Parameterized SQL
-* SQL Injection Prevention
-* HTTPS
-* Authentication
-* Authorization
+* CORS policy behaves as intended
+* Rate-limited requests receive `429`
+* Invalid request payloads are rejected
+* Security headers are present where applicable
+* HTTP/HTTPS behavior matches configuration
 
-## Request / Database Cancellation
+## Database Security
 
-* `CancellationToken`
-* HTTP request cancellation propagation
-* Repository cancellation
-* Dapper `CommandDefinition`
-* Database command cancellation
-* Command timeouts
-
-Explicit command timeouts have been introduced for database operations.
-
-Longer-running banking operations such as Deposit and Transfer use longer command timeouts than ordinary queries.
+* Application cannot perform operations outside its database privileges
+* Database commands respect cancellation
+* Database commands respect configured timeouts
 
 ---
 
-# Security Engineering — Complete
+# Recommended Order
 
-Phase 7 is considered complete.
-
-The objective was to understand and implement the security mechanisms required to transform the functional banking backend into a secure backend.
-
-Completed concepts include:
-
-### Authentication
-
-* JWT
-* Access Tokens
-* Refresh Tokens
-* Token Rotation
-* Token Expiration
-* Token Revocation
-* Login
-* Logout
-* Authentication Middleware
-
-### Authorization
-
-* Claims
-* Roles
-* Authorization Middleware
-* Ownership Validation
-
-### Password Security
-
-* Password Hashing
-* Password Verification
-* Secure Password Storage
-
-### API Security
-
-* Input Validation
-* Parameterized SQL
-* SQL Injection Prevention
-* Secure Exception Handling
-* HTTPS
-
-### Auditing
-
-* Login Auditing
-* Sensitive Action Auditing
-* Previous State
-* New State
-* Actor
-* Timestamp
-
-### Request Lifecycle
-
-* CancellationToken propagation
-* Dapper CommandDefinition
-* Command cancellation
-* Database command timeouts
-
-Security is no longer the current task.
-
----
-
-# Performance Engineering — Current Phase
-
-## Objective
-
-Understand how backend implementation choices affect:
-
-* Latency
-* Throughput
-* Database load
-* Memory usage
-* CPU usage
-* Network round trips
-* Connection usage
-* Query execution
-* Scalability
-
-The central rule is:
-
-> **Measure first. Optimize second.**
-
-Do not optimize based solely on assumptions.
-
-Every meaningful optimization should be supported by measurable evidence whenever practical.
-
----
-
-# Performance Work Already Completed
-
-## PostgreSQL
-
-Completed:
-
-* `EXPLAIN`
-* `EXPLAIN ANALYZE`
-* Execution Plan Analysis
-* Sequential Scan vs Index Scan
-* Query Plan Interpretation
-* Generated SQL Inspection
-* Query Performance Analysis
-
-## Pagination
-
-Completed:
-
-* OFFSET Pagination
-* Ordering by Creation Date
-* Understanding pagination query behavior
-
-## Persistence Comparison
-
-Completed:
-
-* EF Core vs Dapper comparison
-* Generated SQL inspection
-* Understanding ORM overhead
-* Understanding direct SQL execution
-
-## Database Round Trips
-
-Completed conceptually:
-
-* One transaction
-* One SQL statement
-* Multiple writable CTEs
-* One database round trip
-
-This approach is already used in important banking workflows.
-
----
-
-# Current Performance Learning Targets
-
-The next work should deepen performance knowledge rather than simply adding random optimizations.
-
-## PostgreSQL
-
-Study and apply:
-
-* Composite indexes
-* Covering indexes
-* Index selectivity
-* Partial indexes
-* Keyset / cursor pagination
-* Window functions
-* Query planning
-* Lock contention
-* Transaction isolation performance
-* Query latency
-* Connection behavior
-
-## Dapper
-
-Study:
-
-* `CommandDefinition`
-* Buffered vs unbuffered queries
-* Streaming
-* `QueryMultiple`
-* Multi-mapping
-* Allocation behavior
-* Connection lifetime
-* Command timeout behavior
-* Cancellation behavior
-* Database round-trip reduction
-
-## Entity Framework Core
-
-Study:
-
-* Generated SQL
-* Tracking overhead
-* `AsNoTracking`
-* Query projection
-* N+1 queries
-* Split queries
-* Change Tracker cost
-* `SaveChanges` behavior
-* Query performance
-
-## .NET
-
-Study:
-
-* Allocation
-* Garbage Collection
-* Async performance
-* `Task` vs `ValueTask`
-* Collections
-* LINQ performance
-* `Span<T>`
-* `Memory<T>`
-* BenchmarkDotNet
-* Profiling
-
----
-
-# Performance Engineering Rule
-
-Before changing an implementation:
+Work through the remaining security tasks in this order:
 
 ```text
-Identify Problem
-
-↓
-
-Measure Current Behavior
-
-↓
-
-Form Hypothesis
-
-↓
-
-Change Implementation
-
-↓
-
-Measure Again
-
-↓
-
-Compare Results
-
-↓
-
-Keep or Revert
+1. Resource Ownership Authorization
+        ↓
+2. Authorization Policies
+        ↓
+3. HTTPS Verification
+        ↓
+4. CORS
+        ↓
+5. Rate Limiting
+        ↓
+6. Request Validation
+        ↓
+7. Input Sanitization Review
+        ↓
+8. Security Headers
+        ↓
+9. Secrets Management
+        ↓
+10. Database Least Privilege
+        ↓
+11. Production Database Configuration
+        ↓
+12. Security Integration Testing
 ```
 
-Do not introduce complexity merely because an optimization is theoretically faster.
+This order keeps the learning progression aligned with the actual backend architecture.
 
 ---
 
-# Engineering Philosophy
+# Definition of Done
 
-Continue following the project's primary principle:
+Phase 8 Security Engineering can be considered complete when:
 
-> **Understand the abstraction before depending on the abstraction.**
-
-Every engineering decision should answer:
-
-* What problem does this solve?
-* What happens underneath?
-* What SQL is ultimately executed?
-* What database concepts does it depend on?
-* What resources does it consume?
-* What trade-offs are introduced?
-* Can the improvement be measured?
-
----
-
-# Domain Philosophy
-
-The Domain remains persistence-agnostic.
-
-Business rules may be implemented at different levels when appropriate.
-
-Rules that are fundamentally relational or concurrency-sensitive may be enforced by PostgreSQL.
-
-Examples already implemented through database operations include:
-
-* Positive transaction amounts
-* Sufficient available balance
-* Account state restrictions
-* Self-transfer prevention
-* Transaction consistency
-* Concurrency control
-
-The goal is not to force every rule into C#.
-
-The goal is to enforce each invariant at the layer best positioned to guarantee it.
+* Authentication works correctly.
+* Protected endpoints require authentication.
+* Resource ownership is enforced.
+* Authorization policies are understood and implemented where justified.
+* HTTPS behavior is verified.
+* CORS is explicitly configured.
+* Sensitive endpoints have appropriate rate limits.
+* API request validation is enforced.
+* Input handling has been reviewed according to the actual security threat.
+* Appropriate security headers are configured.
+* Secrets are separated from source-controlled configuration.
+* Database access follows least privilege.
+* Production-oriented database configuration is understood.
+* Security behavior is covered by integration tests.
+* No security mechanism exists merely because a framework feature was available.
 
 ---
 
-# SQL Philosophy
+# Current Task
 
-Whenever appropriate:
+**Start with Task 1 — Resource Ownership Authorization.**
+
+Before adding roles or building the client, make the backend correctly enforce:
 
 ```text
-One Transaction
-
-↓
-
-One SQL Statement
-
-↓
-
-Multiple Writable CTEs
-
-↓
-
-One Database Round Trip
+Authenticated Identity
+        ↓
+Resource Ownership
+        ↓
+Authorization Decision
+        ↓
+Business Operation
 ```
 
-The database should be treated as an execution engine—not merely a storage engine.
-
----
-
-# Transaction Philosophy
-
-Infrastructure owns:
-
-* Connection lifecycle
-* Transaction lifecycle
-* Commit
-* Rollback
-* Exception propagation
-* Command execution infrastructure
-
-Repositories remain focused on persistence workflows.
-
-Reusable infrastructure handles common transaction concerns.
-
----
-
-# Audit Philosophy
-
-Audit logging remains independent from business entities.
-
-Audit records capture:
-
-* Entity
-* Action
-* Actor
-* Timestamp
-* Previous values
-* New values
-
-Security-sensitive operations such as login and refresh-token rotation are audited.
-
----
-
-# Ledger Philosophy
-
-Account balances are mutable.
-
-Transaction history is immutable.
-
-Balances represent the current projection.
-
-The transaction ledger represents historical truth.
-
-Financial operations must preserve consistency between:
-
-```text
-Account Balance
-
-+
-
-Transaction History
-
-+
-
-Audit Record
-```
-
----
-
-# Immediate Next Work
-
-The next task is **not another security feature**.
-
-Security Engineering is complete.
-
-The next objective is to continue Phase 8 by taking an existing CSBank operation and performing a complete performance investigation.
-
-The investigation should follow:
-
-```text
-Existing Query
-
-↓
-
-EXPLAIN
-
-↓
-
-EXPLAIN ANALYZE
-
-↓
-
-Identify Bottleneck
-
-↓
-
-Inspect Indexes
-
-↓
-
-Inspect Database Round Trips
-
-↓
-
-Inspect C# / Dapper Behavior
-
-↓
-
-Make One Controlled Change
-
-↓
-
-Measure Again
-
-↓
-
-Document Result
-```
-
-Prefer an existing real operation over creating an artificial benchmark.
-
-Good candidates include:
-
-* Transaction History
-* Read User
-* Deposit
-* Transfer
-* Authentication
-* Refresh Token
-
----
-
-# Current Development Rule
-
-Do not add technologies simply to make the project appear more advanced.
-
-Do not introduce Redis, distributed systems, microservices, or other infrastructure until the problem they solve actually exists.
-
-CSBank should continue evolving from concrete engineering requirements.
-
----
-
-# Current Goal
-
-Transform CSBank from a secure backend into a backend whose **performance characteristics are understood and measurable**.
-
-The immediate objective is not maximum performance.
-
-It is to understand:
-
-* Where time is spent
-* Where resources are consumed
-* Where database work occurs
-* Where network round trips occur
-* Where abstractions introduce cost
-* Which optimizations actually matter
-
-Only after those characteristics are understood should further optimization be introduced.
-
----
-
-# Phase Completion Criteria
-
-Phase 8 should be considered complete when the project demonstrates practical understanding of:
-
-* PostgreSQL query optimization
-* Index design
-* Query execution plans
-* Pagination strategies
-* Dapper performance
-* EF Core performance
-* .NET allocation and async behavior
-* Benchmarking
-* Profiling
-* Database round-trip optimization
-* Performance measurement methodology
-
-Performance engineering will then continue as a **continuous engineering responsibility** rather than becoming a permanently isolated phase.
-
----
-
-# Long-Term Objective
-
-Continue evolving CSBank toward a production-quality banking backend while maintaining the original philosophy:
-
-> **Understand the abstraction before depending on it.**
-
-The project should demonstrate not only that the system works, but that its:
-
-* Architecture
-* Database
-* Persistence
-* Security
-* Performance
-* Concurrency
-* Testing
-* Deployment
-
-can be explained, measured, justified, and maintained.
+The next implementation should focus on proving that one authenticated customer cannot operate on another customer's resources.
