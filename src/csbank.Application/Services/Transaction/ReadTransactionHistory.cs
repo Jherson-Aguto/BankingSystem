@@ -10,6 +10,7 @@ public class ReadTransactionHistory(
 {
     public async Task<IEnumerable<TransactionDto?>?> ReadTransactionHistoryAsync(
        Guid accountid,
+       Guid customerId,
        int pageNumber
    )
     {
@@ -17,7 +18,7 @@ public class ReadTransactionHistory(
 
         int offSet = (pageNumber - 1) * pageSize;
 
-        var results = await getTransaction.GetTransactionAsync(accountid, offSet, pageSize);
+        var results = await getTransaction.GetTransactionAsync(accountid, offSet, pageSize, customerId);
 
         if (!results!.Any())
             return null;

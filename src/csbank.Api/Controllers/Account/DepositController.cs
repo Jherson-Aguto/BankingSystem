@@ -13,8 +13,7 @@ public class DepositController(IDepositService deposit) : ControllerBase
 {
     [Authorize]
     [HttpPost("")]
-    public async Task<IActionResult>
-        DepositAmount([FromBody] RequestDepositUpperDto requestDepositDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> DepositAmount([FromBody] RequestDepositUpperDto requestDepositDto, CancellationToken cancellationToken)
     {
         if (requestDepositDto.DepositValue <= 0)
             throw new ValidationException("Deposit amount must be greater than 0");

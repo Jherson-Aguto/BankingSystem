@@ -3,6 +3,7 @@ using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CSBank.Api.Controllers;
 
@@ -20,7 +21,9 @@ public class TransferController(ITransferFundService fundService) : ControllerBa
         if (requestTransferDto.TransferFundValue <= 0)
             throw new ValidationException("Transfer amount must be greater than 0");
 
-        TransactionsDto? result = await fundService.TransferFund(requestTransferDto, cancellationToken);
+        Guid customerId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        TransactionsDto? result = await fundService.TransferFund(requestTransferDto, customerId cancellationToken);
 
         if (result is null)
             throw new NotFoundException("Failed to transfer funds.");

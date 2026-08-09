@@ -10,7 +10,7 @@ namespace CSBank.Api.Controllers;
 [ApiController]
 [Route("api/users")]
 
-public class AccountsController(
+public class RegisterAccountsController(
     IRegisterAccountsService registerAccounts)
     : ControllerBase
 {

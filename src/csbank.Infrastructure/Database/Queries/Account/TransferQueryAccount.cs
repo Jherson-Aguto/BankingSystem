@@ -29,6 +29,7 @@ public sealed class TransferQuery
             ad.account_number = @AccountNumber
         AND la.id = ad.id
         AND ad.balance >= @TransferFundValue
+        AND ad.customer_id = @customerId
         RETURNING
             ad.balance,
             ad.id,

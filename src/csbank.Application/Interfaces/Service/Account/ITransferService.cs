@@ -4,6 +4,8 @@ namespace CSBank.Application.Interfaces.Services;
 
 public interface ITransferFundService
 {
-    Task<TransactionsDto?>
-    TransferFund(RequestTransferDto requestTransferDto, CancellationToken cancellationToken);
+    Task<TransactionsDto?> TransferFund(
+        RequestTransferDto requestTransferDto,
+        Guid customerId,
+        CancellationToken cancellationToken);
 }
