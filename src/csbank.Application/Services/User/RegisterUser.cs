@@ -5,14 +5,14 @@ using CSBank.Application.Models;
 
 namespace CSBank.Application.Services;
 
-public class RegisterCustomerService
-(UserDomainService register,
-IPasswordService passwordService,
-ISaveUserRepository _save) : IRegisterCustomerService
+public class RegisterCustomerService(
+    UserDomainService register,
+    IPasswordService passwordService,
+    ISaveUserRepository _save) 
+    : IRegisterCustomerService
 {
 
-    public async Task<UserDetailsDto?>
-    CustomerAsync(RequestUserDetailsDto requestUserDetailsDto)
+    public async Task<UserDetailsDto?> CustomerAsync(RequestUserDetailsDto requestUserDetailsDto, CancellationToken cancellationToken)
     {
         string password = passwordService.Hash(requestUserDetailsDto.Password);
 
@@ -23,6 +23,6 @@ ISaveUserRepository _save) : IRegisterCustomerService
 
         register.RegisterCustomerPrivateInfo(requestUserDetailsDto.BirthDate);
 
-        return await _save.DetailsAsync(requestUserDetailsDto);
+        return await _save.DetailsAsync(requestUserDetailsDto, cancellationToken);
     }
 }

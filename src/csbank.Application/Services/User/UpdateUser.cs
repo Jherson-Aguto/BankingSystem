@@ -7,9 +7,9 @@ namespace CSBank.Application.Services;
 
 public class UpdateUserService(IUpdateUserRepository userRepository) : IUpdateUserService
 {
-    public async Task<UpdateUserRequest?> UpdateUserDetails(UpdateUserRequest? userRequest)
+    public async Task<UpdateUserRequest?> UpdateUserDetails(UpdateUserRequest? userRequest, CancellationToken cancellationToken)
     {
-        var updatedData = await userRepository.UpdateUserDetails(userRequest);
+        var updatedData = await userRepository.UpdateUserDetails(userRequest, cancellationToken);
 
         if (updatedData is null)
             return null;

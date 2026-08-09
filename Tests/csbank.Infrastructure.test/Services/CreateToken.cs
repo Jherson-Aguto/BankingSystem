@@ -7,7 +7,7 @@ namespace CSBank.Infrastructure.Test.Services;
 
 public class CreateTokenTest
 {
-    private readonly CreateToken _create;
+    private readonly Token _create;
 
     public CreateTokenTest()
     {
@@ -20,7 +20,7 @@ public class CreateTokenTest
                 ExpiryInMinutes = 15
             });
 
-        _create = new CreateToken(jwtOptions);
+        _create = new Token(jwtOptions);
     }
 
 

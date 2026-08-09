@@ -10,10 +10,10 @@ public class TransferFundService(
     AccountDomainService domainService) : ITransferFundService
 {
     public async Task<TransactionsDto?>
-    TransferFund(RequestTransferDto requestTransferDto)
+    TransferFund(RequestTransferDto requestTransferDto, CancellationToken cancellationToken)
     {
         string referenceNumber = domainService.GenerateReferenceNumber();
 
-        return await fundRepository.TransferFund(requestTransferDto, referenceNumber);
+        return await fundRepository.TransferFund(requestTransferDto, referenceNumber, cancellationToken);
     }
 }

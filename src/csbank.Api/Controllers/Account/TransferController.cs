@@ -12,12 +12,12 @@ public class TransferController(ITransferFundService fundService) : ControllerBa
 {
     [Authorize]
     [HttpPost("")]
-    public async Task<IActionResult> TransferFundAsync([FromBody] RequestTransferDto requestTransferDto)
+    public async Task<IActionResult> TransferFundAsync([FromBody] RequestTransferDto requestTransferDto, CancellationToken cancellationToken)
     {
         if (requestTransferDto.TransferFundValue <= 0)
             throw new ValidationException("Transfer amount must be greater than 0");
 
-        TransactionsDto? result = await fundService.TransferFund(requestTransferDto);
+        TransactionsDto? result = await fundService.TransferFund(requestTransferDto, cancellationToken);
 
         if (result is null)
             throw new NotFoundException("Failed to transfer funds.");

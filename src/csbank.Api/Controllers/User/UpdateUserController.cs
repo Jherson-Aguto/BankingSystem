@@ -14,7 +14,7 @@ public class UpdateUserController(
 {
     [Authorize]
     [HttpPatch("")]
-    public async Task<IActionResult> UpdateUserAsync([FromBody] UpdateUserRequest? dto)
+    public async Task<IActionResult> UpdateUserAsync([FromBody] UpdateUserRequest? dto, CancellationToken cancellationToken)
     {
         if (dto is null)
             throw new NotFoundException("No update needed");
@@ -28,7 +28,7 @@ public class UpdateUserController(
             Id = id
         };
 
-        UpdateUserRequest? data = await updateUser.UpdateUserDetails(dto);
+        UpdateUserRequest? data = await updateUser.UpdateUserDetails(dto, cancellationToken);
 
         if (data is null)
             throw new NotFoundException($"No user id found: {dto.Id} ");

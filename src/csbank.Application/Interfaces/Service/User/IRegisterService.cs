@@ -4,6 +4,5 @@ namespace CSBank.Application.Interfaces.Services;
 
 public interface IRegisterCustomerService
 {
-    Task<UserDetailsDto?> CustomerAsync
-    (RequestUserDetailsDto requestUserDetailsDto);
+    Task<UserDetailsDto?> CustomerAsync(RequestUserDetailsDto requestUserDetailsDto, CancellationToken cancellationToken);
 }

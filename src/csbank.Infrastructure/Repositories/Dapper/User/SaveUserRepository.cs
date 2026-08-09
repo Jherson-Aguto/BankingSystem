@@ -10,18 +10,22 @@ public class SaveUserRepository(
     HelperFactory db)
     : ISaveUserRepository
 {
-    public async Task<UserDetailsDto?> DetailsAsync(RequestUserDetailsDto requestUserDetailsDto)
+    public async Task<UserDetailsDto?> DetailsAsync(RequestUserDetailsDto requestUserDetailsDto, CancellationToken cancellationToken)
     {
         return await db.TransactionOperationAsync(
             async (connection, transaction) =>
             {
-                return (await connection
-                    .QueryAsync<CustomerDto, PrivateInfoDto, UserDetailsDto>(
-                         SaveUser.DetailsAndPrivateInformation,
+                var command = new CommandDefinition(
+                    commandText: SaveUser.DetailsAndPrivateInformation,
+                    parameters: requestUserDetailsDto,
+                    transaction: transaction,
+                    commandTimeout: 30
+                );
+
+                return (await connection.QueryAsync<CustomerDto, PrivateInfoDto, UserDetailsDto>(
+                        command,
                         (CustomerDto customerDto, PrivateInfoDto privateInfoDto)
                             => new UserDetailsDto(customerDto, privateInfoDto),
-                        requestUserDetailsDto,
-                         transaction,
                         splitOn: "CustomerId"))
                     .SingleOrDefault();
             }

@@ -11,12 +11,15 @@ namespace CSBank.Api.Controllers;
 public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("login")]
-    public async Task<IActionResult> LoginAsync([FromForm] string email, [FromForm] string password)
+    public async Task<IActionResult> LoginAsync(
+        [FromForm] string email, 
+        [FromForm] string password, 
+        CancellationToken cancellationToken)
     {
         if (email is null || password is null)
             throw new NotFoundException("Email and Password is required");
 
-        (string? a, string? b) = await authService.LoginAsync(email, password);
+        (string? a, string? b) = await authService.LoginAsync(email, password, cancellationToken);
 
         if (a is null || b is null)
             throw new ValidationException("Invalid email or password!");
@@ -33,11 +36,11 @@ public class AuthController(IAuthService authService) : ControllerBase
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IActionResult> LogoutAsync()
+    public async Task<IActionResult> LogoutAsync(CancellationToken cancellationToken)
     {
         string email = User.FindFirstValue(ClaimTypes.Email)!;
 
-        bool verdict = await authService.LogoutAsync(email);
+        bool verdict = await authService.LogoutAsync(email, cancellationToken);
 
         if (!verdict)
             throw new UnauthorizedException("You must be logged in to do that.");
@@ -51,9 +54,12 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("refresh")]
-    public async Task<IActionResult> RefreshTokenAsync([FromBody] string refreshToken, [FromQuery] string email)
+    public async Task<IActionResult> RefreshTokenAsync(
+        [FromBody] string refreshToken, 
+        [FromQuery] string email,
+        CancellationToken cancellationToken)
     {
-        string? result = await authService.RefreshTokenAsync(email, refreshToken);
+        string? result = await authService.RefreshTokenAsync(email, refreshToken, cancellationToken);
 
         if (result is null)
             throw new UnauthorizedException("Session expired.");

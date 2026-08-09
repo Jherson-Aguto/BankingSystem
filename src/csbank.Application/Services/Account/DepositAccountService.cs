@@ -11,12 +11,12 @@ public class DepositService(
     AccountDomainService domainService
 ) : IDepositService
 {
-    public async Task<TransactionDto?> DepositAmountAsync(RequestDepositUpperDto requestDepositDto)
+    public async Task<TransactionDto?> DepositAmountAsync(RequestDepositUpperDto requestDepositDto, CancellationToken cancellationToken)
     {
         string referenceNumber = domainService.GenerateReferenceNumber();
 
         RequestDepositDto dto = MapAccount.ToParameters(requestDepositDto, referenceNumber);
 
-        return await deposit.DepositAmount(dto);
+        return await deposit.DepositAmount(dto, cancellationToken);
     }
 }

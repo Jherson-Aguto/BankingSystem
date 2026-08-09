@@ -5,5 +5,5 @@ namespace CSBank.Application.Interfaces.IRepositories;
 
 public interface IUpdateUserRepository
 {
-    Task<Customer?> UpdateUserDetails(UpdateUserRequest? updateUser);
+    Task<Customer?> UpdateUserDetails(UpdateUserRequest? updateUser, CancellationToken cancellationToken);
 }
