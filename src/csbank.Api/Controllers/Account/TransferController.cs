@@ -23,7 +23,7 @@ public class TransferController(ITransferFundService fundService) : ControllerBa
 
         Guid customerId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        TransactionsDto? result = await fundService.TransferFund(requestTransferDto, customerId cancellationToken);
+        TransactionsDto? result = await fundService.TransferFund(requestTransferDto, customerId, cancellationToken);
 
         if (result is null)
             throw new NotFoundException("Failed to transfer funds.");
