@@ -14,8 +14,8 @@ public class ReadAccountsController(
 ) : ControllerBase
 {
     [Authorize]
-    [HttpGet("accounts")]
-    public async Task<IActionResult> ReadAccountsAsync([FromQuery] int pageNumber, CancellationToken cancellationToken)
+    [HttpGet("accounts/{pageNumber}")]
+    public async Task<IActionResult> ReadAccountsAsync([FromRoute] int pageNumber, CancellationToken cancellationToken)
     {
         if (pageNumber < 0)
             throw new ValidationException("Page number must be greater than 0");
