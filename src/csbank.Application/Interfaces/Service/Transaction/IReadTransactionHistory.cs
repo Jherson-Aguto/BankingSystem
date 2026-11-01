@@ -6,6 +6,7 @@ public interface IReadTransactionHistory
 {
     Task<IEnumerable<TransactionDto?>?> ReadTransactionHistoryAsync(
         Guid accountid,
+        Guid customerId,
         int pageNumber
     );
 }

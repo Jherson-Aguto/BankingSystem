@@ -1,6 +1,3 @@
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
-using System.Text;
 using CSBank.Application.Interfaces.IRepositories;
 using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;
@@ -15,9 +12,12 @@ public class AuthService(
     IRevokeRefreshTokenRepository revoke)
     : IAuthService
 {
-    public async Task<(string? accessToken, string? refreshToken)> LoginAsync(string email, string password)
+    public async Task<(string? accessToken, string? refreshToken)> LoginAsync(
+        string email,
+        string password,
+        CancellationToken cancellationToken)
     {
-        UserCredentials? result = await readUser.ByEmailAsync(email);
+        UserCredentials? result = await readUser.ByEmailAsync(email, cancellationToken);
 
         if (result?.PasswordHash is null)
             return (null, null);
@@ -38,26 +38,32 @@ public class AuthService(
 
         //save refresh token hash
         string refreshTokenHash = createToken.ConvertToHash(refreshToken);
-        await saveRefreshToken.SaveRefreshTokenAsync(refreshTokenHash, result.UserId);
+        await saveRefreshToken.SaveRefreshTokenAsync(
+            refreshTokenHash,
+            result.UserId,
+            cancellationToken);
 
         return (accessToken: accessToken, refreshToken: refreshToken);
     }
 
-    public async Task<bool> LogoutAsync(string email)
+    public async Task<bool> LogoutAsync(string email, CancellationToken cancellationToken)
     {
-        UserCredentials? user = await readUser.ByEmailAsync(email);
+        UserCredentials? user = await readUser.ByEmailAsync(email, cancellationToken);
 
         if (user is null)
             return false;
 
-        await revoke.RevokeRefreshTokenAsync(user.UserId);
+        await revoke.RevokeRefreshTokenAsync(user.UserId, cancellationToken);
 
         return true;
     }
 
-    public async Task<string?> RefreshTokenAsync(string email, string refreshToken)
+    public async Task<string?> RefreshTokenAsync(
+        string email,
+        string refreshToken,
+        CancellationToken cancellationToken)
     {
-        UserCredentials? user = await readUser.ByEmailAsync(email);
+        UserCredentials? user = await readUser.ByEmailAsync(email, cancellationToken);
 
         if (user is null || user.RefreshTokenHash is null)
             return null;

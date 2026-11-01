@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using CSBank.Api.Middleware;
 using CSBank.Application.Interfaces.Services;
 using CSBank.Application.Models;
@@ -22,7 +23,9 @@ public class TransactionHistory(
         if (pageNumber < 1)
             throw new ValidationException("Page number must be greater than 1");
 
-        var results = await readTransaction.ReadTransactionHistoryAsync(accountId, pageNumber);
+        Guid customerId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var results = await readTransaction.ReadTransactionHistoryAsync(accountId, customerId, pageNumber);
 
         if (results is null)
             throw new NotFoundException("No transaction histories found");

@@ -8,28 +8,28 @@ namespace CSBank.Infrastructure.Repositories.EntityFrameworkCore;
 
 public class UpdateUserRepository(AppDbContext context) : IUpdateUserRepository
 {
-    public async Task<Customer?> UpdateUserDetails(UpdateUserRequest? dto)
+    public async Task<Customer?> UpdateUserDetails(UpdateUserRequest? dto, CancellationToken cancellationToken)
     {
-        bool exists = await context.Customers.AnyAsync(x => x.Id == dto!.Id);
+        bool exists = await context.Customers.AnyAsync(x => x.Id == dto!.Id, cancellationToken);
 
         if (!exists)
             return null;
 
-        Customer? result = await UpdateUserAggregate(dto);
+        Customer? result = await UpdateUserAggregate(dto, cancellationToken);
 
         if (result is null)
             return null;
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
 
         return result;
     }
 
-    private async Task<Customer?> UpdateUserAggregate(UpdateUserRequest? dto)
+    private async Task<Customer?> UpdateUserAggregate(UpdateUserRequest? dto, CancellationToken cancellationToken)
     {
         Customer? customer = await context.Customers
         .Include(p => p.PrivateInformation)
-        .SingleOrDefaultAsync(x => x.Id == dto!.Id);
+        .SingleOrDefaultAsync(x => x.Id == dto!.Id, cancellationToken);
 
         if (customer is null)
             return null;

@@ -31,18 +31,19 @@ public class ReadUserRepository(
         );
     }
 
-    public async Task<UserCredentials?> ByEmailAsync(string email)
+    public async Task<UserCredentials?> ByEmailAsync(string email, CancellationToken cancellationToken)
     {
         return await db.OperationAsync(
             async (connection) =>
             {
-                return await connection.QuerySingleOrDefaultAsync<UserCredentials>(
-                    ReadUser.ByEmail,
-                    new
-                    {
-                        email
-                    }
+                var command = new CommandDefinition(
+                    commandText: ReadUser.ByEmail,
+                    parameters: new { email },
+                    cancellationToken: cancellationToken,
+                    commandTimeout: 30
                 );
+
+                return await connection.QuerySingleOrDefaultAsync<UserCredentials>(command);
             }
         );
     }

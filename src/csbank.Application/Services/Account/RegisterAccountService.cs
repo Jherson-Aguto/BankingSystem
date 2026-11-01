@@ -11,13 +11,17 @@ public class RegisterAccountsService(
     AccountDomainService domainService)
     : IRegisterAccountsService
 {
-    public async Task<AccountDto?> DetailsAsync(Guid customerId, string currency, AccountTypes accountType)
+    public async Task<AccountDto?> DetailsAsync(
+        Guid customerId,
+        string currency,
+        AccountTypes accountType,
+        CancellationToken cancellationToken)
     {
         string accountNumber = domainService.GenerateAccountNumber(currency);
 
         var dto = MapAccount.ToParameters(customerId, currency, accountNumber);
 
-        return await saveAccounts.DetailsAsync(dto, accountType);
+        return await saveAccounts.DetailsAsync(dto, accountType, cancellationToken);
     }
 
 

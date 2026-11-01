@@ -10,6 +10,15 @@ public class ExceptionHandler(
         Exception exception,
         CancellationToken cancellationToken)
     {
+        if (exception is OperationCanceledException)
+        {
+            logger.LogInformation(
+                "Request was cancelled. Path: {Path}",
+                httpContext.Request.Path);
+
+            return true;
+        }
+
         var (statusCode, clientMessage) = exception switch
         {
             NotFoundException => (StatusCodes.Status404NotFound, exception.Message),
@@ -38,4 +47,4 @@ public class ExceptionHandler(
 public class NotFoundException(string message) : Exception(message);
 public class ValidationException(string message) : Exception(message);
 public class ConflictException(string message) : Exception(message);
-public class UnauthorizedException(string message): Exception(message);
+public class UnauthorizedException(string message) : Exception(message);

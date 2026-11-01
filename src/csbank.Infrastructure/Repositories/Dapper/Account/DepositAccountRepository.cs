@@ -9,16 +9,22 @@ namespace CSBank.Infrastructure.Repositories.Dapper;
 public class DepositRepository(HelperFactory db) : IDepositRepository
 {
     public async Task<TransactionDto?> DepositAmount(
-        RequestDepositDto requestDepositDto)
+        RequestDepositDto requestDepositDto,
+        Guid customerId,
+        CancellationToken cancellationToken)
     {
         return await db.TransactionOperationAsync(
            async (connection, transaction) =>
            {
-               return await connection.QuerySingleOrDefaultAsync<TransactionDto>(
-                   DepositQuery.Deposit,
-                   requestDepositDto,
-                   transaction
-                 );
+               var command = new CommandDefinition(
+                   commandText: DepositQuery.Deposit,
+                   parameters: (requestDepositDto, customerId),
+                   transaction: transaction,
+                   cancellationToken: cancellationToken,
+                   commandTimeout: 60
+               );
+
+               return await connection.QuerySingleOrDefaultAsync<TransactionDto>(command);
            }
        );
     }

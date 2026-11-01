@@ -12,7 +12,11 @@ public class GetTransactionHistoryRepository(
 )
     : IGetTransactionHistoryRepository
 {
-    public async Task<IEnumerable<TransactionDto?>?> GetTransactionAsync(Guid accountId, int offSet, int pageSize)
+    public async Task<IEnumerable<TransactionDto?>?> GetTransactionAsync(
+        Guid accountId,
+        int offSet,
+        int pageSize,
+        Guid customerId)
     {
         return await db.OperationAsync(
             async (connection) =>
@@ -23,7 +27,8 @@ public class GetTransactionHistoryRepository(
                       {
                           accountId,
                           offSet,
-                          pageSize
+                          pageSize,
+                          customerId
                       }
                   );
             }

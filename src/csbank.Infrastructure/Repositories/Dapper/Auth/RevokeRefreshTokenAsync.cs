@@ -9,19 +9,19 @@ public class RevokeRefreshTokenRepository(
     HelperFactory db)
     : IRevokeRefreshTokenRepository
 {
-    public async Task RevokeRefreshTokenAsync(Guid userId)
+    public async Task RevokeRefreshTokenAsync(Guid userId, CancellationToken cancellationToken)
     {
         await db.TransactionOperationAsync(
             async (connection, transaction) =>
             {
-                return await connection.ExecuteAsync(
-                    RevokeRefreshTokenQuery.Revoke,
-                    new
-                    {
-                        userId
-                    },
-                    transaction
+                var command = new CommandDefinition(
+                    commandText: RevokeRefreshTokenQuery.Revoke,
+                    parameters: new { userId },
+                    transaction: transaction,
+                    commandTimeout: 30
                 );
+
+                return await connection.ExecuteAsync(command);
             }
         );
     }

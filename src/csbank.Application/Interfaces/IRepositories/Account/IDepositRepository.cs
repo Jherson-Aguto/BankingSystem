@@ -5,5 +5,7 @@ namespace CSBank.Application.Interfaces.IRepositories;
 public interface IDepositRepository
 {
     Task<TransactionDto?> DepositAmount(
-        RequestDepositDto requestDepositDto);
+        RequestDepositDto requestDepositDto,
+        Guid customerId,
+        CancellationToken cancellationToken);
 }

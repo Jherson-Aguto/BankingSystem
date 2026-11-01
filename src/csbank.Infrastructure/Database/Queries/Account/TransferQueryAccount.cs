@@ -16,6 +16,7 @@ public sealed class TransferQuery
         WHERE
             ad.account_number IN (@AccountNumber, @RecipientAccountNumber)
         AND @TransferFundValue > 0
+        AND @AccountNumber <> @RecipientAccountNumber
         ORDER BY ad.id ASC
         FOR UPDATE
     ),
@@ -28,6 +29,7 @@ public sealed class TransferQuery
             ad.account_number = @AccountNumber
         AND la.id = ad.id
         AND ad.balance >= @TransferFundValue
+        AND ad.customer_id = @customerId
         RETURNING
             ad.balance,
             ad.id,

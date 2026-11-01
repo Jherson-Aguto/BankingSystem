@@ -4,5 +4,9 @@ namespace CSBank.Application.Interfaces.IRepositories;
 
 public interface IGetTransactionHistoryRepository
 {
-    Task<IEnumerable<TransactionDto?>?> GetTransactionAsync(Guid accountId, int offSet, int pageNumber);
+    Task<IEnumerable<TransactionDto?>?> GetTransactionAsync(
+        Guid accountId,
+        int offSet,
+        int pageNumber,
+        Guid customerId);
 }

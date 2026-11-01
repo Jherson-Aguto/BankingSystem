@@ -9,21 +9,29 @@ public class SaveRefreshTokenRepository(
     HelperFactory db
 ) : ISaveRefreshTokenRepository
 {
-    public async Task SaveRefreshTokenAsync(string refreshTokenHash, Guid userId)
+    public async Task SaveRefreshTokenAsync(
+        string refreshTokenHash,
+        Guid userId,
+        CancellationToken cancellationToken)
     {
         await db.TransactionOperationAsync(
             async (connection, transaction) =>
             {
 
-                return await connection.QueryAsync<int>(
-                    SaveRefreshTokenQuery.save,
+                var command = new CommandDefinition(
+                    commandText: SaveRefreshTokenQuery.save,
+                    parameters:
                     new
                     {
                         refreshTokenHash,
                         userId
                     },
-                    transaction
+                    transaction: transaction,
+                    cancellationToken: cancellationToken,
+                    commandTimeout: 30
                 );
+
+                return await connection.QueryAsync<int>(command);
             }
         );
     }

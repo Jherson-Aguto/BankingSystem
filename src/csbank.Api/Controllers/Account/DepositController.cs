@@ -3,6 +3,7 @@ using CSBank.Api.Middleware;
 using CSBank.Application.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace CSBank.Api.Controllers;
 
@@ -12,13 +13,14 @@ public class DepositController(IDepositService deposit) : ControllerBase
 {
     [Authorize]
     [HttpPost("")]
-    public async Task<IActionResult>
-        DepositAmount([FromBody] RequestDepositUpperDto requestDepositDto)
+    public async Task<IActionResult> DepositAmount([FromBody] RequestDepositUpperDto requestDepositDto, CancellationToken cancellationToken)
     {
         if (requestDepositDto.DepositValue <= 0)
             throw new ValidationException("Deposit amount must be greater than 0");
 
-        TransactionDto? result = await deposit.DepositAmountAsync(requestDepositDto);
+        Guid customerId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        TransactionDto? result = await deposit.DepositAmountAsync(requestDepositDto, customerId, cancellationToken);
 
         if (result is null)
             throw new NotFoundException("Deposit is not successful.");

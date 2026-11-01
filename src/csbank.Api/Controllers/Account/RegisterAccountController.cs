@@ -10,7 +10,7 @@ namespace CSBank.Api.Controllers;
 [ApiController]
 [Route("api/users")]
 
-public class AccountsController(
+public class RegisterAccountsController(
     IRegisterAccountsService registerAccounts)
     : ControllerBase
 {
@@ -18,13 +18,14 @@ public class AccountsController(
     [HttpPost("accounts")]
     public async Task<IActionResult> DetailsAsync(
         [FromQuery] string currency,
-        [FromQuery] AccountTypes accountType)
+        [FromQuery] AccountTypes accountType,
+        CancellationToken cancellationToken)
     {
         Guid id = Guid.Parse(
           User.FindFirstValue(ClaimTypes.NameIdentifier)!
         );
 
-        AccountDto? data = await registerAccounts.DetailsAsync(id, currency, accountType);
+        AccountDto? data = await registerAccounts.DetailsAsync(id, currency, accountType, cancellationToken);
 
         if (data is null)
             throw new NotFoundException("Failed to register account.");

@@ -18,32 +18,48 @@ The objective is not simply to build banking software, but to understand why eve
 
 ## Architecture
 
-**Status:** Phase 1–7 Active 🚧
+**Status:** Phase 8 — Security Engineering 🚧
+
+**Architecture Status:** Stable ✅
 
 Completed:
 
-- Clean Architecture
-- Domain Layer
-- Application Layer
-- API Layer
-- Manual Mapping
-- Repository Abstractions
-- Domain Services
-- Dependency Injection
-- PostgreSQL Integration
-- Dapper Persistence
-- Repository Executor
-- Higher-Order Transaction Executor
-- Relational Database Design
-- Schema Evolution
-- Constraint Design
-- Entity Framework Core
-- Hybrid Persistence (EF Core Writes / Dapper Reads)
-- SQL Execution Plan Analysis
-- Offset Pagination
-- REST API Refinement
+* Clean Architecture
+* Domain Layer
+* Application Layer
+* API Layer
+* Manual Mapping
+* Repository Abstractions
+* Domain Services
+* Dependency Injection
+* PostgreSQL Integration
+* Dapper Persistence
+* Repository Executor
+* Higher-Order Transaction Executor
+* Relational Database Design
+* Schema Evolution
+* Constraint Design
+* Entity Framework Core
+* Hybrid Persistence (EF Core Writes / Dapper Reads)
+* SQL Execution Plan Analysis
+* Offset Pagination
+* REST API Refinement
+* JWT Authentication
+* Refresh Token Rotation
+* Refresh Token Expiration
+* Refresh Token Revocation
+* Logout
+* Authentication Middleware
+* Authorization Middleware
+* Claims
+* Role-based Authentication
+* Secure Exception Handling
+* Audit Logging
+* CancellationToken Propagation
+* Dapper CommandDefinition Cancellation
+* Database Command Timeouts
 
-Current work focuses on preparing the backend for production through security engineering.
+Current work focuses on completing authorization and API security before moving toward production hardening.
 
 The architectural foundation is considered stable.
 
@@ -55,11 +71,11 @@ The following principles guide every feature implemented in CSBank.
 
 ## Layer Responsibilities
 
-- Domain owns business rules.
-- Application owns orchestration.
-- Infrastructure owns persistence.
-- PostgreSQL owns relational consistency.
-- API owns HTTP concerns and Dependency Injection.
+* Domain owns business rules.
+* Application owns orchestration.
+* Infrastructure owns persistence.
+* PostgreSQL owns relational consistency.
+* API owns HTTP concerns and Dependency Injection.
 
 ---
 
@@ -69,21 +85,21 @@ Repositories orchestrate persistence—not business logic.
 
 Repositories are responsible for:
 
-- Selecting the persistence technology
-- Executing persistence operations
-- Mapping persistence models
-- Returning application models
+* Selecting the persistence technology
+* Executing persistence operations
+* Mapping persistence models
+* Returning application models
 
 Repositories are **not** responsible for:
 
-- Business rules
-- Connection management
-- Transaction lifecycle
+* Business rules
+* Connection management
+* Transaction lifecycle
 
 The persistence implementation may use:
 
-- Dapper
-- Entity Framework Core
+* Dapper
+* Entity Framework Core
 
 depending on the engineering requirements.
 
@@ -119,7 +135,9 @@ PostgreSQL
 
 Entity Framework Core provides productivity for aggregate updates.
 
-Dapper provides explicit SQL control for optimized read operations.
+Dapper provides explicit SQL control for handcrafted queries requiring precise SQL control and predictable behavior.
+
+The project does not treat EF Core as a replacement for SQL knowledge.
 
 ---
 
@@ -127,11 +145,11 @@ Dapper provides explicit SQL control for optimized read operations.
 
 Infrastructure owns:
 
-- Connections
-- Transactions
-- Commit
-- Rollback
-- Exception propagation
+* Connections
+* Transactions
+* Commit
+* Rollback
+* Exception propagation
 
 Repositories remain focused on persistence workflows while reusable higher-order functions centralize infrastructure concerns.
 
@@ -159,6 +177,19 @@ One Database Round Trip
 
 The database should be treated as an execution engine—not merely a storage engine.
 
+Business rules that can be safely and correctly enforced at the database level may be implemented directly in SQL.
+
+Examples include:
+
+* Positive transaction amounts
+* Sufficient account balance
+* Preventing self-transfers
+* Closed-account transaction restrictions
+* Refresh-token expiration checks
+* Refresh-token revocation checks
+
+Application code should not duplicate database responsibilities unnecessarily.
+
 ---
 
 ## Abstraction Philosophy
@@ -181,6 +212,8 @@ Entity Framework Core
 
 Higher-level abstractions increase productivity without replacing relational knowledge.
 
+The project favors explicit mechanisms when they provide greater understanding and control.
+
 ---
 
 ## Ledger Philosophy
@@ -201,14 +234,36 @@ Audit logging remains independent from business entities.
 
 Audit records capture:
 
-- Entity
-- Action
-- Actor
-- Timestamp
-- Previous values (optional)
-- New values (optional)
+* Entity
+* Action
+* Actor
+* Timestamp
+* Previous values (optional)
+* New values (optional)
 
 Business operations determine whether snapshots provide meaningful information.
+
+Audit logging is implemented directly within transactional SQL workflows where appropriate, ensuring that the business operation and its audit record participate in the same transaction.
+
+---
+
+# Security Philosophy
+
+Security is treated as a system-wide concern rather than a collection of middleware features.
+
+Authentication establishes identity.
+
+Authorization determines permissions.
+
+Database constraints enforce relational invariants.
+
+SQL transactions protect atomic operations.
+
+Audit logging provides traceability.
+
+Cancellation and command timeouts prevent indefinitely running database operations.
+
+The goal is to make security enforcement occur at the appropriate layer rather than relying entirely on application-level checks.
 
 ---
 
@@ -299,6 +354,36 @@ Infrastructure Repository
 PostgreSQL
 ```
 
+For security-sensitive requests:
+
+```text
+HTTP Request
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Controller
+
+↓
+
+Application Service
+
+↓
+
+Domain / Repository
+
+↓
+
+PostgreSQL
+```
+
 ---
 
 # Infrastructure Evolution
@@ -327,7 +412,7 @@ PostgreSQL
 
 Purpose:
 
-Introduce production persistence.
+Introduce production persistence and understand SQL-driven persistence.
 
 ---
 
@@ -357,7 +442,7 @@ PostgreSQL
 
 Purpose:
 
-Centralize infrastructure concerns.
+Centralize infrastructure concerns while keeping repositories focused on persistence workflows.
 
 ---
 
@@ -383,80 +468,132 @@ Understand ORM abstractions while preserving SQL knowledge.
 
 ---
 
+## Stage 5
+
+Hybrid Persistence
+
+```text
+Writes → EF Core
+Reads  → Dapper
+```
+
+Purpose:
+
+Use each persistence abstraction where its characteristics provide the most value.
+
+---
+
+## Stage 6
+
+Security-aware Persistence
+
+```text
+Application
+
+↓
+
+Repository
+
+↓
+
+Dapper / EF Core
+
+↓
+
+Transactional SQL
+
+↓
+
+PostgreSQL
+```
+
+Security-sensitive persistence now incorporates:
+
+* Token expiration
+* Token revocation
+* Token rotation
+* Row locking where required
+* Atomic audit logging
+* Command cancellation
+* Command timeouts
+
+---
+
 # Completed Phases
 
 ## Phase 1 — Architecture Foundation ✅
 
-- Clean Architecture
-- Dependency Injection
-- Repository Pattern
-- DTOs
-- Manual Mapping
-- Domain Services
+* Clean Architecture
+* Dependency Injection
+* Repository Pattern
+* DTOs
+* Manual Mapping
+* Domain Services
 
 ---
 
 ## Phase 2 — PostgreSQL Fundamentals ✅
 
-- Schemas
-- Tables
-- Constraints
-- Relationships
-- UUIDs
-- CRUD
-- Transactions
-- JOINs
-- CTEs
-- Referential Integrity
+* Schemas
+* Tables
+* Constraints
+* Relationships
+* UUIDs
+* CRUD
+* Transactions
+* JOINs
+* CTEs
+* Referential Integrity
 
 ---
 
 ## Phase 3 — Persistence Engineering ✅
 
-- Dapper
-- Npgsql
-- Repository Executor
-- Higher-Order Transactions
-- Atomic SQL Workflows
-- Audit Logging
-- Ledger Design
-- Transaction-safe Business Operations
+* Dapper
+* Npgsql
+* Repository Executor
+* Higher-Order Transactions
+* Atomic SQL Workflows
+* Audit Logging
+* Ledger Design
+* Transaction-safe Business Operations
 
 Completed business features:
 
-- Customer Registration
-- Read User
-- Update User
-- Create Account
-- Deposit
-- Transfer
-- Transaction History
+* Customer Registration
+* Read User
+* Update User
+* Create Account
+* Deposit
+* Transfer
+* Transaction History
 
 ---
 
 ## Phase 4 — Relational Database Design ✅
 
-- Relationship Design
-- Constraint Design
-- Index Strategy
-- Normalization
-- Schema Evolution
-- ERD Refinement
+* Relationship Design
+* Constraint Design
+* Index Strategy
+* Normalization
+* Schema Evolution
+* ERD Refinement
 
 ---
 
 ## Phase 5 — Entity Framework Core ✅
 
-- DbContext
-- DbSet
-- Fluent API
-- Entity Configurations
-- Relationship Mapping
-- Change Tracker
-- SaveChanges Pipeline
-- Generated SQL
-- EF Core vs Dapper
-- Hybrid Persistence
+* DbContext
+* DbSet
+* Fluent API
+* Entity Configurations
+* Relationship Mapping
+* Change Tracker
+* Entity States
+* SaveChanges Pipeline
+* Generated SQL
+* EF Core vs Dapper
+* Hybrid Persistence
 
 ---
 
@@ -464,131 +601,218 @@ Completed business features:
 
 Topics completed:
 
-- EXPLAIN
-- EXPLAIN ANALYZE
-- Execution Plans
-- Generated SQL Comparison
-- Index Scan vs Sequential Scan
-- Offset Pagination
-- Query Inspection
+* EXPLAIN
+* EXPLAIN ANALYZE
+* Execution Plans
+* Generated SQL Comparison
+* Index Scan vs Sequential Scan
+* Offset Pagination
+* Query Inspection
+
+Performance engineering is now treated as a continuous engineering responsibility rather than a permanently isolated phase.
 
 ---
 
 # Current Phase
 
-## Phase 7 — Security Engineering 🚧
+## Phase 8 — Security Engineering 🚧
 
-Topics:
+**Goal:**
 
-- Authentication
-- Authorization
-- JWT
-- Refresh Tokens
-- BCrypt / Argon2
-- Validation
-- Secure Error Handling
-- HTTPS
-- CORS
-- Rate Limiting
-- Authorization Policies
-- Account Ownership
-- Idempotency
-- Secrets Management
+Transform CSBank from a functional backend into a secure production-oriented banking backend.
 
-Goal:
+### Authentication
 
-Prepare CSBank for production deployment by ensuring every business operation is secure before further optimization.
+Completed:
+
+* JWT Access Tokens
+* Secure Password Hashing
+* Login
+* Refresh Tokens
+* Refresh Token Hashing
+* Refresh Token Rotation
+* Refresh Token Expiration
+* Refresh Token Revocation
+* Logout
+* Authentication Middleware
+
+### Authorization
+
+Current focus:
+
+* `[Authorize]`
+* Roles
+* Claims
+* Authorization Policies
+* Resource Ownership
+* Account Ownership Validation
+* Preventing unauthorized access to another customer's resources
+
+### API Security
+
+Remaining:
+
+* HTTPS verification
+* CORS
+* Rate Limiting
+* Request Validation
+* Input Sanitization
+* Security Headers
+
+### Database Security
+
+Remaining:
+
+* Least Privilege
+* SQL Injection Prevention
+* Secrets Management
+* Secure Connection Strings
+* Production database configuration
+
+### Application Security
+
+Completed:
+
+* Authentication Middleware
+* Authorization Middleware
+* Secure Exception Handling
+* CancellationToken propagation
+* Database command timeouts
+
+Remaining:
+
+* Security headers
+* Additional authorization policies
+* Security-focused integration testing
+
+### Auditing
+
+Completed:
+
+* Login Audit
+* Sensitive Business Operation Audits
+* Actor Tracking
+* Previous/New Value Tracking where appropriate
+* Transactional Audit Logging
+
+---
+
+# Security Verification
+
+Security features should be verified through actual behavior rather than simply checking whether the implementation exists.
+
+Required verification includes:
+
+* Expired JWT is rejected
+* Invalid JWT is rejected
+* Missing JWT is rejected
+* Revoked refresh token is rejected
+* Expired refresh token is rejected
+* Refresh token rotation works
+* Reused refresh tokens are rejected where applicable
+* Logout invalidates the refresh token
+* Unauthorized users cannot access protected endpoints
+* Incorrect roles are rejected
+* Customers cannot access another customer's resources
+* Customers cannot operate on another customer's accounts
+* Database operations respect cancellation
+* Long-running database commands respect configured timeouts
 
 ---
 
 # Remaining Roadmap
 
-## Phase 8 — Performance Engineering
+## Phase 9 — Performance Engineering
 
-- Query Optimization
-- Index Strategy
-- Keyset Pagination
-- Window Functions
-- Dapper Optimization
-- EF Core Optimization
-- Memory Optimization
-- BenchmarkDotNet
-- Profiling
+Performance remains a continuous engineering responsibility.
 
----
+Future topics:
 
-## Phase 9 — LINQ
-
-- Deferred Execution
-- IEnumerable vs IQueryable
-- Projection
-- Aggregation
-- Grouping
-- Set Operations
-- Performance Characteristics
+* Query Optimization
+* Index Strategy
+* Keyset Pagination
+* Window Functions
+* Dapper Optimization
+* EF Core Optimization
+* Memory Optimization
+* BenchmarkDotNet
+* Profiling
 
 ---
 
-## Phase 10 — Algorithms
+## Phase 10 — LINQ
+
+* Deferred Execution
+* IEnumerable vs IQueryable
+* Projection
+* Aggregation
+* Grouping
+* Set Operations
+* Performance Characteristics
+
+---
+
+## Phase 11 — Algorithms
 
 Apply algorithms where they improve backend systems.
 
 ---
 
-## Phase 11 — Trees & Hierarchies
+## Phase 12 — Trees & Hierarchies
 
 Recursive business models.
 
 ---
 
-## Phase 12 — Networking
+## Phase 13 — Networking
 
-- REST
-- HTTP
-- HTTPS
-- API Design
-- Idempotency
-- Versioning
-
----
-
-## Phase 13 — Advanced Concurrency
-
-- Isolation Levels
-- Deadlocks
-- Retry Strategies
-- Optimistic Concurrency
-- Distributed Transactions
+* REST
+* HTTP
+* HTTPS
+* API Design
+* Idempotency
+* Versioning
 
 ---
 
-## Phase 14 — Caching
+## Phase 14 — Advanced Concurrency
 
-- Memory Cache
-- Redis
-- Cache Invalidation
-- Distributed Caching
-
----
-
-## Phase 15 — Testing
-
-- Unit Testing
-- Integration Testing
-- API Testing
-- Concurrency Testing
-- Load Testing
+* Isolation Levels
+* Deadlocks
+* Retry Strategies
+* Optimistic Concurrency
+* Distributed Transactions
 
 ---
 
-## Phase 16 — Deployment & DevOps
+## Phase 15 — Caching
 
-- Docker
-- CI/CD
-- Logging
-- Monitoring
-- Configuration
-- Cloud Deployment
+* Memory Cache
+* Redis
+* Cache Invalidation
+* Distributed Caching
+
+---
+
+## Phase 16 — Testing
+
+* Unit Testing
+* Integration Testing
+* API Testing
+* Concurrency Testing
+* Load Testing
+* Security Testing
+
+---
+
+## Phase 17 — Deployment & DevOps
+
+* Docker
+* CI/CD
+* Logging
+* Monitoring
+* Configuration
+* Cloud Deployment
 
 ---
 
@@ -598,22 +822,22 @@ Build a production-quality banking backend while understanding every abstraction
 
 By completing CSBank, the project demonstrates practical engineering knowledge in:
 
-- Clean Architecture
-- Software Engineering
-- PostgreSQL
-- Database Engineering
-- Dapper
-- Entity Framework Core
-- Hybrid Persistence
-- Security Engineering
-- Performance Engineering
-- Algorithms
-- Networking
-- Concurrency
-- LINQ
-- Caching
-- Testing
-- Deployment
+* Clean Architecture
+* Software Engineering
+* PostgreSQL
+* Database Engineering
+* Dapper
+* Entity Framework Core
+* Hybrid Persistence
+* Security Engineering
+* Performance Engineering
+* Algorithms
+* Networking
+* Concurrency
+* LINQ
+* Caching
+* Testing
+* Deployment
 
 CSBank is more than a portfolio project.
 
